@@ -1,1 +1,1 @@
-//for sharing types
+//for sharing types within frontend and backend
