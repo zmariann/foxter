@@ -1,5 +1,8 @@
 import express, { Request, Response } from 'express';
 const app = express();
+const db = require("better-sqlite3")
+
+
 
 app.delete('api/foxes/:id', async (req: Request, res: Response) => {
     try {
