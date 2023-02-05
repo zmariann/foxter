@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS fox (
+	id INTEGER PRIMARY KEY,
+	content TEXT NOT NULL,
+	created_at TEXT
+);
