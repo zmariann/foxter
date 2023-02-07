@@ -1,5 +1,12 @@
-import express from 'express'
+import express from "express";
+import { db } from "../database/db";
 
-const foxRouter = express.Router()
+const foxRouter = express.Router();
 
-export = foxRouter
+// get all foxes
+foxRouter.get("/foxes", (req, res) => {
+  const data = db.prepare("SELECT * FROM fox").all();
+  res.send(data);
+});
+
+export = foxRouter;
