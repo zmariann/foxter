@@ -9,4 +9,18 @@ foxRouter.get("/foxes", (req, res) => {
   res.send(data);
 });
 
-export = foxRouter;
+// delete foxes by id
+
+foxRouter.delete('api/foxes/:id', async (req, res) => {
+  try {
+    const entry = await deleteFox(req.params.id);
+    if (!entry) {
+      return res.status(403).send('No entry was fount with this ID')
+    }
+    res.status(200).send('Entry deleted');
+  } catch (error) {
+    res.send(error.message);
+  }
+})
+
+export { foxRouter }
