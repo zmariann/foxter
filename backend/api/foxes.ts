@@ -5,18 +5,18 @@ const foxRouter = express.Router();
 
 // get all foxes
 foxRouter.get("/foxes", (req, res) => {
-  const data = db.prepare("SELECT * FROM fox").all();
+  const data = db.prepare("SELECT * FROM foxes").all();
   res.send(data);
 });
 
 // delete foxes by id
 
-foxRouter.delete('api/foxes/:id', async (req, res) => {
+foxRouter.delete('/foxes/:id', async (req, res) => {
   try {
-    const entry = await deleteFox(req.params.id);
-    if (!entry) {
+    //const entry = await deleteFox(req.params.id);
+    /* if (!entry) {
       return res.status(403).send('No entry was fount with this ID')
-    }
+    } */
     res.status(200).send('Entry deleted');
   } catch (error) {
     res.send(error.message);
