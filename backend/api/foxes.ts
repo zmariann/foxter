@@ -1,10 +1,7 @@
 import express from "express";
 import { db } from "../database/db";
-import { loggerApp } from "./logger";
 
 const foxRouter = express.Router();
-
-foxRouter.use(loggerApp)
 
 // get all foxes
 foxRouter.get("/foxes", (req, res) => {
