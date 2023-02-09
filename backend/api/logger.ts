@@ -6,4 +6,4 @@ function loggerMiddleware(request, response, next) {
     next()
 }
 
-export { loggerMidlleware }
+export { loggerMiddleware }
