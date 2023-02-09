@@ -12,17 +12,21 @@ foxRouter.get("/foxes", (req, res) => {
 // Create a fox
 foxRouter.post("/foxes", (req, res) => {
     try {
-    const { data } = req.body;
-    if (!data) {
-    return res.status(400).send({ error: "Content is required." });
-    }
-    const stmt = db.prepare("INSERT INTO foxes (content) VALUES (?)");
-    stmt.run(data);
-    res.status(201).send({ message: "Fox created successfully!" });
+      const { content } = req.body;
+    
+      if (!content) {
+        return res.status(400).send({ error: "Content is required." });
+      }
+    
+      const stmt = db.prepare("INSERT INTO foxes (content) VALUES (?)");
+    
+      stmt.run(content);
+    
+      res.status(201).send({ message: "Fox created successfully!" });
     } catch (error) {
-    res.status(400).send({ error: error.message });
-    }
-    });
+      res.status(400).send({ error: error.message });
+    }  
+});
   
 // delete foxes by id
 
