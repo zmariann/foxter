@@ -26,7 +26,7 @@ const FoxForm: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ data: text }),
+        body: JSON.stringify({ content: text }),
       });
       if (!response.ok) {
         throw new Error(await response.text());

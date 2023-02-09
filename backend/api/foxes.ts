@@ -32,10 +32,8 @@ foxRouter.post("/foxes", (req, res) => {
 
 foxRouter.delete('/foxes/:id', async (req, res) => {
   try {
-    //const entry = await deleteFox(req.params.id);
-    /* if (!entry) {
-      return res.status(403).send('No entry was fount with this ID')
-    } */
+    db.prepare("DELETE FROM foxes WHERE id = ?").run(req.params.id);
+    
     res.status(200).send('Entry deleted');
   } catch (error) {
     res.send(error.message);
