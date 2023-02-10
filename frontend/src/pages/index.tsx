@@ -42,7 +42,7 @@ const FoxForm: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/foxes/${id}`, {
+      const response = await fetch(`/api/foxes/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
@@ -83,7 +83,12 @@ const FoxForm: React.FC = () => {
       <div>
         <ul>
           {foxes.map((fox) => {
-            return <li>{fox.content}</li>;
+            return (
+              <li key={fox.id}>
+                {fox.content}
+                <button onClick={() => handleDelete(fox.id)}>Delete</button>
+              </li>
+            );
           })}
         </ul>
       </div>
