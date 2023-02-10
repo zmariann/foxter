@@ -9,7 +9,7 @@ const FoxForm: React.FC = () => {
   const [foxes, setFoxes] = useState<Fox[]>([]);
 
   const fetchFoxes = async () => {
-    const response = await fetch("http://localhost:5000/api/foxes");
+    const response = await fetch("/api/foxes");
     setFoxes(await response.json());
     console.log(foxes);
   };
@@ -21,7 +21,7 @@ const FoxForm: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const response = await fetch("http://localhost:5000/api/foxes", {
+      const response = await fetch("/api/foxes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
