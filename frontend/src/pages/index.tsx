@@ -80,7 +80,7 @@ const FoxForm: React.FC = () => {
           </button>
         </form>
       </div>
-      <div>
+      {/* <div>
         <ul>
           {foxes.map((fox) => {
             return (
@@ -91,6 +91,26 @@ const FoxForm: React.FC = () => {
             );
           })}
         </ul>
+      </div>
+        */}
+        <div>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          {foxes.length === 0 ? (
+            <p style={{ textAlign: "center" }}>No foxes to show. Post one!</p>
+          ) : (
+            <ul style={{ listStyle: "none", textAlign: "center" }}>
+              {foxes.map((fox) => {
+                return (
+                  <li key={fox.id} style={{ margin: "20px 0" }}>
+                    {fox.content}
+                    <span style={{ marginLeft: "10px" }}></span>
+                    <button onClick={() => handleDelete(fox.id)}>Delete</button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
       </div>
     </>
   );
