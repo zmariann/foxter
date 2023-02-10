@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 
 interface Fox {
+  id: number;
   content: string;
+  created_at: Date;
 }
 
 const FoxForm: React.FC = () => {
@@ -38,6 +40,21 @@ const FoxForm: React.FC = () => {
     }
   };
 
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/foxes/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+      fetchFoxes();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  
   return (
     <>
       <div
@@ -59,7 +76,7 @@ const FoxForm: React.FC = () => {
             type="submit"
             style={{ marginLeft: "10px", padding: "10px", fontSize: "18px" }}
           >
-            Swing
+            Post a fox
           </button>
         </form>
       </div>
@@ -73,5 +90,6 @@ const FoxForm: React.FC = () => {
     </>
   );
 };
+
 
 export default FoxForm;

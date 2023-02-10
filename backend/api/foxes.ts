@@ -33,7 +33,6 @@ foxRouter.post("/foxes", (req, res) => {
 foxRouter.delete('/foxes/:id', async (req, res) => {
   try {
     db.prepare("DELETE FROM foxes WHERE id = ?").run(req.params.id);
-    
     res.status(200).send('Entry deleted');
   } catch (error) {
     res.send(error.message);
