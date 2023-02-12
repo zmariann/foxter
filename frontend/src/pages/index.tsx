@@ -77,7 +77,7 @@ const FoxForm: React.FC = () => {
 
   return (
     <>
-    {/* Render Text input field and Post a Fox button */}
+      {/* || Render Text input field and Post a Fox button */}
       <div
         style={{
           display: "flex",
@@ -86,6 +86,7 @@ const FoxForm: React.FC = () => {
           justifyContent: "center",
         }}
       >
+        {/* Form for submitting a fox post */}
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -93,6 +94,7 @@ const FoxForm: React.FC = () => {
             onChange={(event) => setText(event.target.value)}
             style={{ padding: "10px", fontSize: "18px" }}
           />
+          {/* Submit button for posting the fox */}
           <button
             type="submit"
             style={{ marginLeft: "10px", padding: "10px", fontSize: "18px" }}
@@ -102,19 +104,21 @@ const FoxForm: React.FC = () => {
         </form>
       </div>
 
-      {/* Render Foxes and Delete button */}
-
+      {/* || Render Foxes and Delete Button */}
       <div>
         <div style={{ display: "flex", justifyContent: "center" }}>
+          {/* Display "No foxes to show. Post one!" message when foxes array is empty */}
           {foxes.length === 0 ? (
             <p style={{ textAlign: "center" }}>No foxes to show. Post one!</p>
           ) : (
             <ul style={{ listStyle: "none", textAlign: "center" }}>
+              {/* Map through foxes array and render fox content and delete button */}
               {foxes.map((fox) => {
                 return (
                   <li key={fox.id} style={{ margin: "20px 0" }}>
                     {fox.content}
                     <span style={{ marginLeft: "10px" }}></span>
+                    {/* Delete Button */}
                     <button onClick={() => handleDelete(fox.id)}>Delete</button>
                   </li>
                 );
