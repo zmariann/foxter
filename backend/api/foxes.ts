@@ -3,17 +3,16 @@ import { db } from "../database/db";
 
 const foxRouter = express.Router();
 
-// get all foxes
 foxRouter.get("/foxes", (req, res) => {
   const data = db.prepare("SELECT * FROM foxes ORDER BY id DESC").all();
   res.send(data);
 });
 
-// Create a fox
 foxRouter.post("/foxes", (req, res) => {
     try {
       const { content } = req.body;
     
+      // Return an error if the content is missing
       if (!content) {
         return res.status(400).send({ error: "Content is required." });
       }
@@ -28,9 +27,13 @@ foxRouter.post("/foxes", (req, res) => {
     }  
 });
   
+<<<<<<< HEAD
 // delete foxes by id
+=======
+>>>>>>> 99cbbd1da5d466717eda08e3ab4b7c41775c946f
 foxRouter.delete('/foxes/:id', async (req, res) => {
   try {
+    // Prepare a DELETE statement to remove the fox with the specified id
     db.prepare("DELETE FROM foxes WHERE id = ?").run(req.params.id);
     res.status(200).send('Entry deleted');
   } catch (error) {
@@ -38,4 +41,5 @@ foxRouter.delete('/foxes/:id', async (req, res) => {
   }
 })
 
+// Export the router for use in other parts of the application
 export { foxRouter }
