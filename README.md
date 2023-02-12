@@ -37,10 +37,6 @@ To run the app, follow these steps:
 
 The app should now be running on `http://localhost:3000` in your browser.
 
-## Contributing
-
-If you would like to contribute to Foxter, please fork the repository, make your changes, and submit a pull request. Contributions are welcome and appreciated!
-
 ## Conclusion 
 
 Foxter is a simple and fun application that demonstrates the basic concepts of building a web application using React. Whether you're a beginner or an experienced developer, Foxter is a great starting point for learning how to build modern web applications.
