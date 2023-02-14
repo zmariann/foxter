@@ -27,10 +27,6 @@ foxRouter.post("/foxes", (req, res) => {
     }  
 });
   
-<<<<<<< HEAD
-// delete foxes by id
-=======
->>>>>>> 99cbbd1da5d466717eda08e3ab4b7c41775c946f
 foxRouter.delete('/foxes/:id', async (req, res) => {
   try {
     // Prepare a DELETE statement to remove the fox with the specified id
