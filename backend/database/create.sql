@@ -9,3 +9,10 @@ CREATE TABLE IF NOT EXISTS user (
   name TEXT NOT NULL,
   password TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS token (
+  token_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  token TEXT NOT NULL,
+  FOREIGN KEY (token_id),
+    REFERENCES user(user_id)
+);
