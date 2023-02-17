@@ -37,17 +37,17 @@ foxRouter.post("/foxes", (req, res) => {
     res.status(400).send({ error: error.message });
   }
 });
-  
+
 // Delete a fox
-foxRouter.delete('/foxes/:id', async (req, res) => {
+foxRouter.delete("/foxes/:id", async (req, res) => {
   try {
     // Prepare a DELETE statement to remove the fox with the specified id
     db.prepare("DELETE FROM foxes WHERE id = ?").run(req.params.id);
-    res.status(200).send('Entry deleted');
+    res.status(200).send("Entry deleted");
   } catch (error) {
     res.send(error.message);
   }
-})
+});
 
 // Export the router for use in other parts of the application
-export { foxRouter }
+export { foxRouter };
