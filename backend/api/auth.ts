@@ -61,7 +61,7 @@ authRouter.get("/verify", (req: Request, res: Response) => {
 });
 
 // Verify user token
-function verifyUser(req): { name: string } | null | boolean {
+function verifyUser(req: Request): { name: string } | null | boolean {
   try {
     const token = req.cookies.token;
     const user_id = req.cookies.user_id;
