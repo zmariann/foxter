@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS user (
 );
 
 CREATE TABLE IF NOT EXISTS token (
-  user_id NOT NULL,
-  token TEXT PRIMARY KEY NOT NULL,
+  user_id INTEGER  PRIMARY KEY NOT NULL,
+  token TEXT UNIQUE NOT NULL,
   FOREIGN KEY (user_id)
     REFERENCES user(id)
 );
