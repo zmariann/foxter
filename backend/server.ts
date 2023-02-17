@@ -3,13 +3,14 @@ import express from "express";
 // Import cors to handle cross-origin resource sharing
 import cors from "cors";
 
+import cookieParser from "cookie-parser";
+
 // Load environment variables from .env file
 require("dotenv").config();
 
 import { foxRouter } from "./api/foxes";
 import { loggerMiddleware } from "./api/logger";
 import { authRouter } from "./api/auth";
-const cookieParser = require("cookie-parser");
 
 const app = express();
 

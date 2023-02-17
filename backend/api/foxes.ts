@@ -1,6 +1,7 @@
 import express from "express";
 import { db } from "../database/db";
 import { verifyUser } from "./auth";
+import { z } from "zod";
 
 const foxRouter = express.Router();
 
@@ -9,22 +10,28 @@ foxRouter.get("/foxes", (req, res) => {
   res.send(data);
 });
 
+const PostFoxSchema = z.object({
+  content: z.string()
+})
+
 // create a fox
-foxRouter.post("/foxes", (req, res) => {
+foxRouter.post("/foxes",  (req, res) => {
   try {
-    const { content } = req.body;
+    const validated = PostFoxSchema.safeParse();
 
     // Return an error if the content is missing
-    if (!content) {
-      return res.status(400).send({ error: "Content is required." });
+    if (validated.success === false) {
+      return res.status(400).send({ error: validated.errors.flatten() });
     }
+    
+    const { content } = validated.data;
 
     const token = req.cookies.token;
 
     // Verify the user token
     const user = verifyUser(token);
 
-    if (!user) {
+    if (user === null) {
       return res.status(401).send({ error: "Unauthorized." });
     }
 
@@ -45,7 +52,7 @@ foxRouter.delete("/foxes/:id", async (req, res) => {
     db.prepare("DELETE FROM foxes WHERE id = ?").run(req.params.id);
     res.status(200).send("Entry deleted");
   } catch (error) {
-    res.send(error.message);
+    res.status(400).send(error.message);
   }
 });
 

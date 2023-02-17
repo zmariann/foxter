@@ -1,15 +1,13 @@
 import express, { Request, Response } from "express";
 import { db } from "../database/db";
 // npm install cookie-parser
-import cookieParser from "cookie-parser";
 // npm install jsonwebtoken
 import jwt from "jsonwebtoken";
 // npm install bcrypt
 import bcrypt from "bcrypt";
+import { z } from "zod";
 
 const authRouter = express.Router();
-
-authRouter.use(cookieParser());
 
 // Generate a random token
 function generateToken(): string {
@@ -17,72 +15,81 @@ function generateToken(): string {
 }
 
 // generate User token function
-function generateUserToken(user_id, res) {
+function generateUserToken(userId, res) {
   // Generate a new token
   const token = generateToken();
-  console.log(token);
-
+  
   // Save the token in the database
   db.prepare(
-    "INSERT INTO token (user_id, token) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET token = ? "
-  ).run(user_id, token, token);
+    "INSERT OR REPLACE INTO tokens (user_id, token) VALUES (?, ?)"
+  ).run(userId, token);
 
   // Set the token as a cookie in the response
   res.cookie("token", token, { httpOnly: true, maxAge: 2 * 60 * 60 * 1000 });
 
   // Set the user_id as a cookie in the response
-  res.cookie("user_id", user_id, {
+  res.cookie("userId", userId, {
     httpOnly: true,
     maxAge: 2 * 60 * 60 * 1000,
   });
 }
 
+const RegisterBodySchema = z.object({
+  username: z.string(),
+  password: z.string()
+})
+
 // Register route
-authRouter.post("/register", (req: Request, res: Response) => {
-  let userName = req.body.userName;
-  let password = passToHash(req.body.password);
-  db.prepare("SELECT * FROM user WHERE name = ?").run(userName);
-  (error, result) => {
-    if (error) {
-      if (error.code === "ER_DUP_ENTRY") {
-        res.status(400);
-        res.send({ E: "dub_entry" });
-        return;
-      }
-      throw error;
-    } else {
-      db.prepare("INSERT INTO user (name, password) VALUES (?, ?) ").run(
-        userName,
-        password
-      );
-      // res.cookie();
-    }
-  };
+authRouter.post("/register", async (req: Request, res: Response) => {
+  const validated = RegisterBodySchema.safeParse(req.body);
+  
+  if (validated.success === false) {
+    return res.status(401).send({ error: validated.error.flatten() });
+  }
+  
+  const { username, password } = validated.data; 
+  
+  const result = db.prepare("SELECT * FROM users WHERE name = ?").get(username);
+
+  if (result !== undefined) {
+    return res.status(400).send({ error: "User with this username already exists" })
+  }
+  
+  const hashedPassword = await hashPassword(password)
+  
+  const { id: userId } = db.prepare("INSERT INTO users (name, password) VALUES (?, ?) RETURNING id").get(
+    username,
+    hashedPassword
+  );
+  
+  generateUserToken(userId, res);
+ 
+  res.send({ message: "Successfuly registered!"});     
 });
 
 // for register route: take req.body.password and hash it with bcrypt (with 10 rounds)
-function passToHash(password: string): string {
-  const hashedPassword: string = bcrypt.hash(password, 10);
+async function hashPassword(password: string): Promise<string> {
+  const hashedPassword: string = await bcrypt.hash(password, 10);
   return hashedPassword;
 }
 
 // delete userToken Function
-function deleteUserToken(user_id, token, res) {
+function deleteUserToken(userId, token, res) {
   // Delete the token from the database
-  db.prepare("DELETE FROM token WHERE user_id = ? AND token =?").run(
-    user_id,
+  db.prepare("DELETE FROM tokens WHERE user_id = ? AND token =?").run(
+    userId,
     token
   );
   // Remove the token cookie from the response
   res.clearCookie("token");
+  res.clearCookie("userId");
 }
 
 // Logout route
 authRouter.post("/logout", (req: Request, res: Response) => {
   try {
-    const token = req.cookies.token;
-    const user_id = req.cookies.user_id;
-    deleteUserToken(user_id, token, res);
+    const { token, userId } = req.cookies;
+    deleteUserToken(userId, token, res);
 
     res.send({ message: "Logged out successfully!" });
   } catch (error) {
@@ -96,23 +103,25 @@ authRouter.get("/verify", (req: Request, res: Response) => {
 });
 
 // Verify user token
-function verifyUser(req: Request): { name: string } | null | boolean {
+function verifyUser(req: Request): { id: number, name: string } | null {
   try {
-    const token = req.cookies.token;
-    const user_id = req.cookies.user_id;
+    const { token, userId } = req.cookies;
 
     const tokenData = db
-      .prepare("SELECT * FROM token WHERE user_id = ? and token= ?")
-      .get(user_id, token);
+      .prepare("SELECT * FROM tokens WHERE user_id = ? and token= ?")
+      .get(userId, token);
     console.log(tokenData);
-    if (tokenData) {
-      const userData = db
-        .prepare("SELECT id, name from user WHERE id=?")
-        .get(user_id);
-      return userData;
-    } else {
-      return false;
+    
+    if (tokenData === undefined) {
+      return null;
     }
+    
+    const userData = db
+      .prepare("SELECT id, name from users WHERE id=?")
+      .get(user_id);
+    
+    return userData;
+    
   } catch (error) {
     console.error(error);
   }
