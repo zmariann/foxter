@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { db } from "../database/db";
 // npm install cookie-parser
-const cookieParser = require("cookie-parser");
+import cookieParser from "cookie-parser";
 // npm install jsonwebtoken
 import jwt from "jsonwebtoken";
 // npm install bcrypt
@@ -35,6 +35,35 @@ function generateUserToken(user_id, res) {
     httpOnly: true,
     maxAge: 2 * 60 * 60 * 1000,
   });
+}
+
+// Register route
+authRouter.post("/register", (req: Request, res: Response) => {
+  let userName = req.body.userName;
+  let password = passToHash(req.body.password);
+  db.prepare("SELECT * FROM user WHERE name = ?").run(userName);
+  (error, result) => {
+    if (error) {
+      if (error.code === "ER_DUP_ENTRY") {
+        res.status(400);
+        res.send({ E: "dub_entry" });
+        return;
+      }
+      throw error;
+    } else {
+      db.prepare("INSERT INTO user (name, password) VALUES (?, ?) ").run(
+        userName,
+        password
+      );
+      // res.cookie();
+    }
+  };
+});
+
+// for register route: take req.body.password and hash it with bcrypt (with 10 rounds)
+function passToHash(password: string): string {
+  const hashedPassword: string = bcrypt.hash(password, 10);
+  return hashedPassword;
 }
 
 // delete userToken Function
@@ -93,4 +122,3 @@ function verifyUser(req: Request): { name: string } | null | boolean {
 }
 
 export { authRouter, verifyUser };
-

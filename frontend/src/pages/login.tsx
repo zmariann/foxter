@@ -15,7 +15,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 const LogIn = () => {
     return (
       <div>
-        <h1>Sign Up</h1>
+        <h1>Log In</h1>
         <form onSubmit={handleSubmit}>
         <div className="input-container">
           <label>Username </label>
@@ -23,10 +23,6 @@ const LogIn = () => {
         </div>
         <div className="input-container">
           <label>Password </label>
-          <input type="password" name="pass" required />
-        </div>
-        <div className="input-container">
-          <label>Password Again</label>
           <input type="password" name="pass" required />
         </div>
         <div className="button-container">
