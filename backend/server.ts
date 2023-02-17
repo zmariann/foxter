@@ -8,6 +8,8 @@ require("dotenv").config();
 
 import { foxRouter } from "./api/foxes";
 import { loggerMiddleware } from "./api/logger";
+import { authRouter } from "./api/auth";
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
@@ -19,10 +21,9 @@ app.use(cors());
 
 // Use json middleware for parsing incoming request bodies as JSON
 app.use(express.json());
-
+app.use(cookieParser());
 app.use(loggerMiddleware);
-
-app.use("/api", [foxRouter]);
+app.use("/api", [foxRouter,authRouter]);
 
 app.listen(PORT, () => {
   console.log(`Server listening at port ${PORT}`);
