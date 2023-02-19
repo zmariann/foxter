@@ -21,7 +21,7 @@ const RegisterPage: React.FC = () => {
     setSubmitted(false);
   };
   // Handling the form submission
-  const handleSubmit = (event: React.SyntheticEvent) => {
+  const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     if (username === "" || password === "") {
       setError(true);
@@ -29,6 +29,17 @@ const RegisterPage: React.FC = () => {
       setSubmitted(true);
       setError(false);
       console.log(username, password);
+      try {
+        const response = await fetch("/api/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+        });
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
