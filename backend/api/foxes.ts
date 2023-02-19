@@ -17,11 +17,11 @@ const PostFoxSchema = z.object({
 // create a fox
 foxRouter.post("/foxes",  (req, res) => {
   try {
-    const validated = PostFoxSchema.safeParse();
+    const validated = PostFoxSchema.safeParse(req.body);
 
     // Return an error if the content is missing
     if (validated.success === false) {
-      return res.status(400).send({ error: validated.errors.flatten() });
+      return res.status(400).send({ error: validated.error.flatten() });
     }
     
     const { content } = validated.data;
