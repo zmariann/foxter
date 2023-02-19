@@ -1,8 +1,6 @@
 import express from "express";
-
 // Import cors to handle cross-origin resource sharing
 import cors from "cors";
-
 import cookieParser from "cookie-parser";
 
 // Load environment variables from .env file

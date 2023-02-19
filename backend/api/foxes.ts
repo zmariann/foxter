@@ -11,11 +11,11 @@ foxRouter.get("/foxes", (req, res) => {
 });
 
 const PostFoxSchema = z.object({
-  content: z.string()
-})
+  content: z.string(),
+});
 
 // create a fox
-foxRouter.post("/foxes",  (req, res) => {
+foxRouter.post("/foxes", (req, res) => {
   try {
     const validated = PostFoxSchema.safeParse(req.body);
 
@@ -23,9 +23,8 @@ foxRouter.post("/foxes",  (req, res) => {
     if (validated.success === false) {
       return res.status(400).send({ error: validated.error.flatten() });
     }
-    
-    const { content } = validated.data;
 
+    const { content } = validated.data;
     const token = req.cookies.token;
 
     // Verify the user token
@@ -36,7 +35,6 @@ foxRouter.post("/foxes",  (req, res) => {
     }
 
     const stmt = db.prepare("INSERT INTO foxes (content) VALUES (?)");
-
     stmt.run(content);
 
     res.status(201).send({ message: "Fox created successfully!" });
