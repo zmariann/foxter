@@ -9,6 +9,7 @@ require("dotenv").config();
 import { foxRouter } from "./api/foxes";
 import { loggerMiddleware } from "./api/logger";
 import { authRouter } from "./api/auth";
+import { validateFox }  from  "./api/validateFox";
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(loggerMiddleware);
+app.use(validateFox);
 app.use("/api", [foxRouter,authRouter]);
 
 app.listen(PORT, () => {

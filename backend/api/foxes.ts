@@ -1,7 +1,7 @@
 import express from "express";
 import { db } from "../database/db";
 import { verifyUser } from "./auth";
-import { z } from "zod";
+import { validateFox }  from  "./validateFox";
 
 const foxRouter = express.Router();
 
@@ -10,21 +10,10 @@ foxRouter.get("/foxes", (req, res) => {
   res.send(data);
 });
 
-const PostFoxSchema = z.object({
-  content: z.string(),
-});
-
 // create a fox
-foxRouter.post("/foxes", (req, res) => {
+foxRouter.post("/foxes", validateFox, (req, res) => {
   try {
-    const validated = PostFoxSchema.safeParse(req.body);
-
-    // Return an error if the content is missing
-    if (validated.success === false) {
-      return res.status(400).send({ error: validated.error.flatten() });
-    }
-
-    const { content } = validated.data;
+    const { content } = req.body.data;
     const token = req.cookies.token;
 
     // Verify the user token
