@@ -1,9 +1,6 @@
 import express, { Request, Response } from "express";
 import { db } from "../database/db";
-// npm install cookie-parser
-// npm install jsonwebtoken
 import jwt from "jsonwebtoken";
-// npm install bcrypt
 import bcrypt from "bcrypt";
 import { z } from "zod";
 
@@ -32,6 +29,18 @@ function generateUserToken(userId, res) {
     httpOnly: true,
     maxAge: 2 * 60 * 60 * 1000,
   });
+}
+
+// delete userToken Function
+function deleteUserToken(userId, token, res) {
+  // Delete the token from the database
+  db.prepare("DELETE FROM tokens WHERE user_id = ? AND token =?").run(
+    userId,
+    token
+  );
+  // Remove the token cookie from the response
+  res.clearCookie("token");
+  res.clearCookie("userId");
 }
 
 const RegisterBodySchema = z.object({
@@ -73,17 +82,35 @@ async function hashPassword(password: string): Promise<string> {
   return hashedPassword;
 }
 
-// delete userToken Function
-function deleteUserToken(userId, token, res) {
-  // Delete the token from the database
-  db.prepare("DELETE FROM tokens WHERE user_id = ? AND token =?").run(
-    userId,
-    token
-  );
-  // Remove the token cookie from the response
-  res.clearCookie("token");
-  res.clearCookie("userId");
-}
+// Login route
+authRouter.post("/login", async (req: Request, res: Response) => {
+  try {
+    const { name, password } = req.body;
+
+    // Check if user exists
+    const user = db.prepare("SELECT * FROM user WHERE name = ?").get(name);
+    if (!user) {
+      return res.status(401).json({ status: false, error: "No user found" });
+    }
+
+    // Check if password is correct
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res
+        .status(401)
+        .json({ status: false, error: "Invalid credentials." });
+    }
+
+    // Generate a new token
+    generateUserToken(user.id, res);
+
+    res.json({ status: true, message: "Logged in successfully!" });
+  } catch (error) {
+    res.status(400).json({ status: false, error: error.message });
+  }
+});
+
+
 
 // Logout route
 authRouter.post("/logout", (req: Request, res: Response) => {
@@ -118,7 +145,7 @@ function verifyUser(req: Request): { id: number, name: string } | null {
     
     const userData = db
       .prepare("SELECT id, name from users WHERE id=?")
-      .get(user_id);
+      .get(userId);
     
     return userData;
     
