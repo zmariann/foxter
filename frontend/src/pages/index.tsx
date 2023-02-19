@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 // Define the shape of the fox data
@@ -6,6 +7,14 @@ interface Fox {
   content: string;
   created_at: Date;
 }
+
+interface User {
+  name: string;
+  isAuthenticated: boolean;
+  onLoginClick: () => void;
+  onLogoutClick: () => void;
+}
+
 
 const FoxForm: React.FC = () => {
   // State to store the text input value
@@ -130,5 +139,35 @@ const FoxForm: React.FC = () => {
     </>
   );
 };
+
+const Navigation: React.FC<User> = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
+  return (
+    <nav>
+      <ul>
+        <li>
+          <Link href="/">
+            <a>Home</a>
+          </Link>
+        </li>
+        <li>
+          <Link href="/Messages">
+            <a>Messages</a>
+          </Link>
+        </li>
+        {isAuthenticated ? (
+          <li>
+            <button onClick={onLogoutClick}>Logout</button>
+          </li>
+        ) : (
+          <li>
+            <button onClick={onLoginClick}>Login</button>
+          </li>
+        )}
+      </ul>
+    </nav>
+  );
+};
+
+
 
 export default FoxForm;
