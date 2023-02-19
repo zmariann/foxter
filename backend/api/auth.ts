@@ -15,7 +15,7 @@ function generateToken(): string {
 function generateUserToken(userId, res) {
   // Generate a new token
   const token = generateToken();
-  
+
   // Save the token in the database
   db.prepare(
     "INSERT OR REPLACE INTO tokens (user_id, token) VALUES (?, ?)"
@@ -45,35 +45,7 @@ function deleteUserToken(userId, token, res) {
 
 const RegisterBodySchema = z.object({
   username: z.string(),
-  password: z.string()
-})
-
-// Register route
-authRouter.post("/register", async (req: Request, res: Response) => {
-  const validated = RegisterBodySchema.safeParse(req.body);
-  
-  if (validated.success === false) {
-    return res.status(401).send({ error: validated.error.flatten() });
-  }
-  
-  const { username, password } = validated.data; 
-  
-  const result = db.prepare("SELECT * FROM users WHERE name = ?").get(username);
-
-  if (result !== undefined) {
-    return res.status(400).send({ error: "User with this username already exists" })
-  }
-  
-  const hashedPassword = await hashPassword(password)
-  
-  const { id: userId } = db.prepare("INSERT INTO users (name, password) VALUES (?, ?) RETURNING id").get(
-    username,
-    hashedPassword
-  );
-  
-  generateUserToken(userId, res);
- 
-  res.send({ message: "Successfuly registered!"});     
+  password: z.string(),
 });
 
 // for register route: take req.body.password and hash it with bcrypt (with 10 rounds)
@@ -81,6 +53,35 @@ async function hashPassword(password: string): Promise<string> {
   const hashedPassword: string = await bcrypt.hash(password, 10);
   return hashedPassword;
 }
+
+// Register route
+authRouter.post("/register", async (req: Request, res: Response) => {
+  const validated = RegisterBodySchema.safeParse(req.body);
+
+  if (validated.success === false) {
+    return res.status(401).send({ error: validated.error.flatten() });
+  }
+
+  const { username, password } = validated.data;
+
+  const result = db.prepare("SELECT * FROM users WHERE name = ?").get(username);
+
+  if (result !== undefined) {
+    return res
+      .status(400)
+      .send({ error: "User with this username already exists" });
+  }
+
+  const hashedPassword = await hashPassword(password);
+
+  const { id: userId } = db
+    .prepare("INSERT INTO users (name, password) VALUES (?, ?) RETURNING id")
+    .get(username, hashedPassword);
+
+  generateUserToken(userId, res);
+
+  res.send({ message: "Successfuly registered!" });
+});
 
 // Login route
 authRouter.post("/login", async (req: Request, res: Response) => {
@@ -110,8 +111,6 @@ authRouter.post("/login", async (req: Request, res: Response) => {
   }
 });
 
-
-
 // Logout route
 authRouter.post("/logout", (req: Request, res: Response) => {
   try {
@@ -130,7 +129,7 @@ authRouter.get("/verify", (req: Request, res: Response) => {
 });
 
 // Verify user token
-function verifyUser(req: Request): { id: number, name: string } | null {
+function verifyUser(req: Request): { id: number; name: string } | null {
   try {
     const { token, userId } = req.cookies;
 
@@ -138,17 +137,16 @@ function verifyUser(req: Request): { id: number, name: string } | null {
       .prepare("SELECT * FROM tokens WHERE user_id = ? and token= ?")
       .get(userId, token);
     console.log(tokenData);
-    
+
     if (tokenData === undefined) {
       return null;
     }
-    
+
     const userData = db
       .prepare("SELECT id, name from users WHERE id=?")
       .get(userId);
-    
+
     return userData;
-    
   } catch (error) {
     console.error(error);
   }
