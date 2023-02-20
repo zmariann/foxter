@@ -2,7 +2,7 @@ import { useState } from "react";
 
 const RegisterPage: React.FC = () => {
   // States for registration
-  const [username, setusername] = useState("");
+  const [name, setusername] = useState("");
   const [password, setPassword] = useState("");
 
   // States for checking the errors
@@ -23,19 +23,19 @@ const RegisterPage: React.FC = () => {
   // Handling the form submission
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
-    if (username === "" || password === "") {
+    if (name === "" || password === "") {
       setError(true);
     } else {
       setSubmitted(true);
       setError(false);
-      console.log(username, password);
+      console.log(name, password);
       try {
         const response = await fetch("/api/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ username, password }),
+          body: JSON.stringify({ username: name, pass: password }),
         });
       } catch (error) {
         console.error(error);
@@ -52,7 +52,7 @@ const RegisterPage: React.FC = () => {
           display: submitted ? "" : "none",
         }}
       >
-        <h1>User {username} successfully registered!!</h1>
+        <h1>User {name} successfully registered!!</h1>
       </div>
     );
   };
@@ -83,7 +83,7 @@ const RegisterPage: React.FC = () => {
       <form>
         <label className="label">Username</label>
         <input
-          value={username}
+          value={name}
           onChange={handleName}
           className="input"
           type="text"

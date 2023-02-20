@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 
 const LoginPage: React.FC = () => {
-  const [username, setUsername] = useState("");
+  const [name, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   // handleUsernameChange and handlePasswordChange functions are called
@@ -25,7 +25,7 @@ const LoginPage: React.FC = () => {
       const response = await fetch("/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ name, password }),
       });
       const data = await response.json();
       console.log(data);
@@ -48,7 +48,7 @@ const LoginPage: React.FC = () => {
       <input
         type="text"
         id="username"
-        value={username}
+        value={name}
         onChange={handleUsernameChange}
         style={{ marginBottom: "1rem", padding: "0.5rem" }}
       />
