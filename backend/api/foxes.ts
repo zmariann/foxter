@@ -1,7 +1,7 @@
 import express from "express";
 import { db } from "../database/db";
 import { verifyUser } from "./auth";
-import { validateFox }  from  "./validation";
+import { validateBody }  from  "./validation";
 
 const foxRouter = express.Router();
 
@@ -11,7 +11,7 @@ foxRouter.get("/foxes", (req, res) => {
 });
 
 // create a fox
-foxRouter.post("/foxes", validateFox, (req, res) => {
+foxRouter.post("/foxes", validateBody, (req, res) => {
   try {
     const { content } = req.body.data;
     const token = req.cookies.token;
