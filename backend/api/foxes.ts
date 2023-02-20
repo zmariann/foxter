@@ -1,7 +1,7 @@
 import express from "express";
 import { db } from "../database/db";
 import { verifyUser } from "./auth";
-import { validateFox }  from  "./validateFox";
+import { validateFox }  from  "./validation";
 
 const foxRouter = express.Router();
 
