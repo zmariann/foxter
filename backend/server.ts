@@ -9,7 +9,7 @@ require("dotenv").config();
 import { foxRouter } from "./api/foxes";
 import { loggerMiddleware } from "./api/logger";
 import { authRouter } from "./api/auth";
-import { validateFox }  from  "./api/validation";
+import { validateBody }  from  "./api/validation";
 import { userRouter } from "./api/users";
 
 const app = express();

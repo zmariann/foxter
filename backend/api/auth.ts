@@ -1,8 +1,9 @@
 import express, { Request, Response } from "express";
 import { db } from "../database/db";
-import jwt from "jsonwebtoken";
+// import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { z } from "zod";
+import { validateBody } from "./validation";
 
 const authRouter = express.Router();
 
@@ -55,35 +56,36 @@ async function hashPassword(password: string): Promise<string> {
 }
 
 // Register route
-authRouter.post("/register", async (req: Request, res: Response) => {
+authRouter.post(
+  "/register",
+  validateBody(RegisterBodySchema),
+  async (req: Request, res: Response) => {
+    try {
+      const { name, password } = req.body;
+      const result = db.prepare("SELECT * FROM users WHERE name = ?").get(name);
 
-  const validated = RegisterBodySchema.safeParse(req.body);
+      if (result !== undefined) {
+        return res
+          .status(400)
+          .send({ error: "User with this username already exists" });
+      }
+      const hashedPassword = await hashPassword(password);
 
-  if (validated.success === false) {
-    //console.log(validated.error);
-    return res.status(401).send({ error: validated.error.flatten() });
+      const { id: userId } = db
+        .prepare(
+          "INSERT INTO users (name, password) VALUES (?, ?) RETURNING id"
+        )
+        .get(name, hashedPassword);
+
+      generateUserToken(userId, res);
+
+      res.send({ message: "Successfuly registered!" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ error: "Internal server error" });
+    }
   }
-
-  const { name, password } = validated.data;
-
-  const result = db.prepare("SELECT * FROM users WHERE name = ?").get(name);
-
-  if (result !== undefined) {
-    return res
-      .status(400)
-      .send({ error: "User with this username already exists" });
-  }
-
-  const hashedPassword = await hashPassword(password);
-
-  const { id: userId } = db
-    .prepare("INSERT INTO users (name, password) VALUES (?, ?) RETURNING id")
-    .get(name, hashedPassword);
-
-  generateUserToken(userId, res);
-
-  res.send({ message: "Successfuly registered!" });
-});
+);
 
 // Login route
 authRouter.post("/login", async (req: Request, res: Response) => {
