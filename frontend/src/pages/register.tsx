@@ -35,14 +35,14 @@ const RegisterPage: React.FC = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ username: name, pass: password }),
+          body: JSON.stringify({ name, password }),
         });
       } catch (error) {
         console.error(error);
       }
     }
   };
-
+  
   // Showing success message
   const successMessage = () => {
     return (

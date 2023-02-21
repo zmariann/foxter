@@ -14,10 +14,9 @@ foxRouter.get("/foxes", (req, res) => {
 foxRouter.post("/foxes", validateFox, (req, res) => {
   try {
     const { content } = req.body.data;
-    const token = req.cookies.token;
 
     // Verify the user token
-    const user = verifyUser(token);
+    const user = verifyUser(req);
 
     if (user === null) {
       return res.status(401).send({ error: "Unauthorized." });

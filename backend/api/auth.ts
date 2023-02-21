@@ -44,7 +44,7 @@ function deleteUserToken(userId, token, res) {
 }
 
 const RegisterBodySchema = z.object({
-  username: z.string(),
+  name: z.string(),
   password: z.string(),
 });
 
@@ -56,15 +56,17 @@ async function hashPassword(password: string): Promise<string> {
 
 // Register route
 authRouter.post("/register", async (req: Request, res: Response) => {
+
   const validated = RegisterBodySchema.safeParse(req.body);
 
   if (validated.success === false) {
+    //console.log(validated.error);
     return res.status(401).send({ error: validated.error.flatten() });
   }
 
-  const { username, password } = validated.data;
+  const { name, password } = validated.data;
 
-  const result = db.prepare("SELECT * FROM users WHERE name = ?").get(username);
+  const result = db.prepare("SELECT * FROM users WHERE name = ?").get(name);
 
   if (result !== undefined) {
     return res
@@ -76,7 +78,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
 
   const { id: userId } = db
     .prepare("INSERT INTO users (name, password) VALUES (?, ?) RETURNING id")
-    .get(username, hashedPassword);
+    .get(name, hashedPassword);
 
   generateUserToken(userId, res);
 
@@ -89,7 +91,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
     const { name, password } = req.body;
 
     // Check if user exists
-    const user = db.prepare("SELECT * FROM user WHERE name = ?").get(name);
+    const user = db.prepare("SELECT * FROM users WHERE name = ?").get(name);
     if (!user) {
       return res.status(401).json({ status: false, error: "No user found" });
     }

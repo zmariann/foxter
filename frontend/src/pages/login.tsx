@@ -22,7 +22,7 @@ const LoginPage: React.FC = () => {
   // sends a POST request to a login API endpoint (/api/login) with the username and password
   const handleSignIn = async () => {
     try {
-      const response = await fetch("/login", {
+      const response = await fetch("api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, password }),

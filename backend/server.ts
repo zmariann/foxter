@@ -10,6 +10,7 @@ import { foxRouter } from "./api/foxes";
 import { loggerMiddleware } from "./api/logger";
 import { authRouter } from "./api/auth";
 import { validateFox }  from  "./api/validation";
+import { userRouter } from "./api/users";
 
 const app = express();
 
@@ -23,8 +24,7 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(loggerMiddleware);
-app.use(validateFox);
-app.use("/api", [foxRouter,authRouter]);
+app.use("/api", [foxRouter,authRouter, userRouter]);
 
 app.listen(PORT, () => {
   console.log(`Server listening at port ${PORT}`);
