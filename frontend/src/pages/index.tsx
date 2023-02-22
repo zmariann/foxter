@@ -15,7 +15,6 @@ interface User {
   onLogoutClick: () => void;
 }
 
-
 const FoxForm: React.FC = () => {
   // State to store the text input value
   const [text, setText] = useState("");
@@ -86,6 +85,8 @@ const FoxForm: React.FC = () => {
 
   return (
     <>
+    {/*  Test Tailwind */}
+      <h1 className="text-3xl font-bold underline">Hello world! with Tailwind</h1>
       {/* || Render Text input field and Post a Fox button */}
       <div
         style={{
@@ -140,7 +141,11 @@ const FoxForm: React.FC = () => {
   );
 };
 
-const Navigation: React.FC<User> = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
+const Navigation: React.FC<User> = ({
+  isAuthenticated,
+  onLoginClick,
+  onLogoutClick,
+}) => {
   return (
     <nav>
       <ul>
@@ -167,7 +172,5 @@ const Navigation: React.FC<User> = ({ isAuthenticated, onLoginClick, onLogoutCli
     </nav>
   );
 };
-
-
 
 export default FoxForm;
