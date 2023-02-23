@@ -73,7 +73,6 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="registerForm">
-      
       <div className="messages">
         {errorMessage()}
         {successMessage()}
@@ -81,12 +80,10 @@ const RegisterPage: React.FC = () => {
 
       <form className="register">
 
-
-
-
         <div className="content">
-        <h1>Register a new Foxter</h1>
+          <h1>Register a new Foxter</h1>
 
+          <div className="inpuContainer">
           <input
             value={name}
             onChange={handleName}
@@ -109,12 +106,16 @@ const RegisterPage: React.FC = () => {
             placeholder="Password again"
           />
 
-        <button onClick={handleSubmit} className="btn" type="submit">
-          Sign Up
-        </button>
+          <button onClick={handleSubmit} className="btn" type="submit">
+            Sign Up
+          </button>
+          </div>
 
+          <h3>Already have an account? Log In</h3>
+          <div className="logoContainer">
+            <div className="logo">logo</div>
+          </div>
         </div>
-
       </form>
     </div>
   );
