@@ -2,12 +2,12 @@ import express from "express";
 import { db } from "../database/db";
 import { verifyUser } from "./auth";
 import { z } from "zod";
-import { validateBody }  from  "./validation";
+import { validateBody } from "./validation";
 
 const foxRouter = express.Router();
 
 foxRouter.get("/foxes", (req, res) => {
-  const data = db.prepare("SELECT * FROM foxes ORDER BY id DESC").all();
+  const data = db.prepare("SELECT * FROM foxes ORDER BY created_at DESC").all();
   res.send(data);
 });
 
@@ -18,18 +18,16 @@ const foxesBodySchema = z.object({
 // create a fox
 foxRouter.post("/foxes", validateBody(foxesBodySchema), (req, res) => {
   try {
-    const { content } = req.body.data;
+    const { content } = req.body;
 
     // Verify the user token
     const user = verifyUser(req);
-
     if (user === null) {
       return res.status(401).send({ error: "Unauthorized." });
     }
-
-    const stmt = db.prepare("INSERT INTO foxes (content) VALUES (?)");
-    stmt.run(content);
-
+    const stmt = db
+      .prepare("INSERT INTO foxes (content, user_id) VALUES (?,?)")
+      .run(content, user.id);
     res.status(201).send({ message: "Fox created successfully!" });
   } catch (error) {
     res.status(400).send({ error: error.message });
