@@ -140,9 +140,8 @@ function verifyUser(req: Request): { id: number; name: string } | null {
     const tokenData = db
       .prepare("SELECT * FROM tokens WHERE user_id = ? and token= ?")
       .get(userId, token);
-    console.log(tokenData);
-
-    if (tokenData === undefined) {
+ 
+      if (tokenData === undefined) {
       return null;
     }
 
