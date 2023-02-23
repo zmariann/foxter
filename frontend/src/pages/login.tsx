@@ -3,9 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import styles from "../styles/login.module.css";
-import logo from "../public/logo.png";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const LoginPage: React.FC = () => {
   const [name, setUsername] = useState("");
@@ -24,7 +23,8 @@ const LoginPage: React.FC = () => {
 
   // handleSignIn() is called when the "Sign in" button is clicked.
   // sends a POST request to a login API endpoint (/api/login) with the username and password
-  const handleSignIn = async () => {
+  const handleSignIn = async (event: any) => {
+    event.preventDefault();
     try {
       const response = await fetch("api/login", {
         method: "POST",
@@ -32,10 +32,10 @@ const LoginPage: React.FC = () => {
         body: JSON.stringify({ name, password }),
       });
       const data = await response.json();
-      console.log(data);
+      toast(data.message.toString());
       // Handle successful login
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      toast(error.toString());
       // Handle login error
     }
   };
@@ -44,42 +44,73 @@ const LoginPage: React.FC = () => {
   const handleForgotPassword = () => {};
 
   return (
-    <div className={styles.container}>
-       <div className={styles.brand}>
-        <Image className=".brand img " src={logo} alt="Brand Logo"  />
-      </div>
+    <div className="w-full max-w-xs m-auto">
+      <ToastContainer position="top-center" limit={1} />
+      <Image
+        className=".brand img "
+        src="/logo.png"
+        width="500"
+        height="500"
+        alt="Brand Logo"
+      />
 
-      <form className={styles.form} onSubmit={handleSignIn}>
-        <h1>Sign in to Foxter</h1>
-        <input
-          type="text"
-          id="username"
-          placeholder="Username"
-          value={name}
-          onChange={handleUsernameChange}
-          className={styles.input}
-        />
-        <input
-          type="password"
-          id="password"
-          placeholder="Password"
-          value={password}
-          onChange={handlePasswordChange}
-          className={styles.input}
-        />
-        <input type="submit" value="Sign in" className={styles.submitButton} />
-        <button
-          type="button"
-          onClick={handleForgotPassword}
-          className={styles.forgotPasswordButton}
-        >
-          Forgot password?
-        </button>
+      <form
+        onSubmit={handleSignIn}
+        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+      >
+        <h1 className="mb-4 text-xl">Sign in to Foxter</h1>
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="username"
+          >
+            Username
+          </label>
+          <input
+            type="text"
+            id="username"
+            placeholder="Username"
+            value={name}
+            onChange={handleUsernameChange}
+            className="shadow appearance-none border border-gray-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
+        <div className="mb-4">
+          <label
+            htmlFor="password"
+            className="block text-gray-700 text-sm font-bold mb-2"
+          >
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            placeholder="**********"
+            value={password}
+            onChange={handlePasswordChange}
+            className="shadow appearance-none border rounded border-gray-500 w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <button
+            type="submit"
+            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Sign in
+          </button>
+          <button
+            type="button"
+            onClick={handleForgotPassword}
+            className="inline-block align-baseline font-bold text-sm text-green-600 hover:text-green-800"
+          >
+            Forgot password?
+          </button>
+        </div>
       </form>
-      <p style={{ margin: "1rem 0" }}>
-        Don't have an account?{" "}
+      <p>
+        Don't have an account?
         <Link href="/register" passHref>
-          <span style={{ textDecoration: "underline", cursor: "pointer" }}>
+          <span className="inline-block align-baseline font-bold text-sm text-green-600 hover:text-blue-800 ml-1">
             Sign up
           </span>
         </Link>
