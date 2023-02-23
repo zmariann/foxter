@@ -1,6 +1,7 @@
 import express from "express";
 import { db } from "../database/db";
 import { verifyUser } from "./auth";
+import { z } from "zod";
 import { validateBody }  from  "./validation";
 
 const foxRouter = express.Router();
@@ -10,8 +11,12 @@ foxRouter.get("/foxes", (req, res) => {
   res.send(data);
 });
 
+const foxesBodySchema = z.object({
+  content: z.string().min(1),
+});
+
 // create a fox
-foxRouter.post("/foxes", validateBody, (req, res) => {
+foxRouter.post("/foxes", validateBody(foxesBodySchema), (req, res) => {
   try {
     const { content } = req.body.data;
 
