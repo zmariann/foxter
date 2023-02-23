@@ -1,4 +1,5 @@
 import { useState } from "react";
+import styles from "../styles/register.module.css";
 
 const RegisterPage: React.FC = () => {
   // States for registration
@@ -72,48 +73,51 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="registerForm">
+    <div className={styles.registerForm}>
+      
       <div className="messages">
         {errorMessage()}
         {successMessage()}
       </div>
 
-      <form className="register">
 
-        <div className="content">
-          <h1>Register a new Foxter</h1>
 
-          <div className="inpuContainer">
+      <form className={styles.register}>
+
+        <div className={styles.content}>
+          <h1 className={styles.registNew}>Register a new Foxter</h1>
+
+          <div className={styles.inputContainer}>
           <input
             value={name}
             onChange={handleName}
-            className="input"
+            className={styles.input}
             type="text"
             placeholder="Username"
           />
           <input
             value={password}
             onChange={handlePassword}
-            className="input"
+            className={styles.input}
             type="password"
             placeholder="Password"
           />
           <input
             value={password}
             onChange={handlePassword}
-            className="input"
+            className={styles.input}
             type="password"
             placeholder="Password again"
           />
 
-          <button onClick={handleSubmit} className="btn" type="submit">
+          <button onClick={handleSubmit} className={styles.btn} type="submit">
             Sign Up
           </button>
           </div>
 
-          <h3>Already have an account? Log In</h3>
-          <div className="logoContainer">
-            <div className="logo">logo</div>
+          <h3 className={styles.alreadyHave}>Already have an account? Log In</h3>
+          <div className={styles.logoContainer}>
+            <div className={styles.logo}>logo</div>
           </div>
         </div>
       </form>
