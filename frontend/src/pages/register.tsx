@@ -42,7 +42,7 @@ const RegisterPage: React.FC = () => {
       }
     }
   };
-  
+
   // Showing success message
   const successMessage = () => {
     return (
@@ -72,31 +72,49 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="form">
-      <div>
-        <h1>Fox Registration</h1>
-      </div>
+    <div className="registerForm">
+      
       <div className="messages">
         {errorMessage()}
         {successMessage()}
       </div>
-      <form>
-        <label className="label">Username</label>
-        <input
-          value={name}
-          onChange={handleName}
-          className="input"
-          type="text"
-        />
-        <input
-          value={password}
-          onChange={handlePassword}
-          className="input"
-          type="password"
-        />
+
+      <form className="register">
+
+
+
+
+        <div className="content">
+        <h1>Register a new Foxter</h1>
+
+          <input
+            value={name}
+            onChange={handleName}
+            className="input"
+            type="text"
+            placeholder="Username"
+          />
+          <input
+            value={password}
+            onChange={handlePassword}
+            className="input"
+            type="password"
+            placeholder="Password"
+          />
+          <input
+            value={password}
+            onChange={handlePassword}
+            className="input"
+            type="password"
+            placeholder="Password again"
+          />
+
         <button onClick={handleSubmit} className="btn" type="submit">
           Sign Up
         </button>
+
+        </div>
+
       </form>
     </div>
   );
