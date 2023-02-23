@@ -86,7 +86,7 @@ const FoxForm: React.FC = () => {
   return (
     <>
     {/*  Test Tailwind */}
-      <h1 className="text-3xl font-bold underline">Hello world! with Tailwind</h1>
+      {/*<h1 className="text-3xl font-bold underline">Hello world! with Tailwind</h1>*/}
       {/* || Render Text input field and Post a Fox button */}
       <div
         style={{
