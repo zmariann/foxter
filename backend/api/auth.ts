@@ -33,7 +33,8 @@ function generateUserToken(userId, res) {
 }
 
 // delete userToken Function
-function deleteUserToken(userId, token, res) {
+function deleteUserToken(req: Request, res: Response): void {
+  const { token, userId } = req.cookies;
   // Delete the token from the database
   db.prepare("DELETE FROM tokens WHERE user_id = ? AND token =?").run(
     userId,
@@ -119,7 +120,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
 authRouter.post("/logout", (req: Request, res: Response) => {
   try {
     const { token, userId } = req.cookies;
-    deleteUserToken(userId, token, res);
+    deleteUserToken(userId, token);
 
     res.send({ message: "Logged out successfully!" });
   } catch (error) {
@@ -127,9 +128,14 @@ authRouter.post("/logout", (req: Request, res: Response) => {
   }
 });
 
+// verifyUser Route
 authRouter.get("/verify", (req: Request, res: Response) => {
-  let user = verifyUser(req);
-  res.json(user);
+  const user = verifyUser(req);
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(401).send({ error: "Invalid token" });
+  }
 });
 
 // Verify user token
@@ -140,8 +146,8 @@ function verifyUser(req: Request): { id: number; name: string } | null {
     const tokenData = db
       .prepare("SELECT * FROM tokens WHERE user_id = ? and token= ?")
       .get(userId, token);
- 
-      if (tokenData === undefined) {
+
+    if (tokenData === undefined) {
       return null;
     }
 
