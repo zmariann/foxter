@@ -93,6 +93,13 @@ authRouter.post("/login", async (req: Request, res: Response) => {
   try {
     const { name, password } = req.body;
 
+    // Check if user is already logged in
+    if (req.cookies.token) {
+      return res
+        .status(401)
+        .json({ status: false, error: "You are already logged in." });
+    }
+
     // Check if user exists
     const user = db.prepare("SELECT * FROM users WHERE name = ?").get(name);
     if (!user) {
@@ -106,10 +113,8 @@ authRouter.post("/login", async (req: Request, res: Response) => {
         .status(401)
         .json({ status: false, error: "Invalid credentials." });
     }
-
     // Generate a new token
     generateUserToken(user.id, res);
-
     res.json({ status: true, message: "Logged in successfully!" });
   } catch (error) {
     res.status(400).json({ status: false, error: error.message });
@@ -119,9 +124,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
 // Logout route
 authRouter.post("/logout", (req: Request, res: Response) => {
   try {
-    const { token, userId } = req.cookies;
-    deleteUserToken(userId, token);
-
+    deleteUserToken(req, res);
     res.send({ message: "Logged out successfully!" });
   } catch (error) {
     res.status(400).send({ error: error.message });
