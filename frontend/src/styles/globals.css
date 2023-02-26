@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;400;700&display=swap");
+
+* {
+  font-family: "Nunito" "sans-serif";
+  font-size: 20px;
+}
+
 /*
 :root {
   --max-width: 1100px;

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import logo from "frontend/public/reactLogo.png";
 
 // Define the shape of the fox data
 interface Fox {
