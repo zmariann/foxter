@@ -12,17 +12,14 @@ const RegisterPage: React.FC = () => {
   // name
   const handleName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setusername(event.target.value);
-
   };
   // password
   const handlePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
-
   };
   // password again
   const handlePasswordAgain = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPasswordAgain(event.target.value);
-
   };
   // Handling the form submission
   const handleSubmit = async (event: React.SyntheticEvent) => {
@@ -62,22 +59,42 @@ const RegisterPage: React.FC = () => {
             Register a new Foxter
           </h1>
 
-<div className="">
           <div className="mb-4">
 
-          <img className="h-8 max-w-full" alt="logo" src="formIcons/user-32.png" />
+
+              <div className="relative flex justify-end pr-2 h-50 w-500">
+                <img
+                  className="absolute max-w-full h-6 w-6"
+                  alt="logo"
+                  src="formIcons/user-96.png"
+                />
+                <img
+                  className="absolute max-w-full h-6 w-6"
+                  alt="logo"
+                  src="formIcons/hide-96.png"
+                />
+                <img
+                  className="absolute max-w-full h-6 w-6"
+                  alt="logo"
+                  src="formIcons/hide-96.png"
+                />
+              </div>
+
+
             <input
               value={name}
               onChange={handleName}
-              className="shadow appearance-none border rounded-[8px] w-full py-2 px-3 text-lightGray bg-whiteFox leading-tight focus:outline-none focus:shadow-outline mt-6"
+              className="shadow appearance-none border rounded-[8px] w-full py-2 pl-3 pr-8 text-lightGray bg-whiteFox leading-tight focus:outline-none focus:shadow-outline mt-6"
               type="text"
               placeholder="Username"
             />
+
+            
             <div className="mb-6">
               <input
                 value={password}
                 onChange={handlePassword}
-                className="shadow appearance-none border rounded-[8px] w-full py-2 px-3 text-lightGray bg-whiteFox leading-tight focus:outline-none focus:shadow-outline mt-6"
+                className="shadow appearance-none border rounded-[8px] w-full py-2 pl-3 pr-8 text-lightGray bg-whiteFox leading-tight focus:outline-none focus:shadow-outline mt-6"
                 type="password"
                 placeholder="Password"
               />
@@ -87,14 +104,12 @@ const RegisterPage: React.FC = () => {
               <input
                 value={passwordAgain}
                 onChange={handlePasswordAgain}
-                className="shadow appearance-none border  rounded-[8px] w-full py-2 px-3 text-lightGray bg-whiteFox leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border  rounded-[8px] w-full py-2 pl-3 pr-8 text-lightGray bg-whiteFox leading-tight focus:outline-none focus:shadow-outline"
                 type="password"
                 placeholder="Password"
               />
             </div>
 
-</div>
-            
             <button
               onClick={handleSubmit}
               className="bg-greenFox hover:bg-[#387354] text-whiteFox py-1  rounded-full w-full text-center"
@@ -102,14 +117,16 @@ const RegisterPage: React.FC = () => {
             >
               Sign Up
             </button>
-
-
           </div>
+
           <div className="flex items-center justify-center">
             <h2 className="inline-block align-baseline font-bold text-sm text-darkFox">
               Already have an account? &nbsp;
             </h2>
-            <a href="/login" className="inline-block align-baseline font-bold text-sm text-greenFox hover:text-[#387354] cursor-pointer">
+            <a
+              href="/login"
+              className="inline-block align-baseline font-bold text-sm text-greenFox hover:text-[#387354] cursor-pointer"
+            >
               Log In
             </a>
           </div>
