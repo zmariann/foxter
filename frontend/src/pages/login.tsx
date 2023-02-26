@@ -25,17 +25,28 @@ const LoginPage: React.FC = () => {
   // sends a POST request to a login API endpoint (/api/login) with the username and password
   const handleSignIn = async (event: any) => {
     event.preventDefault();
+
+    // Check if user is already logged in
+    const token = localStorage.getItem("token");
+    if (token) {
+      toast("User has already been logged in");
+      return;
+    }
     try {
       const response = await fetch("api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, password }),
       });
+      // handle successful login
       const data = await response.json();
       toast(data.message.toString());
-      // Handle successful login
     } catch (error: any) {
-      toast(error.toString());
+      if (error.response && error.response.status === 401) {
+        toast("Invalid credentials");
+      } else {
+        toast(error.toString());
+      }
       // Handle login error
     }
   };
@@ -44,77 +55,79 @@ const LoginPage: React.FC = () => {
   const handleForgotPassword = () => {};
 
   return (
-    <div className="w-full max-w-xs m-auto">
-      <ToastContainer position="top-center" limit={1} />
-      <Image
-        className=".brand img "
-        src="/logo.png"
-        width="500"
-        height="500"
-        alt="Brand Logo"
-      />
-
-      <form
-        onSubmit={handleSignIn}
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-      >
-        <h1 className="mb-4 text-xl">Sign in to Foxter</h1>
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="username"
-          >
-            Username
-          </label>
-          <input
-            type="text"
-            id="username"
-            placeholder="Username"
-            value={name}
-            onChange={handleUsernameChange}
-            className="shadow appearance-none border border-gray-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-        <div className="mb-4">
-          <label
-            htmlFor="password"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            placeholder="**********"
-            value={password}
-            onChange={handlePasswordChange}
-            className="shadow appearance-none border rounded border-gray-500 w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-        <div className="flex items-center justify-between">
-          <button
-            type="submit"
-            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Sign in
-          </button>
-          <button
-            type="button"
-            onClick={handleForgotPassword}
-            className="inline-block align-baseline font-bold text-sm text-green-600 hover:text-green-800"
-          >
-            Forgot password?
-          </button>
-        </div>
-      </form>
-      <p>
-        Don't have an account?
-        <Link href="/register" passHref>
-          <span className="inline-block align-baseline font-bold text-sm text-green-600 hover:text-blue-800 ml-1">
-            Sign up
-          </span>
-        </Link>
-      </p>
+    <div className="flex flex-col items-center justify-center h-screen mx-auto p-20 bg-gray-200">
+      <div className="w-full max-w-md m-auto rounded-2xl bg-white shadow-md">
+        <ToastContainer position="top-center" limit={1} />
+        <form onSubmit={handleSignIn} className="px-10 pt-8 pb-8 rounded-lg">
+          <h1 className="mb-6 text-xl text-center">Sign in to Foxter</h1>
+          <div className="mb-4">
+            <label
+              htmlFor="username"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
+              Username
+            </label>
+            <input
+              type="text"
+              id="username"
+              placeholder="Username"
+              value={name}
+              onChange={handleUsernameChange}
+              className="shadow appearance-none border border-gray-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+            />
+          </div>
+          <div className="mb-6">
+            <label
+              htmlFor="password"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              placeholder="**********"
+              value={password}
+              onChange={handlePasswordChange}
+              className="shadow appearance-none border rounded border-gray-500 w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+            />
+          </div>
+          <div className="mb-6">
+            <button
+              type="submit"
+              className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline w-full"
+            >
+              Sign in
+            </button>
+          </div>
+          <div className="text-center mb-6">
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              className="text-green-600 hover:text-green-800"
+            >
+              Forgot password?
+            </button>
+          </div>
+        </form>
+        <p className="text-center mb-4">
+          Don't have an account?
+          <Link href="/register" passHref>
+            <span className="inline-block font-bold text-green-600 hover:text-blue-800 ml-1">
+              Sign up
+            </span>
+          </Link>
+        </p>
+      </div>
+      <div className="mt-4">
+        <Image
+          className="block mx-auto"
+          src="/logo.png"
+          width="150"
+          height="150"
+          alt="Brand Logo"
+        />
+      </div>
     </div>
   );
 };
