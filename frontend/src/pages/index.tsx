@@ -1,6 +1,8 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import logo from "frontend/public/reactLogo.png";
+import Image from "next/image";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Define the shape of the fox data
 interface Fox {
@@ -83,61 +85,109 @@ const FoxForm: React.FC = () => {
       console.error(error);
     }
   };
-
+  const [open, setOpen] = useState(false);
+  const Menus = [
+    {title: "Home", src:"Home"}, 
+    {title: "Explore", src:"Explore"},
+    {title: "Notifications", src:"Notifications"},
+    {title: "Messages", src:"Messages"},
+    {title: "Bookmarks", src:"Bookmarks"},
+    {title: "Profile", src:"Profile"},
+    {title: "More", src:"More"},
+    {title: "New Foxter", src:"Foxter"},]
+  
   return (
     <>
-    {/*  Test Tailwind */}
-      {/*<h1 className="text-3xl font-bold underline">Hello world! with Tailwind</h1>*/}
-      {/* || Render Text input field and Post a Fox button */}
-      <div
-        style={{
-          display: "flex",
-          height: "20vh",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {/* Form for submitting a fox post */}
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={text}
-            onChange={(event) => setText(event.target.value)}
-            style={{ padding: "10px", fontSize: "18px" }}
-          />
-          {/* Submit button for posting the fox */}
-          <button
-            type="submit"
-            style={{ marginLeft: "10px", padding: "10px", fontSize: "18px" }}
+      <div className="flex" >
+      <div className={`${open ? "w-52": "w-36"} duration-300 h-screen p-5 pt-8 bg-white relative`}>
+        <img src="/Openicon.png" className={`absolute cursor-pointer
+        -right-3 top-9 w-4 border-white ${open && "rotate-180"}`}
+        onClick={()=> setOpen(!open)}
+        />
+        <div className="flex gap-x-4 items-center">
+          <img src="/logo.png" className={`w-20 cursor-pointer duration-500 ${open && "rotate-[360deg]"}`} />
+        
+          <h1 className={`text-black origin-left font-medium text-xl duration-300 ${!open && "scale-0" }`}
           >
-            Post a fox
-          </button>
-        </form>
+            Foxter
+          </h1>
+        </div>
+        <ul className="pt-6">
+          {Menus.map((menu,index)=>(
+            <li key={index} className="text-greenFox text-sm flex items-center
+            gap-x-4 cursor-pointer p-2 hover:bg-lightGray rounded-md w-12" >
+              <img src={`/${menu.src}.png`} />
+              <span className={`${!open && 'hidden'} origin-left duration-200`}>{menu.title}</span>
+            </li>
+            ))}
+        </ul>
       </div>
+      <div className={`w-96 h-screen bg-whiteFox`}>
+        <div
+          style={{
+            display: "flex",
+            height: "20vh",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {/* Form for submitting a fox post */}
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              value={text}
+              onChange={(event) => setText(event.target.value)}
+              style={{ padding: "10px", fontSize: "18px" }}
+            />
+            {/* Submit button for posting the fox */}
+            <button
+              type="submit"
+              style={{ marginLeft: "10px", padding: "10px", fontSize: "18px" }}
+            >
+              Post a fox
+            </button>
+          </form>
+        </div>
 
-      {/* || Render Foxes and Delete Button */}
-      <div>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          {/* Display "No foxes to show. Post one!" message when foxes array is empty */}
-          {foxes.length === 0 ? (
-            <p style={{ textAlign: "center" }}>No foxes to show. Post one!</p>
-          ) : (
-            <ul style={{ listStyle: "none", textAlign: "center" }}>
-              {/* Map through foxes array and render fox content and delete button */}
-              {foxes.map((fox) => {
-                return (
-                  <li key={fox.id} style={{ margin: "20px 0" }}>
-                    {fox.content}
-                    <span style={{ marginLeft: "10px" }}></span>
-                    {/* Delete Button */}
-                    <button onClick={() => handleDelete(fox.id)}>Delete</button>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
+        {/* || Render Foxes and Delete Button */}
+        <div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            {/* Display "No foxes to show. Post one!" message when foxes array is empty */}
+            {foxes.length === 0 ? (
+              <p style={{ textAlign: "center" }}>No foxes to show. Post one!</p>
+            ) : (
+              <ul style={{ listStyle: "none", textAlign: "center" }}>
+                {/* Map through foxes array and render fox content and delete button */}
+                {foxes.map((fox) => {
+                  return (
+                    <li key={fox.id} style={{ margin: "20px 0" }}>
+                      {fox.content}
+                      <span style={{ marginLeft: "10px" }}></span>
+                      {/* Delete Button */}
+                      <button onClick={() => handleDelete(fox.id)}>Delete</button>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
         </div>
       </div>
+      <div className={`w-72 h-screen bg-white p-8`}> 
+        <div>
+          <input type="text" placeholder="Search foxes"/>
+        </div>
+        <div>
+          Trends
+        </div>
+        <div>
+          Who to follow
+        </div>
+        <div>
+          Footer
+        </div>
+      </div>
+      </div>;
     </>
   );
 };
