@@ -1,5 +1,6 @@
 import { useState } from "react";
-import logo from "./logo.png";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const RegisterPage: React.FC = () => {
   // States for registration
@@ -7,37 +8,30 @@ const RegisterPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
 
-  // States for checking the errors
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState(false);
-
   // Handle methods:
   // name
   const handleName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setusername(event.target.value);
-    setSubmitted(false);
+
   };
   // password
   const handlePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
-    setSubmitted(false);
+
   };
   // password again
   const handlePasswordAgain = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPasswordAgain(event.target.value);
-    setSubmitted(false);
+
   };
   // Handling the form submission
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     if (name === "" || password === "") {
-      setError(true);
+      toast.warn("Please enter all the fields");
     } else if (password !== passwordAgain) {
-      setError(true);
+      toast.warn("Passwords doesn't match");
     } else {
-      setSubmitted(true);
-      setError(false);
-      console.log(name, password);
       try {
         const response = await fetch("/api/register", {
           method: "POST",
@@ -46,50 +40,25 @@ const RegisterPage: React.FC = () => {
           },
           body: JSON.stringify({ name, password }),
         });
-      } catch (error) {
-        console.error(error);
+        if (response.status === 400) {
+          toast.error((await response.json()).error);
+        } else if (response.status === 500) {
+          toast.error((await response.json()).error);
+        } else {
+          toast.success("User " + name + " successfully registered");
+        }
+      } catch (error: any) {
+        toast.error(error.toString());
       }
     }
   };
 
-  // Showing success message
-  const successMessage = () => {
-    return (
-      <div
-        className="success"
-        style={{
-          display: submitted ? "" : "none",
-        }}
-      >
-        <h1>User {name} successfully registered</h1>
-      </div>
-    );
-  };
-
-  // Showing error message if error is true
-  const errorMessage = () => {
-    return (
-      <div
-        className="error"
-        style={{
-          display: error ? "" : "none",
-        }}
-      >
-        <h1>Please enter all the fields</h1>
-      </div>
-    );
-  };
-
   return (
-    <div className="h-screen flex items-center justify-center border rounded bg-greenFox">
+    <div className="h-screen flex items-center justify-center border rounded bg-register-logoutBG">
+      <ToastContainer position="top-center" limit={1} autoClose={900} />
       <div className="w-full max-w-xs">
-        <div className="">
-          {errorMessage()}
-          {successMessage()}
-        </div>
-
         <form className="bg-whiteFox shadow-2xl rounded-[10px] px-8 pt-6 pb-8 mb-4">
-          <h1 className="text-darkFox flex justify-center mt-2">
+          <h1 className=" text-darkFox flex justify-center mt-2">
             Register a new Foxter
           </h1>
 
@@ -105,7 +74,7 @@ const RegisterPage: React.FC = () => {
               <input
                 value={password}
                 onChange={handlePassword}
-                className="shadow appearance-none border border-red-500 rounded-[8px] w-full py-2 px-3 text-lightGray bg-whiteFox leading-tight focus:outline-none focus:shadow-outline mt-6"
+                className="shadow appearance-none border rounded-[8px] w-full py-2 px-3 text-lightGray bg-whiteFox leading-tight focus:outline-none focus:shadow-outline mt-6"
                 type="password"
                 placeholder="Password"
               />
@@ -115,7 +84,7 @@ const RegisterPage: React.FC = () => {
               <input
                 value={passwordAgain}
                 onChange={handlePasswordAgain}
-                className="shadow appearance-none border border-red-500 rounded-[8px] w-full py-2 px-3 text-lightGray bg-whiteFox leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border  rounded-[8px] w-full py-2 px-3 text-lightGray bg-whiteFox leading-tight focus:outline-none focus:shadow-outline"
                 type="password"
                 placeholder="Password"
               />
@@ -133,12 +102,12 @@ const RegisterPage: React.FC = () => {
             <h2 className="inline-block align-baseline font-bold text-sm text-darkFox">
               Already have an account? &nbsp;
             </h2>
-            <a className="inline-block align-baseline font-bold text-sm text-greenFox hover:text-[#387354] cursor-pointer">
+            <a href="/login" className="inline-block align-baseline font-bold text-sm text-greenFox hover:text-[#387354] cursor-pointer">
               Log In
             </a>
           </div>
-          <div className="flex items-center justify-center mt-8 mb-2">
-            <img className="h-auto max-w-full" src="" alt="logo" />
+          <div className="flex items-center justify-center mt-3">
+            <img className="h-8 max-w-full" alt="logo" src="/logo.png" />
           </div>
         </form>
       </div>

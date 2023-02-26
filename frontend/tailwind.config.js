@@ -18,7 +18,8 @@ module.exports = {
         darkFox: "#395444",
         darkGrey: "#395444",
         lightGray: "#B3B3B3",
-        whiteFox: "#FCFCFC"
+        whiteFox: "#FCFCFC",
+        "register-logoutBG": "#D9D9D9"
       },
     },
   },
