@@ -19,7 +19,8 @@ module.exports = {
         darkGrey: "#395444",
         lightGray: "#B3B3B3",
         whiteFox: "#FCFCFC",
-        "register-logoutBG": "#D9D9D9"
+        white:"ffffff",
+        registerlogoutBG: "#D9D9D9"
       },
     },
   },
