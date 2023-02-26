@@ -62,7 +62,10 @@ const RegisterPage: React.FC = () => {
             Register a new Foxter
           </h1>
 
+<div className="">
           <div className="mb-4">
+
+          <img className="h-8 max-w-full" alt="logo" src="formIcons/user-32.png" />
             <input
               value={name}
               onChange={handleName}
@@ -90,6 +93,8 @@ const RegisterPage: React.FC = () => {
               />
             </div>
 
+</div>
+            
             <button
               onClick={handleSubmit}
               className="bg-greenFox hover:bg-[#387354] text-whiteFox py-1  rounded-full w-full text-center"
@@ -97,6 +102,8 @@ const RegisterPage: React.FC = () => {
             >
               Sign Up
             </button>
+
+
           </div>
           <div className="flex items-center justify-center">
             <h2 className="inline-block align-baseline font-bold text-sm text-darkFox">
