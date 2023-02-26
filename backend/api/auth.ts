@@ -66,9 +66,7 @@ authRouter.post(
       const result = db.prepare("SELECT * FROM users WHERE name = ?").get(name);
 
       if (result !== undefined) {
-        return res
-          .status(400)
-          .send({ error: "User with this username already exists" });
+        return res.status(400).send({ error: "Username already exists" });
       }
       const hashedPassword = await hashPassword(password);
 
