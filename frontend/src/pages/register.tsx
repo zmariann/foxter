@@ -39,47 +39,68 @@ const RegisterPage: React.FC = () => {
         });
         if (response.status === 400) {
           toast.error((await response.json()).error);
-        } else if (response.status === 500) {
-          toast.error((await response.json()).error);
         } else {
           toast.success("User " + name + " successfully registered");
         }
       } catch (error: any) {
-        toast.error(error.toString());
+        toast.error(JSON.stringify(error));
       }
     }
   };
 
+  // handle toggle for show & hide password
+  const [open, setOpen] = useState(false);
+  const handleToggle = () => {
+    setOpen(!open);
+  };
+
   return (
-    <div className="h-screen flex items-center justify-center border rounded bg-register-logoutBG bg-[#D9D9D9]">
+    <div className="flex flex-col items-center justify-center h-screen mx-auto p-20 bg-registerLogoutBG">
       <ToastContainer position="top-center" limit={1} autoClose={900} />
-      <div className="w-full max-w-xs">
-        <form className="bg-whiteFox shadow-2xl rounded-[10px] px-8 pt-6 pb-8 mb-4">
-          <h1 className=" text-darkFox flex justify-center mt-2">
+      <div className="w-full max-w-[350px]">
+        <form className="bg-whiteFox shadow-2xl rounded-[10px] px-8 pt-10 pb-10 mb-10">
+          <h1 className="text-xl text-darkFox flex justify-center">
             Register a new Foxter
           </h1>
 
           <div className="mb-4">
-
-
-              <div className="relative flex justify-end pr-2 h-50 w-500">
+            <div className="relative flex justify-end pr-2">
+              <img
+                className="absolute max-w-full h-6 w-6 mt-8"
+                alt="logo"
+                src="formIcons/user-96.png"
+              />
+              {open === false ? (
                 <img
-                  className="absolute max-w-full h-6 w-6"
-                  alt="logo"
-                  src="formIcons/user-96.png"
-                />
-                <img
-                  className="absolute max-w-full h-6 w-6"
-                  alt="logo"
-                  src="formIcons/hide-96.png"
-                />
-                <img
-                  className="absolute max-w-full h-6 w-6"
+                  className="absolute max-w-full h-6 w-6 mt-[95.5px]"
                   alt="logo"
                   src="formIcons/hide-96.png"
+                  onClick={handleToggle}
                 />
-              </div>
-
+              ) : (
+                <img
+                  className="absolute max-w-full h-6 w-6 mt-[94px]"
+                  alt="logo"
+                  src="formIcons/eye-96.png"
+                  onClick={handleToggle}
+                />
+              )}
+              {open === false ? (
+                <img
+                  className="absolute max-w-full h-6 w-6 mt-[156px]"
+                  alt="logo"
+                  src="formIcons/hide-96.png"
+                  onClick={handleToggle}
+                />
+              ) : (
+                <img
+                  className="absolute max-w-full h-6 w-6 mt-[155px]"
+                  alt="logo"
+                  src="formIcons/eye-96.png"
+                  onClick={handleToggle}
+                />
+              )}
+            </div>
 
             <input
               value={name}
@@ -89,13 +110,12 @@ const RegisterPage: React.FC = () => {
               placeholder="Username"
             />
 
-            
             <div className="mb-6">
               <input
                 value={password}
                 onChange={handlePassword}
-                className="shadow appearance-none border rounded-[8px] w-full py-2 pl-3 pr-8 text-lightGray bg-whiteFox leading-tight focus:outline-none focus:shadow-outline mt-6"
-                type="password"
+                className="shadow appearance-none border rounded-[8px] w-full py-2 pl-3 pr-9 text-lightGray bg-whiteFox leading-tight focus:outline-none focus:shadow-outline mt-6"
+                type={open === false ? "password" : "text"}
                 placeholder="Password"
               />
             </div>
@@ -104,9 +124,9 @@ const RegisterPage: React.FC = () => {
               <input
                 value={passwordAgain}
                 onChange={handlePasswordAgain}
-                className="shadow appearance-none border  rounded-[8px] w-full py-2 pl-3 pr-8 text-lightGray bg-whiteFox leading-tight focus:outline-none focus:shadow-outline"
-                type="password"
-                placeholder="Password"
+                className="shadow appearance-none border  rounded-[8px] w-full py-2 pl-3 pr-9 text-lightGray bg-whiteFox leading-tight focus:outline-none focus:shadow-outline"
+                type={open === false ? "password" : "text"}
+                placeholder="Password again"
               />
             </div>
 
@@ -120,20 +140,26 @@ const RegisterPage: React.FC = () => {
           </div>
 
           <div className="flex items-center justify-center">
-            <h2 className="inline-block align-baseline font-bold text-sm text-darkFox">
+            <h2 className="inline-block align-baseline font-bold text-sm text-darkFox mb-1">
               Already have an account? &nbsp;
             </h2>
             <a
               href="/login"
-              className="inline-block align-baseline font-bold text-sm text-greenFox hover:text-[#387354] cursor-pointer"
+              className="inline-block align-baseline font-bold text-sm text-greenFox hover:text-[#387354] mb-1 cursor-pointer"
             >
               Log In
             </a>
           </div>
-          <div className="flex items-center justify-center mt-3">
-            <img className="h-8 max-w-full" alt="logo" src="/logo.png" />
-          </div>
         </form>
+      </div>
+      <div>
+        <img
+          className="block mx-auto"
+          src="/logo.png"
+          width="90"
+          height="90"
+          alt="Brand Logo"
+        />
       </div>
     </div>
   );

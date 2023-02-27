@@ -14,13 +14,13 @@ module.exports = {
         "mainFont": ["Nunito", "sans-serif"],
       },
       colors: {
-        greenFox: "#488D69",
+        greenFox: "#3CB878",
         darkFox: "#395444",
         darkGrey: "#395444",
         lightGray: "#B3B3B3",
         whiteFox: "#FCFCFC",
         white:"ffffff",
-        registerlogoutBG: "#D9D9D9"
+        registerLogoutBG: "#D9D9D9"
       },
     },
   },

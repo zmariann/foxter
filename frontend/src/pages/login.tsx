@@ -25,11 +25,10 @@ const LoginPage: React.FC = () => {
   // sends a POST request to a login API endpoint (/api/login) with the username and password
   const handleSignIn = async (event: any) => {
     event.preventDefault();
-
     // Check if user is already logged in
     const token = localStorage.getItem("token");
     if (token) {
-      toast("User has already been logged in");
+      toast.warn("User has already been logged in");
       return;
     }
     try {
@@ -38,14 +37,19 @@ const LoginPage: React.FC = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, password }),
       });
-      // handle successful login
+
       const data = await response.json();
-      toast(data.message.toString());
+
+      if (!response.ok) {
+        throw data;
+      }
+      // handle successful login
+      toast.success(data.message.toString());
     } catch (error: any) {
-      if (error.response && error.response.status === 401) {
-        toast("Invalid credentials");
+      if ("error" in error) {
+        toast.warn(error.error);
       } else {
-        toast(error.toString());
+        toast.error(JSON.stringify(error));
       }
       // Handle login error
     }
@@ -54,77 +58,92 @@ const LoginPage: React.FC = () => {
   // forgot password handle: Need to understand what exactly we need to do here,
   const handleForgotPassword = () => {};
 
+  // handle toggle for show & hide password
+  const [open, setOpen] = useState(false);
+  const handleToggle = () => {
+    setOpen(!open);
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center h-screen mx-auto p-20 bg-gray-200">
-      <div className="w-full max-w-md m-auto rounded-2xl bg-white shadow-md">
-        <ToastContainer position="top-center" limit={1} />
-        <form onSubmit={handleSignIn} className="px-10 pt-8 pb-8 rounded-lg">
-          <h1 className="mb-6 text-xl text-center">Sign in to Foxter</h1>
+    <div className="flex flex-col items-center justify-center h-screen mx-auto p-20 bg-registerLogoutBG">
+      <ToastContainer position="top-center" limit={1} autoClose={900} />
+      <div className="w-full max-w-[350px]">
+        <form
+          onSubmit={handleSignIn}
+          className="bg-whiteFox shadow-2xl rounded-[10px] px-8 pt-8 pb-8 mb-10"
+        >
+          <h1 className="text-xl text-darkFox flex justify-center mt-2">
+            Sign In to Foxter
+          </h1>
           <div className="mb-4">
-            <label
-              htmlFor="username"
-              className="block text-gray-700 text-sm font-bold mb-2"
-            >
-              Username
-            </label>
+            <div className="relative flex justify-end pr-2">
+              <img
+                className="absolute max-w-full h-6 w-6 mt-8"
+                alt="logo"
+                src="formIcons/user-96.png"
+              />
+              {open === false ? (
+                <img
+                  className="absolute max-w-full h-6 w-6 mt-[95.5px]"
+                  alt="logo"
+                  src="formIcons/hide-96.png"
+                  onClick={handleToggle}
+                />
+              ) : (
+                <img
+                  className="absolute max-w-full h-6 w-6 mt-[94px]"
+                  alt="logo"
+                  src="formIcons/eye-96.png"
+                  onClick={handleToggle}
+                />
+              )}
+            </div>
+
             <input
               type="text"
               id="username"
               placeholder="Username"
               value={name}
               onChange={handleUsernameChange}
-              className="shadow appearance-none border border-gray-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded-[8px] w-full py-2 pl-3 pr-8 text-lightGray bg-whiteFox leading-tight focus:outline-none focus:shadow-outline mt-6"
             />
           </div>
           <div className="mb-6">
-            <label
-              htmlFor="password"
-              className="block text-gray-700 text-sm font-bold mb-2"
-            >
-              Password
-            </label>
             <input
-              type="password"
+              type={open === false ? "password" : "text"}
               id="password"
-              placeholder="**********"
+              placeholder="Password"
               value={password}
               onChange={handlePasswordChange}
-              className="shadow appearance-none border rounded border-gray-500 w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded-[8px] w-full py-2 pl-3 pr-8 text-lightGray bg-whiteFox leading-tight focus:outline-none focus:shadow-outline mt-3"
             />
           </div>
           <div className="mb-6">
             <button
               type="submit"
-              className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline w-full"
+              className="bg-greenFox hover:bg-[#387354] text-whiteFox py-1  rounded-full w-full text-center"
             >
-              Sign in
+              Sign In
             </button>
           </div>
           <div className="text-center mb-6">
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              className="text-green-600 hover:text-green-800"
-            >
-              Forgot password?
-            </button>
+            <p className="text-center font-bold text-darkFox mb-4 text-sm">
+              Don't have an account?
+              <Link href="/register" passHref>
+                <span className="inline-block font-bold text-greenFox hover:text-[#387354] ml-1">
+                  Sign Up
+                </span>
+              </Link>
+            </p>
           </div>
         </form>
-        <p className="text-center mb-4">
-          Don't have an account?
-          <Link href="/register" passHref>
-            <span className="inline-block font-bold text-green-600 hover:text-blue-800 ml-1">
-              Sign up
-            </span>
-          </Link>
-        </p>
       </div>
-      <div className="mt-4">
+      <div>
         <Image
           className="block mx-auto"
           src="/logo.png"
-          width="150"
-          height="150"
+          width="90"
+          height="90"
           alt="Brand Logo"
         />
       </div>
