@@ -25,9 +25,24 @@ foxRouter.post("/foxes", validateBody(foxesBodySchema), (req, res) => {
     if (user === null) {
       return res.status(401).send({ error: "Unauthorized." });
     }
-    const stmt = db
+    const hashtags = content.match(/#[a-zA-Z0-9]+/g); // Find all hashtags in the content
+    console.log(hashtags);
+    const foxStmt = db
       .prepare("INSERT INTO foxes (content, user_id) VALUES (?,?)")
       .run(content, user.id);
+    const foxId = foxStmt.lastInsertRowid;
+
+    if (hashtags.length > 0) {
+      hashtags.forEach((hashTag, index) => {
+        if (index < 10) {
+          hashTag = hashTag.replace("#","");
+          db.prepare("INSERT INTO hashtags (tag, fox_id) VALUES (?, ?)").run(
+            hashTag,foxId
+          );
+        }
+      });
+    }
+
     res.status(201).send({ message: "Fox created successfully!" });
   } catch (error) {
     res.status(400).send({ error: error.message });
