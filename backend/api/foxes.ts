@@ -25,22 +25,29 @@ foxRouter.post("/foxes", validateBody(foxesBodySchema), (req, res) => {
     if (user === null) {
       return res.status(401).send({ error: "Unauthorized." });
     }
-    const hashtags = content.match(/#[a-zA-Z0-9]+/g); // Find all hashtags in the content
-    console.log(hashtags);
+    const hashtagUnfiltered = content.match(/#[a-zA-Z0-9]+/g); // Find all hashtags in the content
+    const hashtags: Set<string> = new Set(hashtagUnfiltered);
+   
     const foxStmt = db
       .prepare("INSERT INTO foxes (content, user_id) VALUES (?,?)")
       .run(content, user.id);
     const foxId = foxStmt.lastInsertRowid;
 
-    if (hashtags.length > 0) {
-      hashtags.forEach((hashTag, index) => {
-        if (index < 10) {
-          hashTag = hashTag.replace("#","");
-          db.prepare("INSERT INTO hashtags (tag, fox_id) VALUES (?, ?)").run(
-            hashTag,foxId
-          );
+    const maxHashtags = Math.min(hashtags.size, 10);
+    if (maxHashtags > 0) {
+      let i = 0;
+      const insertStmt = db.prepare(
+        "INSERT INTO hashtags (tag, fox_id) VALUES (?, ?)"
+      );
+      for (let hashTag of hashtags) {
+        if (i >= maxHashtags) {
+          break
         }
-      });
+      
+        hashTag = hashTag.replace("#", "")
+        insertStmt.run(hashTag, foxId)
+        i++;
+      } 
     }
 
     res.status(201).send({ message: "Fox created successfully!" });
@@ -48,6 +55,7 @@ foxRouter.post("/foxes", validateBody(foxesBodySchema), (req, res) => {
     res.status(400).send({ error: error.message });
   }
 });
+
 
 // Delete a fox
 foxRouter.delete("/foxes/:id", async (req, res) => {
