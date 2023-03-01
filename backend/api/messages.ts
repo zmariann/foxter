@@ -3,3 +3,7 @@ import { db } from '../database/db'
 
 const messagesRouter = express.Router();
 
+
+
+
+export {messagesRouter}
