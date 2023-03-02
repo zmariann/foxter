@@ -11,7 +11,7 @@ import { loggerMiddleware } from "./api/logger";
 import { authRouter } from "./api/auth";
 import { validateBody }  from  "./api/validation";
 import { userRouter } from "./api/users";
-import { hTagRouter } from "./api/hashTag"
+import { hTagRouter } from "./api/hashtag"
 
 const app = express();
 
