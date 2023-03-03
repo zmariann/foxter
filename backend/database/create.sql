@@ -19,6 +19,15 @@ CREATE TABLE IF NOT EXISTS tokens (
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+CREATE TABLE IF NOT EXISTS hashtags (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+tag TEXT NOT NULL,
+fox_id INTEGER NOT NULL,
+FOREIGN KEY (fox_id)
+REFERENCES foxes(id)
+);
+
+
 -----------------------------------------------
 -- messages & room tables
 
