@@ -85,6 +85,9 @@ const FoxForm: React.FC = () => {
       console.error(error);
     }
   };
+
+
+
   const [open, setOpen] = useState(false);
   const Menus = [
     {title: "Home", src:"Home"}, 
@@ -99,7 +102,7 @@ const FoxForm: React.FC = () => {
   return (
     <>
       <div className="flex" >
-      <div className={`${open ? "w-52": "w-36"} duration-300 h-screen p-5 pt-8 bg-white relative`}>
+      <div className={`${open ? "30vw": "20vw"} duration-300 h-screen p-5 pt-8 bg-white relative`}>
         <img src="/Openicon.png" className={`absolute cursor-pointer
         -right-3 top-9 w-4 border-white ${open && "rotate-180"}`}
         onClick={()=> setOpen(!open)}
@@ -122,7 +125,7 @@ const FoxForm: React.FC = () => {
             ))}
         </ul>
       </div>
-      <div className={`w-96 h-screen bg-whiteFox`}>
+      <div className={`60vw h-screen bg-whiteFox`}>
         <div
           style={{
             display: "flex",
@@ -165,6 +168,7 @@ const FoxForm: React.FC = () => {
                       <span style={{ marginLeft: "10px" }}></span>
                       {/* Delete Button */}
                       <button onClick={() => handleDelete(fox.id)}>Delete</button>
+                      <button onClick={() => handleFollowing(.id)}>Delete</button>
                     </li>
                   );
                 })}
@@ -173,17 +177,17 @@ const FoxForm: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className={`w-72 h-screen bg-white p-8`}> 
+      <div className={`vw20 h-screen bg-white p-8`}> 
         <div>
-          <input type="text" placeholder="Search foxes"/>
+          <input className="focus:ring-2 focus:ring-greenFox-300" type="text" placeholder="Search foxes" p-8/>
         </div>
-        <div>
+        <div  className="w-full max-w-md m-auto rounded-2xl bg-whiteFox shadow-md p-5 mt-5">
           Trends
         </div>
-        <div>
+        <div className="w-full max-w-md m-auto rounded-2xl bg-whiteFox shadow-md p-5 mt-5">
           Who to follow
         </div>
-        <div>
+        <div className="w-full max-w-md m-auto rounded-2xl bg-white p-5 mt-5">
           Footer
         </div>
       </div>
