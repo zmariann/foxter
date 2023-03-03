@@ -28,14 +28,14 @@ CREATE TABLE IF NOT EXISTS messages (
   room_id INT NOT NULL,
   user_id INTEGER NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users(id)
-)
+);
 
 CREATE TABLE IF NOT EXISTS rooms (
   id INTEGER NOT NULL PRIMARY KEY,
   group INTEGER NOT NULL,
   creator_id INTEGER NOT NULL,
   FOREIGN KEY (creator_id) REFERENCES users(id)
-)
+);
 
 CREATE TABLE IF NOT EXISTS room_participants  (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS room_participants  (
   users_id INTEGER NOT NULL,
   FOREIGN KEY (room_id) REFERENCES rooms(id),
   FOREIGN KEY (user_id) REFERENCES users(id)
-)
+);
 
 CREATE TABLE IF NOT EXISTS room_invitations  (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -53,4 +53,4 @@ CREATE TABLE IF NOT EXISTS room_invitations  (
   FOREIGN KEY (host_id) REFERENCES users(id),
   FOREIGN KEY (invited_id) REFERENCES users(id),
   FOREIGN KEY (room_id) REFERENCES rooms(id)
-)
+);
