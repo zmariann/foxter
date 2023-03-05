@@ -42,8 +42,13 @@ const profilePage: React.FC = () => {
             ))}
         </ul>
       </div>
+      <div>
+      <button>
+              Follow
+      </button>
         {/* <h1>{users.name}</h1>
         <img src={profileImage} alt={users.name} /> */}
+      </div>
       </div>
 );
 };

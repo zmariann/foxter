@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
   name TEXT NOT NULL,
   password TEXT NOT NULL,
   followers_count INTEGER,
-  profile_image_url TEXT
+  profile_image_url TEXT,
   UNIQUE (name)
 );
 
@@ -59,8 +59,8 @@ CREATE TABLE IF NOT EXISTS room_invitations  (
 
 CREATE TABLE IF NOT EXISTS followers (
   id INTEGER PRIMARY KEY,
-  user_id INTEGER NOT NULL,
-  follow_user_id INTEGER NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES users (id),
-  FOREIGN KEY (follow_user_id) REFERENCES users (id)
+  follower INTEGER NOT NULL,
+  followed INTEGER NOT NULL,
+  FOREIGN KEY (follower) REFERENCES users (id),
+  FOREIGN KEY (followed) REFERENCES users (id)
 );

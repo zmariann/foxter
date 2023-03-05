@@ -2,14 +2,18 @@ import express from "express";
 import { db } from "../database/db";
 import { z } from "zod";
 import { verifyUser } from "./auth";
+import { validateBody } from "./validation";
 
 const followRouter = express.Router();
+const followBodySchema = z.object({
+    follower: z.number(),
+    followed: z.number()
+});
 
-
-function followUser(req: Request, res: Response) {
-    const userId = req.body.user_Id;
-    const followingId = req.body.follow_user_id;
-
+followRouter.post("/profile", validateBody(followBodySchema), (req, res) => {
+    const follower = req.body.follower;
+    const followed = req.body.followed;
+    console.log(followBodySchema)
     // Check if both users exist in the database
     const usersExistQuery = `
     SELECT COUNT(*) as count
@@ -17,7 +21,7 @@ function followUser(req: Request, res: Response) {
     WHERE id IN (?, ?)
   `;
 
-    db.get(usersExistQuery, [userId, followingId], (err, row) => {
+    db.get(usersExistQuery, [follower, followed], (err, row) => {
         if (err) {
             console.error(err);
             res.status(500).send('Server error');
@@ -26,11 +30,11 @@ function followUser(req: Request, res: Response) {
         } else {
             // Follow the user by inserting a row into the following table
             const followQuery = `
-        INSERT INTO following (user_id, following_user_id)
+        INSERT INTO followers (follower, followed)
         VALUES (?, ?)`
                 ;
 
-            db.run(followQuery, [userId, followingId], (err) => {
+            db.run(followQuery, [follower, followed], (err) => {
                 if (err) {
                     console.error(err);
                     res.status(500).send('Server error');
@@ -40,5 +44,6 @@ function followUser(req: Request, res: Response) {
             });
         }
     });
-}
+});
+
 export { followRouter };
