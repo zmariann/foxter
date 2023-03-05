@@ -157,7 +157,7 @@ const FoxForm: React.FC = () => {
           <div style={{ display: "flex", justifyContent: "center" }}>
             {/* Display "No foxes to show. Post one!" message when foxes array is empty */}
             {foxes.length === 0 ? (
-              <p style={{ textAlign: "center" }}>No foxes to show. Post one!</p>
+              <p className=" flex justify-center items-center">No foxes to show. Post one!</p>
             ) : (
               <ul style={{ listStyle: "none", textAlign: "center" }}>
                 {/* Map through foxes array and render fox content and delete button */}
@@ -166,9 +166,6 @@ const FoxForm: React.FC = () => {
                     <li key={fox.id} style={{ margin: "20px 0" }}>
                       {fox.content}
                       <span style={{ marginLeft: "10px" }}></span>
-                      {/* Delete Button */}
-                      <button onClick={() => handleDelete(fox.id)}>Delete</button>
-                      <button onClick={() => handleFollowing(.id)}>Delete</button>
                     </li>
                   );
                 })}

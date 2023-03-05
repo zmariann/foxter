@@ -1,10 +1,12 @@
 import express from "express";
 import { db } from "../database/db";
+import { z } from "zod";
+import { verifyUser } from "./auth";
 
 const followRouter = express.Router();
 
 
-async function followUser(req: Request, res: Response) {
+function followUser(req: Request, res: Response) {
     const userId = req.body.user_Id;
     const followingId = req.body.follow_user_id;
 
