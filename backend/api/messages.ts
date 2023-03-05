@@ -172,7 +172,7 @@ messagesRouter.get("/invitations", (req, res) => {
     // get the room names
     const namesOfRooms = db
       .prepare(
-        "SELECT name FROM rooms INNER JOIN room_invitations ON rooms.id = room_invitations.room_id WHERE invited_id = ?"
+        "SELECT rooms.name FROM rooms INNER JOIN room_invitations ON rooms.id = room_invitations.room_id WHERE invited_id = ? ORDER BY room_invitations.id DESC"
       )
       .all(user.id);
     res.send(namesOfRooms);
@@ -190,7 +190,9 @@ messagesRouter.get("/invitations/all", (req, res) => {
       return res.status(401).send({ error: "Unauthorized." });
     }
     const invitations = db
-      .prepare("SELECT * FROM room_invitations WHERE invited_id = ?")
+      .prepare(
+        "SELECT * FROM room_invitations WHERE invited_id = ? ORDER BY id DESC"
+      )
       .all(user.id);
     res.send(invitations);
   } catch (error) {
