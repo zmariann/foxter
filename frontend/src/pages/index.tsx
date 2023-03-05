@@ -102,7 +102,7 @@ const FoxForm: React.FC = () => {
   return (
     <>
       <div className="flex" >
-      <div className={`${open ? "30vw": "20vw"} duration-300 h-screen p-5 pt-8 bg-white relative`}>
+      <div className={`${open ? "w-[15%]": "w-[10%]"} duration-300 h-screen p-5 pt-8 bg-white relative`}>
         <img src="/Openicon.png" className={`absolute cursor-pointer
         -right-3 top-9 w-4 border-white ${open && "rotate-180"}`}
         onClick={()=> setOpen(!open)}
@@ -125,7 +125,7 @@ const FoxForm: React.FC = () => {
             ))}
         </ul>
       </div>
-      <div className={`60vw h-screen bg-whiteFox`}>
+      <div className={`w-[60%] h-screen bg-whiteFox`}>
         <div
           style={{
             display: "flex",
@@ -154,7 +154,7 @@ const FoxForm: React.FC = () => {
 
         {/* || Render Foxes and Delete Button */}
         <div>
-          <div style={{ display: "flex", justifyContent: "center" }}>
+          <div className="flex justify-center items-center w-[100%]">
             {/* Display "No foxes to show. Post one!" message when foxes array is empty */}
             {foxes.length === 0 ? (
               <p className=" flex justify-center items-center">No foxes to show. Post one!</p>
@@ -163,9 +163,9 @@ const FoxForm: React.FC = () => {
                 {/* Map through foxes array and render fox content and delete button */}
                 {foxes.map((fox) => {
                   return (
-                    <li key={fox.id} style={{ margin: "20px 0" }}>
+                    <li key={fox.id} className= "w-full max-w-md m-auto rounded-2xl bg-whiteFox shadow-md p-5 mt-5 p-8">
                       {fox.content}
-                      <span style={{ marginLeft: "10px" }}></span>
+                      <span className="m-8"></span>
                     </li>
                   );
                 })}
@@ -174,7 +174,7 @@ const FoxForm: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className={`vw20 h-screen bg-white p-8`}> 
+      <div className={`w-[20%] h-screen bg-white p-8`}> 
         <div>
           <input className="focus:ring-2 focus:ring-greenFox-300" type="text" placeholder="Search foxes" p-8/>
         </div>
