@@ -10,6 +10,7 @@ messagesRouter.post("/messages/:roomId", (req, res) => {
   try {
     const { content } = req.body;
     const { roomId } = req.params;
+    // get the user id of the person who logged in
     const user = verifyUser(req);
     if (user === null) {
       return res.status(401).send({ error: "Unauthorized." });
@@ -44,6 +45,7 @@ messagesRouter.get("/messages/:roomId", (req, res) => {
 messagesRouter.delete("/messages/:messageId", async (req, res) => {
   try {
     const { messageId } = req.params;
+    // get the user id of the person who logged in
     const user = verifyUser(req);
     if (user === null) {
       return res.status(401).send({ error: "Unauthorized." });
@@ -77,16 +79,53 @@ messagesRouter.post("/rooms", (req, res) => {
     if (result !== undefined) {
       return res.status(400).send({ error: "This room has already exists" });
     }
+    // insert new room into rooms table
+    const roomId = db
+      .prepare(
+        "INSERT INTO rooms (name, rooms_group, creator_id) VALUES (?,?,?)"
+      )
+      .run(name, group, user.id);
+    // insert new room into participants table
     db.prepare(
-      "INSERT INTO rooms (name, rooms_group, creator_id) VALUES (?,?,?)"
-    ).run(name, group, user.id);
+      "INSERT INTO room_participants (room_id, user_id) VALUES (?,?)"
+    ).run(roomId.lastInsertRowid, user.id);
     res.send({ message: "New room has successfuly created" });
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
 });
 
-// show rooms
+// get a room
+messagesRouter.get("/rooms/:roomId", (req, res) => {
+  try {
+    const { roomId } = req.params;
+    // get the user id of the person who logged in
+    const user = verifyUser(req);
+    if (user === null) {
+      return res.status(401).send({ error: "Unauthorized." });
+    }
+    // check if he is a participant of the room (if he is the crator of the room he is automatically in the room_participants table)
+    const participantOfThisRoom = db
+      .prepare(
+        "SELECT * FROM room_participants WHERE room_id = ? AND user_id = ?"
+      )
+      .get(roomId, user.id);
+    if (participantOfThisRoom !== undefined) {
+      // user can access the room, so he can see the messages
+      const messages = db
+        .prepare("SELECT content FROM messages WHERE room_id = ?")
+        .all(roomId);
+      return res.send(messages);
+    }
+    res.status(400).send({
+      error: "You can only access to this room if you are a participant",
+    });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+});
+
+// show rooms, what the user created & where he/she is invited
 messagesRouter.get("/rooms", (req, res) => {
   try {
     // get the user id of the person who logged in
@@ -96,9 +135,9 @@ messagesRouter.get("/rooms", (req, res) => {
     }
     const rooms = db
       .prepare(
-        "SELECT name, id FROM rooms WHERE creator_id = ? ORDER BY id DESC"
+        "SELECT DISTINCT rooms.name, rooms.id FROM rooms INNER JOIN room_participants WHERE rooms.creator_id = ? OR room_participants.user_id = ? ORDER BY rooms.name ASC"
       )
-      .all(user.id);
+      .all(user.id, user.id);
     res.send(rooms);
   } catch (error) {
     res.status(400).send({ error: error.message });
@@ -106,7 +145,7 @@ messagesRouter.get("/rooms", (req, res) => {
 });
 
 // delete a room
-messagesRouter.delete("/rooms/:roomId", async (req, res) => {
+messagesRouter.delete("/rooms/:roomId", (req, res) => {
   try {
     const { roomId } = req.params;
     // get the user id of the person who logged in
@@ -118,7 +157,6 @@ messagesRouter.delete("/rooms/:roomId", async (req, res) => {
     const result = db
       .prepare("SELECT * FROM rooms WHERE id = ? AND creator_id = ?")
       .all(roomId, user.id);
-    console.log(result);
     // if she/he it is then delete everything that related to the deleted room
     if (result[0].creator_id === user.id) {
       db.prepare("DELETE FROM messages WHERE room_id = ?").run(roomId);
@@ -137,10 +175,10 @@ messagesRouter.delete("/rooms/:roomId", async (req, res) => {
 });
 
 // ---- INVITATIONS
-// room invitations
-messagesRouter.post("/invitation/:roomId", (req, res) => {
+// room invitations for chats
+messagesRouter.post("/invitation/group/:roomId", (req, res) => {
   try {
-    // who will be invited
+    // the id who will get the invitation
     const { invitedUserId } = req.body;
     // the number of the room where the invitation is addressed
     const { roomId } = req.params;
@@ -149,19 +187,45 @@ messagesRouter.post("/invitation/:roomId", (req, res) => {
     if (user === null) {
       return res.status(401).send({ error: "Unauthorized." });
     }
+    // check if the user who would like to send an invitation is the creator of the room
+    const creator = db
+      .prepare("SELECT creator_id FROM rooms WHERE id = ?")
+      .get(roomId);
+    if (creator.creator_id !== user.id) {
+      return res.send({
+        error:
+          "You can send an invitation if you are the creator of the a room",
+      });
+    }
+    // if he has already the part of the room he can't get an invitation
+    const invited = db
+      .prepare("SELECT * FROM room_participants WHERE room_id = ? AND user_id = ?")
+      .get(roomId, invitedUserId);
+    if (invited !== undefined) {
+      return res.send({
+        error: "This user has already the part of the room",
+      });
+    }
+    // check if this invitation is exists
+    const existingInvitation = db
+      .prepare(
+        "SELECT id FROM room_invitations WHERE host_id = ? AND invited_id = ? AND room_id = ?"
+      )
+      .get(user.id, invitedUserId, roomId);
+    if (existingInvitation !== undefined) {
+      return res.send({ message: "This invitation has already exist" });
+    }
     db.prepare(
       "INSERT INTO room_invitations (host_id, invited_id, room_id) VALUES (?,?,?)"
     ).run(user.id, invitedUserId, roomId);
-    res.send({ message: "New invitation has successfuly created" });
+    return res.send({ message: "New invitation has successfuly created" });
+    
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
 });
 
-// we need all the users where we can choose the person who we want to invite
-// in users.ts
-
-// user can check his/her invitations from others
+// user can check his/her invitations what he got
 messagesRouter.get("/invitations", (req, res) => {
   try {
     // get the user id of the person who logged in
@@ -184,16 +248,11 @@ messagesRouter.get("/invitations", (req, res) => {
 // check all invitations for test purposes
 messagesRouter.get("/invitations/all", (req, res) => {
   try {
-    // get the user id of the person who logged in
-    const user = verifyUser(req);
-    if (user === null) {
-      return res.status(401).send({ error: "Unauthorized." });
-    }
     const invitations = db
       .prepare(
-        "SELECT * FROM room_invitations WHERE invited_id = ? ORDER BY id DESC"
+        "SELECT * FROM room_invitations"
       )
-      .all(user.id);
+      .all();
     res.send(invitations);
   } catch (error) {
     res.status(400).send({ error: error.message });
@@ -211,6 +270,42 @@ messagesRouter.delete("/invitations/:invitationId", (req, res) => {
     }
     db.prepare("DELETE FROM room_invitations WHERE id = ?").run(invitationId);
     res.send({ message: "Invitation is successfully deleted" });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+});
+
+// check room_participants for test purposes
+messagesRouter.get("/participants/", (req, res) => {
+  try {
+    const participants = db.prepare("SELECT * FROM room_participants").get();
+    res.send(participants);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+});
+
+// shows participants in a specific room
+messagesRouter.post("/participants/", (req, res) => {
+  try {
+    // invited_id = participant
+    const { participant, roomId } = req.body;
+    // get the user id of the person who logged in
+    const user = verifyUser(req);
+    if (user === null) {
+      return res.status(401).send({ error: "Unauthorized." });
+    }
+    // if the user want to be a participant in a room he/she has to own an invitation from another group member
+    const result = db
+      .prepare("SELECT invited_id FROM room_invitations WHERE invited_id = ?")
+      .get(user.id);
+    console.log(result);
+    res.send(result);
+    /*
+    db.prepare(
+      "INSERT INTO room_participants (room_id, user_id) VALUES (?,?)"
+    ).run(roomId, participant);
+    */
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
