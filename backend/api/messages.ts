@@ -137,7 +137,7 @@ messagesRouter.get("/rooms", (req, res) => {
     }
     const rooms = db
       .prepare(
-        "SELECT rooms.name, rooms.id FROM rooms INNER JOIN room_participants ON rooms.id = room_participants.room_id WHERE rooms.creator_id = ? OR room_participants.user_id = ? ORDER BY rooms.name ASC"
+        "SELECT DISTINCT rooms.name, rooms.id FROM rooms INNER JOIN room_participants ON rooms.id = room_participants.room_id WHERE rooms.creator_id = ? OR room_participants.user_id = ? ORDER BY rooms.name ASC"
       )
       .all(user.id, user.id);
     res.status(200).send(rooms);
