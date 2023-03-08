@@ -6,21 +6,44 @@ import { validateBody } from "./validation";
 
 const messagesRouter = express.Router();
 
-const RegisterBodySchema = z.object({
+const messageBodySchema = z.object({
   content: z.string(),
   roomId: z.string(),
+});
+
+const messageDeleteBodySchema = z.object({
   messageId: z.string(),
+});
+
+const roomPostBodySchema = z.object({
   name: z.string(),
   group: z.string(),
+});
+
+const roomGetBodySchema = z.object({
+  roomId: z.string(),
+});
+
+const invitationsBodySchema = z.object({
+  invitedUserId: z.string(),
+  roomId: z.string(),
+});
+
+const acceptInvitationsBodySchema = z.object({
+  roomId: z.string(),
   invitedUserId: z.string(),
   invitationId: z.string(),
 });
+
+const deleteInvitationsBodySchema = z.object({
+    invitationId: z.string(),
+  });
 
 // ---- MESSAGES
 // create a new message
 messagesRouter.post(
   "/messages/:roomId",
-  validateBody(RegisterBodySchema),
+  validateBody(messageBodySchema),
   (req, res) => {
     try {
       const { content } = req.body;
@@ -62,7 +85,7 @@ messagesRouter.get("/messages/:roomId", (req, res) => {
 // delete a message
 messagesRouter.delete(
   "/messages/:messageId",
-  validateBody(RegisterBodySchema),
+  validateBody(messageDeleteBodySchema),
   (req, res) => {
     try {
       const { messageId } = req.params;
@@ -88,7 +111,7 @@ messagesRouter.delete(
 
 // ---- ROOMS
 // create a new room
-messagesRouter.post("/rooms", validateBody(RegisterBodySchema), (req, res) => {
+messagesRouter.post("/rooms", validateBody(roomPostBodySchema), (req, res) => {
   try {
     const { name, group } = req.body;
     // get the user id of the person who logged in
@@ -120,7 +143,7 @@ messagesRouter.post("/rooms", validateBody(RegisterBodySchema), (req, res) => {
 // get a room
 messagesRouter.get(
   "/rooms/:roomId",
-  validateBody(RegisterBodySchema),
+  validateBody(roomGetBodySchema),
   (req, res) => {
     try {
       const { roomId } = req.params;
@@ -173,7 +196,7 @@ messagesRouter.get("/rooms", (req, res) => {
 // delete a room
 messagesRouter.delete(
   "/rooms/:roomId",
-  validateBody(RegisterBodySchema),
+  validateBody(roomGetBodySchema),
   (req, res) => {
     try {
       const { roomId } = req.params;
@@ -212,7 +235,7 @@ messagesRouter.delete(
 // room invitations for chats
 messagesRouter.post(
   "/invitations/group/",
-  validateBody(RegisterBodySchema),
+  validateBody(invitationsBodySchema),
   (req, res) => {
     try {
       // the id who will get the invitation &
@@ -292,7 +315,7 @@ messagesRouter.get("/invitations", (req, res) => {
 // user accepts the invitation
 messagesRouter.post(
   "/invitations/accept/:invitationId",
-  validateBody(RegisterBodySchema),
+  validateBody(acceptInvitationsBodySchema),
   (req, res) => {
     try {
       const { roomId, invitedUserId } = req.body;
@@ -333,7 +356,7 @@ messagesRouter.get("/invitations/all", (req, res) => {
 // user who got the invitation can delete it
 messagesRouter.delete(
   "/invitations/:invitationId",
-  validateBody(RegisterBodySchema),
+  validateBody(deleteInvitationsBodySchema),
   (req, res) => {
     try {
       const { invitationId } = req.params;
@@ -363,7 +386,7 @@ messagesRouter.get("/participants/", (req, res) => {
 // shows participants in a specific room
 messagesRouter.get(
   "/participants/:roomId",
-  validateBody(RegisterBodySchema),
+  validateBody(roomGetBodySchema),
   (req, res) => {
     try {
       const { roomId } = req.params;
