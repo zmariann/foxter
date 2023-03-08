@@ -6,44 +6,14 @@ import { validateBody } from "./validation";
 
 const messagesRouter = express.Router();
 
-const messageBodySchema = z.object({
-  content: z.string(),
-  roomId: z.string(),
-});
-
-const messageDeleteBodySchema = z.object({
-  messageId: z.string(),
-});
-
-const roomPostBodySchema = z.object({
-  name: z.string(),
-  group: z.string(),
-});
-
-const roomGetBodySchema = z.object({
-  roomId: z.string(),
-});
-
-const invitationsBodySchema = z.object({
-  invitedUserId: z.string(),
-  roomId: z.string(),
-});
-
-const acceptInvitationsBodySchema = z.object({
-  roomId: z.string(),
-  invitedUserId: z.string(),
-  invitationId: z.string(),
-});
-
-const deleteInvitationsBodySchema = z.object({
-    invitationId: z.string(),
-  });
-
 // ---- MESSAGES
 // create a new message
+const messageContentBodySchema = z.object({
+  content: z.string(),
+});
 messagesRouter.post(
   "/messages/:roomId",
-  validateBody(messageBodySchema),
+  validateBody(messageContentBodySchema),
   (req, res) => {
     try {
       const { content } = req.body;
@@ -83,96 +53,96 @@ messagesRouter.get("/messages/:roomId", (req, res) => {
 */
 
 // delete a message
-messagesRouter.delete(
-  "/messages/:messageId",
-  validateBody(messageDeleteBodySchema),
-  (req, res) => {
-    try {
-      const { messageId } = req.params;
-      // get the user id of the person who logged in
-      const user = verifyUser(req);
-      if (user === null) {
-        return res.status(401).send({ error: "Unauthorized." });
-      }
-      const result = db
-        .prepare("DELETE FROM messages WHERE id = ? AND user_id = ?")
-        .run(messageId, user.id);
-      if (result.changes === 0) {
-        return res
-          .status(400)
-          .send({ error: "You can delete a message if you are the creator" });
-      }
-      res.status(200).send({ message: "Message is successfully deleted." });
-    } catch (error) {
-      res.status(400).send({ error: error.message });
-    }
-  }
-);
-
-// ---- ROOMS
-// create a new room
-messagesRouter.post("/rooms", validateBody(roomPostBodySchema), (req, res) => {
+messagesRouter.delete("/messages/:messageId", (req, res) => {
   try {
-    const { name, group } = req.body;
+    const { messageId } = req.params;
     // get the user id of the person who logged in
     const user = verifyUser(req);
     if (user === null) {
       return res.status(401).send({ error: "Unauthorized." });
     }
-    // check if this name in rooms database is exists
-    const result = db.prepare("SELECT * FROM rooms WHERE name = ?").get(name);
-    if (result !== undefined) {
-      return res.status(400).send({ error: "This room has already exists" });
+    const result = db
+      .prepare("DELETE FROM messages WHERE id = ? AND user_id = ?")
+      .run(messageId, user.id);
+    if (result.changes === 0) {
+      return res
+        .status(400)
+        .send({ error: "You can delete a message if you are the creator" });
     }
-    // insert new room into rooms table
-    const roomId = db
-      .prepare(
-        "INSERT INTO rooms (name, rooms_group, creator_id) VALUES (?,?,?)"
-      )
-      .run(name, group, user.id);
-    // insert new room into participants table
-    db.prepare(
-      "INSERT INTO room_participants (room_id, user_id) VALUES (?,?)"
-    ).run(roomId.lastInsertRowid, user.id);
-    res.status(200).send({ message: "New room has successfuly created" });
+    res.status(200).send({ message: "Message is successfully deleted." });
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
 });
 
-// get a room
-messagesRouter.get(
-  "/rooms/:roomId",
-  validateBody(roomGetBodySchema),
+// ---- ROOMS
+// create a new room
+const roomsBodySchema = z.object({
+  name: z.string(),
+  group: z.number(),
+});
+messagesRouter.post(
+  "/rooms",
+  validateBody(roomsBodySchema),
   (req, res) => {
     try {
-      const { roomId } = req.params;
+      const { name, group } = req.body;
       // get the user id of the person who logged in
       const user = verifyUser(req);
       if (user === null) {
         return res.status(401).send({ error: "Unauthorized." });
       }
-      // check if he is a participant of the room (if he is the crator of the room he is automatically in the room_participants table)
-      const participantOfThisRoom = db
-        .prepare(
-          "SELECT * FROM room_participants WHERE room_id = ? AND user_id = ?"
-        )
-        .get(roomId, user.id);
-      if (participantOfThisRoom !== undefined) {
-        // user can access the room, so he can see the messages
-        const messages = db
-          .prepare("SELECT content FROM messages WHERE room_id = ?")
-          .all(roomId);
-        return res.status(200).send(messages);
+      // check if this name in rooms database is exists
+      const result = db.prepare("SELECT * FROM rooms WHERE name = ?").get(name);
+      if (result !== undefined) {
+        return res.status(400).send({ error: "This room has already exists" });
       }
-      res.status(403).send({
-        error: "You can only access to this room if you are a participant",
-      });
+      // insert new room into rooms table
+      const roomId = db
+        .prepare(
+          "INSERT INTO rooms (name, rooms_group, creator_id) VALUES (?,?,?)"
+        )
+        .run(name, group, user.id);
+      // insert new room into participants table
+      db.prepare(
+        "INSERT INTO room_participants (room_id, user_id) VALUES (?,?)"
+      ).run(roomId.lastInsertRowid, user.id);
+      res.status(200).send({ message: "New room has successfuly created" });
     } catch (error) {
       res.status(400).send({ error: error.message });
     }
   }
 );
+
+// get a room
+messagesRouter.get("/rooms/:roomId", (req, res) => {
+  try {
+    const { roomId } = req.params;
+    // get the user id of the person who logged in
+    const user = verifyUser(req);
+    if (user === null) {
+      return res.status(401).send({ error: "Unauthorized." });
+    }
+    // check if he is a participant of the room (if he is the crator of the room he is automatically in the room_participants table)
+    const participantOfThisRoom = db
+      .prepare(
+        "SELECT * FROM room_participants WHERE room_id = ? AND user_id = ?"
+      )
+      .get(roomId, user.id);
+    if (participantOfThisRoom !== undefined) {
+      // user can access the room, so he can see the messages
+      const messages = db
+        .prepare("SELECT content FROM messages WHERE room_id = ?")
+        .all(roomId);
+      return res.status(200).send(messages);
+    }
+    res.status(403).send({
+      error: "You can only access to this room if you are a participant",
+    });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+});
 
 // show rooms, what the user created & where he/she is invited
 messagesRouter.get("/rooms", (req, res) => {
@@ -196,7 +166,6 @@ messagesRouter.get("/rooms", (req, res) => {
 // delete a room
 messagesRouter.delete(
   "/rooms/:roomId",
-  validateBody(roomGetBodySchema),
   (req, res) => {
     try {
       const { roomId } = req.params;
@@ -233,6 +202,10 @@ messagesRouter.delete(
 
 // ---- INVITATIONS
 // room invitations for chats
+const invitationsBodySchema = z.object({
+  invitedUserId: z.number(),
+  roomId: z.number(),
+});
 messagesRouter.post(
   "/invitations/group/",
   validateBody(invitationsBodySchema),
@@ -315,10 +288,10 @@ messagesRouter.get("/invitations", (req, res) => {
 // user accepts the invitation
 messagesRouter.post(
   "/invitations/accept/:invitationId",
-  validateBody(acceptInvitationsBodySchema),
+  validateBody(invitationsBodySchema),
   (req, res) => {
     try {
-      const { roomId, invitedUserId } = req.body;
+      const { invitedUserId, roomId } = req.body;
       const { invitationId } = req.params;
       // if the user is the part of the room he can't accept again
       const invited = db
@@ -354,24 +327,20 @@ messagesRouter.get("/invitations/all", (req, res) => {
 });
 
 // user who got the invitation can delete it
-messagesRouter.delete(
-  "/invitations/:invitationId",
-  validateBody(deleteInvitationsBodySchema),
-  (req, res) => {
-    try {
-      const { invitationId } = req.params;
-      // get the user id of the person who logged in
-      const user = verifyUser(req);
-      if (user === null) {
-        return res.status(401).send({ error: "Unauthorized." });
-      }
-      db.prepare("DELETE FROM room_invitations WHERE id = ?").run(invitationId);
-      res.send({ message: "Invitation is successfully deleted" });
-    } catch (error) {
-      res.status(400).send({ error: error.message });
+messagesRouter.delete("/invitations/:invitationId", (req, res) => {
+  try {
+    const { invitationId } = req.params;
+    // get the user id of the person who logged in
+    const user = verifyUser(req);
+    if (user === null) {
+      return res.status(401).send({ error: "Unauthorized." });
     }
+    db.prepare("DELETE FROM room_invitations WHERE id = ?").run(invitationId);
+    res.send({ message: "Invitation is successfully deleted" });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
   }
-);
+});
 
 // check room_participants for test purposes
 messagesRouter.get("/participants/", (req, res) => {
@@ -384,22 +353,18 @@ messagesRouter.get("/participants/", (req, res) => {
 });
 
 // shows participants in a specific room
-messagesRouter.get(
-  "/participants/:roomId",
-  validateBody(roomGetBodySchema),
-  (req, res) => {
-    try {
-      const { roomId } = req.params;
-      const result = db
-        .prepare(
-          "SELECT name FROM users INNER JOIN room_participants ON users.id = room_participants.user_id WHERE room_participants.room_id = ?"
-        )
-        .all(roomId);
-      res.send(result);
-    } catch (error) {
-      res.status(400).send({ error: error.message });
-    }
+messagesRouter.get("/participants/:roomId", (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const result = db
+      .prepare(
+        "SELECT name FROM users INNER JOIN room_participants ON users.id = room_participants.user_id WHERE room_participants.room_id = ?"
+      )
+      .all(roomId);
+    res.send(result);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
   }
-);
+});
 
 export { messagesRouter };
