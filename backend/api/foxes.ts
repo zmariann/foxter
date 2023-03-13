@@ -7,7 +7,14 @@ import { validateBody } from "./validation";
 const foxRouter = express.Router();
 
 foxRouter.get("/foxes", (req, res) => {
-  const data = db.prepare("SELECT * FROM foxes ORDER BY created_at DESC").all();
+  const data = db
+    .prepare(
+      `SELECT f.*, COUNT(l.id) AS likes
+      FROM foxes f 
+      LEFT JOIN fox_likes l ON f.id = l.fox_id GROUP BY(f.id)
+      ORDER BY f.created_at DESC;`
+    )
+    .all();
   res.send(data);
 });
 
@@ -61,7 +68,8 @@ foxRouter.delete("/foxes/:id", async (req, res) => {
     const foxId: number = parseInt(req.params.id);
     // Prepare a DELETE statement to remove the fox with the specified id
     db.prepare("DELETE FROM hashtags WHERE fox_id = ?").run(foxId);
-    db.prepare("DELETE FROM foxes WHERE id = ?").run(foxId);
+    db.prepare("DELETE FROM fox_likes WHERE fox_id = ?").run(foxId);
+    db.prepare("DELETE FROM foxes WHERE id = ?").run(foxId);  
     res.status(200).send("Entry deleted");
   } catch (error) {
     res.status(400).send(error.message);
