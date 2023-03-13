@@ -15,7 +15,7 @@ const validateBody = (schema: Schema) => {
       next();
     } catch (error) {
       // If validation fails, send an error response with the provided message or the validation errors
-       return res.status(401).send(error.flatten());
+       return res.status(400).send(error.flatten());
     }
   };
 };

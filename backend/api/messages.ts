@@ -81,38 +81,34 @@ const roomsBodySchema = z.object({
   name: z.string(),
   group: z.number(),
 });
-messagesRouter.post(
-  "/rooms",
-  validateBody(roomsBodySchema),
-  (req, res) => {
-    try {
-      const { name, group } = req.body;
-      // get the user id of the person who logged in
-      const user = verifyUser(req);
-      if (user === null) {
-        return res.status(401).send({ error: "Unauthorized." });
-      }
-      // check if this name in rooms database is exists
-      const result = db.prepare("SELECT * FROM rooms WHERE name = ?").get(name);
-      if (result !== undefined) {
-        return res.status(400).send({ error: "This room has already exists" });
-      }
-      // insert new room into rooms table
-      const roomId = db
-        .prepare(
-          "INSERT INTO rooms (name, rooms_group, creator_id) VALUES (?,?,?)"
-        )
-        .run(name, group, user.id);
-      // insert new room into participants table
-      db.prepare(
-        "INSERT INTO room_participants (room_id, user_id) VALUES (?,?)"
-      ).run(roomId.lastInsertRowid, user.id);
-      res.status(200).send({ message: "New room has successfuly created" });
-    } catch (error) {
-      res.status(400).send({ error: error.message });
+messagesRouter.post("/rooms", validateBody(roomsBodySchema), (req, res) => {
+  try {
+    const { name, group } = req.body;
+    // get the user id of the person who logged in
+    const user = verifyUser(req);
+    if (user === null) {
+      return res.status(401).send({ error: "Unauthorized." });
     }
+    // check if this name in rooms database is exists
+    const result = db.prepare("SELECT * FROM rooms WHERE name = ?").get(name);
+    if (result !== undefined) {
+      return res.status(400).send({ error: "This room has already exists" });
+    }
+    // insert new room into rooms table
+    const roomId = db
+      .prepare(
+        "INSERT INTO rooms (name, rooms_group, creator_id) VALUES (?,?,?)"
+      )
+      .run(name, group, user.id);
+    // insert new room into participants table
+    db.prepare(
+      "INSERT INTO room_participants (room_id, user_id) VALUES (?,?)"
+    ).run(roomId.lastInsertRowid, user.id);
+    res.status(200).send({ message: "New room has successfuly created" });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
   }
-);
+});
 
 // get a room
 messagesRouter.get("/rooms/:roomId", (req, res) => {
@@ -123,22 +119,39 @@ messagesRouter.get("/rooms/:roomId", (req, res) => {
     if (user === null) {
       return res.status(401).send({ error: "Unauthorized." });
     }
+    console.log(user.id);
     // check if he is a participant of the room (if he is the crator of the room he is automatically in the room_participants table)
     const participantOfThisRoom = db
       .prepare(
         "SELECT * FROM room_participants WHERE room_id = ? AND user_id = ?"
       )
       .get(roomId, user.id);
-    if (participantOfThisRoom !== undefined) {
-      // user can access the room, so he can see the messages
-      const messages = db
-        .prepare("SELECT content FROM messages WHERE room_id = ?")
-        .all(roomId);
-      return res.status(200).send(messages);
+    console.log(participantOfThisRoom);
+    // user can access the room, so he can see the messages
+    if (participantOfThisRoom === undefined) {
+      return res.status(403).send({
+        error: "You can only access to this room if you are a participant",
+      });
     }
-    res.status(403).send({
-      error: "You can only access to this room if you are a participant",
-    });
+    const messages = db
+      .prepare(
+        "SELECT id, content FROM messages WHERE room_id = ? ORDER BY id DESC"
+      )
+      .all(roomId);
+    res.status(200).send(messages);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+});
+
+// get the name of the room
+messagesRouter.get("/rooms/name/:roomId", (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const roomName = db
+      .prepare("SELECT name FROM rooms WHERE id = ?")
+      .get(roomId);
+    res.status(200).send(roomName);
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
@@ -164,41 +177,34 @@ messagesRouter.get("/rooms", (req, res) => {
 });
 
 // delete a room
-messagesRouter.delete(
-  "/rooms/:roomId",
-  (req, res) => {
-    try {
-      const { roomId } = req.params;
-      // get the user id of the person who logged in
-      const user = verifyUser(req);
-      if (user === null) {
-        return res.status(401).send({ error: "Unauthorized." });
-      }
-      // check if logged in person is the room creator or not
-      const result = db
-        .prepare("SELECT * FROM rooms WHERE id = ? AND creator_id = ?")
-        .get(roomId, user.id);
-      // if she/he it is then delete everything that related to the deleted room
-      if (result !== undefined) {
-        db.prepare("DELETE FROM messages WHERE room_id = ?").run(roomId);
-        db.prepare("DELETE FROM room_participants WHERE room_id = ?").run(
-          roomId
-        );
-        db.prepare("DELETE FROM room_invitations WHERE room_id = ?").run(
-          roomId
-        );
-        db.prepare("DELETE FROM rooms WHERE id = ?").run(roomId);
-        return res.status(200).send("Room is successfully deleted.");
-      }
-      // otherwise send an error
-      res
-        .status(403)
-        .send({ error: "You can delete a room if you are the creator" });
-    } catch (error) {
-      res.status(400).send({ error: error.message });
+messagesRouter.delete("/rooms/:roomId", (req, res) => {
+  try {
+    const { roomId } = req.params;
+    // get the user id of the person who logged in
+    const user = verifyUser(req);
+    if (user === null) {
+      return res.status(401).send({ error: "Unauthorized." });
     }
+    // check if logged in person is the room creator or not
+    const result = db
+      .prepare("SELECT * FROM rooms WHERE id = ? AND creator_id = ?")
+      .get(roomId, user.id);
+    // if she/he it is then delete everything that related to the deleted room
+    if (result !== undefined) {
+      db.prepare("DELETE FROM messages WHERE room_id = ?").run(roomId);
+      db.prepare("DELETE FROM room_participants WHERE room_id = ?").run(roomId);
+      db.prepare("DELETE FROM room_invitations WHERE room_id = ?").run(roomId);
+      db.prepare("DELETE FROM rooms WHERE id = ?").run(roomId);
+      return res.status(200).send("Room is successfully deleted.");
+    }
+    // otherwise send an error
+    res
+      .status(403)
+      .send({ error: "You can delete a room if you are the creator" });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
   }
-);
+});
 
 // ---- INVITATIONS
 // room invitations for chats
