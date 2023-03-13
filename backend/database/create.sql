@@ -27,9 +27,18 @@ FOREIGN KEY (fox_id)
 REFERENCES foxes(id)
 );
 
+----------- fox-likes -----------------------------
+CREATE TABLE IF NOT EXISTS fox_likes (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	fox_id INTEGER NOT NULL,
+	user_id INTEGER NOT NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (fox_id) REFERENCES foxes(id),
+	FOREIGN KEY (user_id) REFERENCES users(id) 
+ );
+ CREATE UNIQUE INDEX IF NOT EXISTS unique_fox_like ON fox_likes (fox_id,user_id);
 
------------------------------------------------
--- messages & room tables
+---------- messages & room tables------------------
 
 CREATE TABLE IF NOT EXISTS messages (
   id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
