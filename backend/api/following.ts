@@ -27,9 +27,9 @@ followRouter.post("/following", validateBody(followBodySchema), async (req, res)
 
         // Check if both users exist in the database
         const usersExistQuery = `
-    SELECT COUNT(*) as count
-    FROM users
-    WHERE id IN (?, ?)
+        SELECT COUNT(*) as count
+        FROM users
+        WHERE id IN (?, ?)
   `
 
         const row = db.prepare(usersExistQuery).get(user.id, followedId)

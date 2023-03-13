@@ -92,15 +92,15 @@ const FoxForm: React.FC = () => {
   
   // Function to follow someone
  const handleFollowing = async (userId:number) =>{
-    console.log(userId)
-    const response = await fetch(`/api/following`, {
+    const response = await fetch("/api/following", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({followedId: userId}),
     })
-    console.log(await response.json())
+    let body = await response.json() 
+    console.log(body)
   }
 
 
