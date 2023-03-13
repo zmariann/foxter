@@ -6,8 +6,8 @@ import { validateBody } from "./validation";
 
 const followRouter = express.Router();
 const followBodySchema = z.object({
-    follower: z.number(),
-    followed: z.number(),
+
+    followedId: z.number(),
 });
 
 
@@ -15,8 +15,15 @@ const followBodySchema = z.object({
 followRouter.post("/following", validateBody(followBodySchema), async (req, res) => {
     console.log("following fired")
     try {
-        const follower = req.body.follower;
-        const followed = req.body.followed;
+        const user = verifyUser(req)
+        if (user == null) {
+            return res.status(401).send({ error: "Unauthorized!" })
+        }
+
+        const followedId = req.body.followedId;
+        if (followedId == user.id) {
+            return res.status(401).send({ error: 'Cannot follow yourself!' })
+        }
 
         // Check if both users exist in the database
         const usersExistQuery = `
@@ -25,7 +32,7 @@ followRouter.post("/following", validateBody(followBodySchema), async (req, res)
     WHERE id IN (?, ?)
   `
 
-        const row = db.prepare(usersExistQuery).get(follower, followed)
+        const row = db.prepare(usersExistQuery).get(user.id, followedId)
 
         if (row.count !== 2) {
             return res.status(404).send({ error: 'User not found' });
@@ -36,7 +43,7 @@ followRouter.post("/following", validateBody(followBodySchema), async (req, res)
         VALUES (?, ?)
     `
 
-        db.prepare(followQuery).run(follower, followed)
+        db.prepare(followQuery).run(user.id, followedId)
 
         res.send({ message: "User followed successfully" })
     } catch (err) {

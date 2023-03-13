@@ -9,6 +9,7 @@ interface Fox {
   id: number;
   content: string;
   created_at: Date;
+  user_id: number;
 }
 
 interface User {
@@ -90,15 +91,16 @@ const FoxForm: React.FC = () => {
 
   
   // Function to follow someone
- const handleFollowing = async (id:number) =>{
-    await fetch(`/api/foxes?id`, {
-      method: "GET",
+ const handleFollowing = async (userId:number) =>{
+    console.log(userId)
+    const response = await fetch(`/api/following`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(id),
+      body: JSON.stringify({followedId: userId}),
     })
-    console.log(id)
+    console.log(await response.json())
   }
 
 
@@ -174,7 +176,7 @@ const FoxForm: React.FC = () => {
                       {fox.content}
                         <span style={{ marginLeft: "10px" }}></span>
                         <button onClick={() => handleDelete(fox.id)} className="absolute right-1 top-1 w-5 h-10 p-1 bg-red-500 rounded-tr-2xl"><p>x</p></button>
-                        <button onClick={() => handleFollowing()} className="absolute right-1 bottom-1 w-5 p-1 bg-blue-400 rounded-br-2xl h-10"><p>f</p></button>
+                        <button onClick={() => handleFollowing(fox.user_id)} className="absolute right-1 bottom-1 w-5 p-1 bg-blue-400 rounded-br-2xl h-10"><p>f</p></button>
                     </div>
                   );
                 })}
@@ -185,7 +187,7 @@ const FoxForm: React.FC = () => {
       </div>
       <div className={`w-[20%] h-screen bg-white mt-4 px-2`}> 
         <div>
-          <input className="focus:ring-2 focus:ring-offset-lime-300 outline-none rounded-2xl w-full pl-5" type="text" placeholder="Search foxes" p-8/>
+          <input className="focus:ring-2 focus:ring-offset-lime-300 outline-none rounded-2xl w-full pl-5 p-8" type="text" placeholder="Search foxes" />
         </div>
         <div  className="w-full max-w-md m-auto rounded-2xl bg-whiteFox shadow-md p-5 mt-5">
           Trends

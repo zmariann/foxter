@@ -7,7 +7,7 @@ import { validateBody } from "./validation";
 const foxRouter = express.Router();
 
 foxRouter.get("/foxes", (req, res) => {
-  const data = db.prepare("SELECT * FROM foxes ORDER BY created_at DESC").all();
+  const data = db.prepare("SELECT id, content, created_at as createdAt, user_id as userId FROM foxes ORDER BY created_at DESC").all();
   res.send(data);
 });
 
