@@ -135,7 +135,7 @@ messagesRouter.get("/rooms/:roomId", (req, res) => {
     }
     const messages = db
       .prepare(
-        "SELECT id, content FROM messages WHERE room_id = ? ORDER BY id DESC"
+        "SELECT users.name, messages.id, messages.content FROM messages INNER JOIN users ON messages.user_id = users.id WHERE messages.room_id = ? ORDER BY messages.id DESC"
       )
       .all(roomId);
     res.status(200).send(messages);
@@ -210,16 +210,16 @@ messagesRouter.delete("/rooms/:roomId", (req, res) => {
 // room invitations for chats
 const invitationsBodySchema = z.object({
   invitedUserId: z.number(),
-  roomId: z.number(),
 });
 messagesRouter.post(
-  "/invitations/group/",
+  "/invitations/:roomId",
   validateBody(invitationsBodySchema),
   (req, res) => {
     try {
-      // the id who will get the invitation &
-      // the number of the room where the invitation is addressed
-      const { invitedUserId, roomId } = req.body;
+      // the invitedUserId who will get the invitation &
+      // the roomId is id of the room where the invitation is addressed
+      const { roomId } = req.params;
+      const { invitedUserId } = req.body;
 
       // user who logged in
       const user = verifyUser(req);
@@ -245,19 +245,20 @@ messagesRouter.post(
         .get(roomId, invitedUserId);
       if (invited !== undefined) {
         return res.status(400).send({
-          error: "This user has already part of the room",
+          error: "This user has already the part of the room",
         });
       }
+
       // check if this invitation is exists
       const existingInvitation = db
         .prepare(
-          "SELECT id FROM room_invitations WHERE host_id = ? AND invited_id = ? AND room_id = ?"
+          "SELECT id FROM room_invitations WHERE invited_id = ? AND room_id = ?"
         )
-        .get(user.id, invitedUserId, roomId);
+        .get(invitedUserId, roomId);
       if (existingInvitation !== undefined) {
         return res
           .status(400)
-          .send({ message: "This invitation has already exist" });
+          .send({ error: "This invitation has already exist" });
       }
       db.prepare(
         "INSERT INTO room_invitations (host_id, invited_id, room_id) VALUES (?,?,?)"
@@ -271,6 +272,12 @@ messagesRouter.post(
   }
 );
 
+// get all the user
+messagesRouter.get("/invitations/users", (req, res) => {
+  const data = db.prepare("SELECT id, name FROM users ORDER BY name ASC").all();
+  res.send(data);
+});
+
 // user can check his/her invitations what he got
 messagesRouter.get("/invitations", (req, res) => {
   try {
@@ -282,7 +289,7 @@ messagesRouter.get("/invitations", (req, res) => {
     // get the room names
     const namesOfRooms = db
       .prepare(
-        "SELECT rooms.name FROM rooms INNER JOIN room_invitations ON rooms.id = room_invitations.room_id WHERE invited_id = ? ORDER BY room_invitations.id DESC"
+        "SELECT rooms.name, room_invitations.room_id, room_invitations.id FROM rooms INNER JOIN room_invitations ON rooms.id = room_invitations.room_id WHERE invited_id = ? ORDER BY room_invitations.id DESC"
       )
       .all(user.id);
     res.status(200).send(namesOfRooms);
@@ -292,27 +299,35 @@ messagesRouter.get("/invitations", (req, res) => {
 });
 
 // user accepts the invitation
+const acceptInvitationBodySchema = z.object({
+  roomId: z.number(),
+});
 messagesRouter.post(
   "/invitations/accept/:invitationId",
-  validateBody(invitationsBodySchema),
+  validateBody(acceptInvitationBodySchema),
   (req, res) => {
     try {
-      const { invitedUserId, roomId } = req.body;
+      // get the user id of the person who logged in
+      const user = verifyUser(req);
+      if (user === null) {
+        return res.status(401).send({ error: "Unauthorized." });
+      }
+      const { roomId } = req.body;
       const { invitationId } = req.params;
       // if the user is the part of the room he can't accept again
       const invited = db
         .prepare(
           "SELECT * FROM room_participants WHERE room_id = ? AND user_id = ?"
         )
-        .get(roomId, invitedUserId);
+        .get(roomId, user.id);
       if (invited !== undefined) {
         return res.status(400).send({
-          error: "This user has already part of the room",
+          error: "This user has already the part of the room",
         });
       }
       db.prepare(
         "INSERT INTO room_participants (room_id, user_id) VALUES (?,?)"
-      ).run(roomId, invitedUserId);
+      ).run(roomId, user.id);
       // delete the invitation
       db.prepare("DELETE FROM room_invitations WHERE id = ?").run(invitationId);
       res.status(200).send({ message: "Invitation accepted" });

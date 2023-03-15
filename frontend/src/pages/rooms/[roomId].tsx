@@ -3,19 +3,17 @@ import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-interface Messages {
-  id: number;
-  content: string;
-  name: string;
-}
-
 const singleRoom: React.FC = () => {
+  interface Messages {
+    id: number;
+    content: string;
+    name: string;
+  }
+
   const router = useRouter();
 
   // messages in the room
   const [messages, setMessages] = useState<Messages[]>([]);
-  const [roomName, setName] = useState("");
-
   const dataFetch = async () => {
     //console.log(`/api/rooms/${router.query.roomId}`);
     const data = await (
@@ -25,19 +23,36 @@ const singleRoom: React.FC = () => {
     //console.log(data[0].name);
   };
 
+  // show the name of the room
+  const [roomName, setName] = useState("");
   const roomNameFetch = async () => {
     //console.log(`/api/rooms/${router.query.roomId}`);
     const data = await (
       await fetch(`/api/rooms/name/${router.query.roomId}`)
     ).json();
-    setName(data.name)
+    setName(data.name);
     // console.log(data);
+  };
+
+  // show participants in this room
+  interface Participants {
+    name: string;
+  }
+  const [participants, setparticipants] = useState<Participants[]>([]);
+  const participantsFetch = async () => {
+    //console.log(`/api/rooms/${router.query.roomId}`);
+    const data = await (
+      await fetch(`/api/participants/${router.query.roomId}`)
+    ).json();
+    setparticipants(data);
+    console.log(data);
   };
 
   useEffect(() => {
     if (!router.isReady) return;
     dataFetch();
     roomNameFetch();
+    participantsFetch();
   }, [router.isReady]);
 
   // post a new message
@@ -90,12 +105,23 @@ const singleRoom: React.FC = () => {
     }
   };
 
-
-
   return (
     <div>
       <ToastContainer position="top-center" limit={1} autoClose={1000} />
-      <h1>details about {roomName}</h1>
+      <h1>Welcome in {roomName}</h1>
+      <h1 className="bg-greenFox">participants of this room: </h1>
+      {participants.map((participant) => {
+        return <p className="bg-greenFox">{participant.name}</p>;
+      })}
+      <h1>
+        <a href={"/invitations/" + router.query.roomId}>
+          send invitation to {roomName}
+        </a>
+      </h1>
+
+      <h1>
+        <a href="/rooms">back</a>
+      </h1>
 
       <form>
         <h1>post new message</h1>
@@ -122,7 +148,7 @@ const singleRoom: React.FC = () => {
         {messages.map((message) => {
           return (
             <li>
-              {message.content}
+              user name: {message.name}: message: {message.content}
               <button
                 onClick={() => handleDelete(message.id)}
                 className="bg-greenFox hover:bg-[#387354] text-whiteFox py-2  rounded-full text-center"

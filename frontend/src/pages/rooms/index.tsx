@@ -8,8 +8,8 @@ interface Rooms {
 }
 
 const allRooms: React.FC = () => {
+  // fetch room names
   const [rooms, setRooms] = useState<Rooms[]>([]);
-
   const dataFetch = async () => {
     const data = await (await fetch("/api/rooms")).json();
     setRooms(data);
@@ -20,15 +20,16 @@ const allRooms: React.FC = () => {
     dataFetch();
   }, []);
 
+  // delete
   const handleDelete = async (roomId: number) => {
     try {
       const response = await fetch(`/api/rooms/${roomId}`, {
         method: "DELETE",
       });
-      if (response.status === 400) {
+      if (response.status === 400 || response.status === 403) {
         toast.error((await response.json()).error);
       } else {
-        toast.success("Message successfully deleted");
+        toast.success("Room has successfully deleted");
         dataFetch();
       }
     } catch (error: any) {
@@ -36,8 +37,12 @@ const allRooms: React.FC = () => {
     }
   };
 
+  // ---- Form SUBMIT
+  // select tag:
   const options = ["one-one chat", "group chat"];
+  // name for add a name to the room - input field
   const [name, setRoomName] = useState("");
+  // group to choose the type of the group - select tag
   const [group, setOption] = useState(0);
 
   const handleName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,10 +50,11 @@ const allRooms: React.FC = () => {
   };
 
   const optionHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log("User Selected Value - ", event.target.selectedIndex);
+    //console.log("User Selected Value - ", event.target.selectedIndex);
     setOption(event.target.selectedIndex);
   };
 
+  // send the choosen and given datas to the server
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     if (name === "") {
