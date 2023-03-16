@@ -4,7 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const SendInvitations: React.FC = () => {
-  interface Users {
+  interface User {
     id: number;
     name: string;
   }
@@ -12,7 +12,7 @@ const SendInvitations: React.FC = () => {
   const router = useRouter();
 
   // get users
-  const [users, setUsers] = useState<Users[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   // get user id
   const [invitedUserId, setinvitedUserId] = useState(0);
 
@@ -58,7 +58,10 @@ const SendInvitations: React.FC = () => {
         );
         if (response.status === 400) {
           toast.error((await response.json()).error);
-        } else {
+        } else if (response.status === 403){
+          toast.error((await response.json()).error);
+        }
+        else {
           toast.success("Invitation has been successfully sent");
         }
       } catch (error: any) {
@@ -73,7 +76,7 @@ const SendInvitations: React.FC = () => {
       <h1>invitation room id {roomId}</h1>
 
       <select onChange={optionHandler}>
-        <option>Please choose one option</option>
+        <option>Choose a user</option>
         {users.map((user) => (
           <option data-key={user.id}>{user.name}</option>
         ))}

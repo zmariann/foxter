@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 interface Rooms {
   name: string;
   id: number;
+  rooms_group: number;
 }
 
 const allRooms: React.FC = () => {
@@ -50,7 +51,7 @@ const allRooms: React.FC = () => {
   };
 
   const optionHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    //console.log("User Selected Value - ", event.target.selectedIndex);
+    console.log("User Selected Value - ", event.target.selectedIndex);
     setOption(event.target.selectedIndex);
   };
 
@@ -68,8 +69,6 @@ const allRooms: React.FC = () => {
           },
           body: JSON.stringify({ name, group }),
         });
-        console.log(name);
-        console.log(group);
         if (response.status === 400) {
           toast.error((await response.json()).error);
         } else {
@@ -97,8 +96,8 @@ const allRooms: React.FC = () => {
         />
         <label>Choose the type of the group </label> <br />
         <select className="bg-greenFox" onChange={optionHandler}>
-          {options.map((option, index) => {
-            return <option key={index}>{option}</option>;
+          {options.map((option) => {
+            return <option>{option}</option>;
           })}
         </select>
         <button
@@ -114,6 +113,9 @@ const allRooms: React.FC = () => {
           return (
             <li>
               <a href={"/rooms/" + room.id}>{room.name}</a>
+              <p>type:
+              {room.rooms_group === 0 && <p>one-one chat</p>}
+              {room.rooms_group === 1 && <p>group chat</p>}</p>
               <button
                 onClick={() => handleDelete(room.id)}
                 className="bg-greenFox hover:bg-[#387354] text-whiteFox py-2  rounded-full text-center"

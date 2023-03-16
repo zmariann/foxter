@@ -167,7 +167,7 @@ messagesRouter.get("/rooms", (req, res) => {
     }
     const rooms = db
       .prepare(
-        "SELECT DISTINCT rooms.name, rooms.id FROM rooms INNER JOIN room_participants ON rooms.id = room_participants.room_id WHERE rooms.creator_id = ? OR room_participants.user_id = ? ORDER BY rooms.name ASC"
+        "SELECT DISTINCT rooms.name, rooms.id, rooms.rooms_group FROM rooms INNER JOIN room_participants ON rooms.id = room_participants.room_id WHERE rooms.creator_id = ? OR room_participants.user_id = ? ORDER BY rooms.name ASC"
       )
       .all(user.id, user.id);
     res.status(200).send(rooms);
@@ -229,14 +229,15 @@ messagesRouter.post(
 
       // check if the user who would like to send an invitation is the creator of the room
       const creator = db
-        .prepare("SELECT creator_id FROM rooms WHERE id = ?")
-        .get(roomId);
+        .prepare("SELECT * FROM rooms WHERE id = ? AND creator_id = ?")
+        .get(roomId, user.id);
       if (creator === undefined) {
         return res.status(403).send({
           error:
             "You can send an invitation if you are the creator of the a room",
         });
       }
+      
       // if he has already the part of the room he can't get an invitation
       const invited = db
         .prepare(
@@ -249,6 +250,17 @@ messagesRouter.post(
         });
       }
 
+      // check what type of group is this
+      // if this is a one-one chat and the only participant is the creator, another ONE user can be invited
+      // if this is a group chat the number of the participants are NOT limited
+      // SELECT rooms.name, room_invitations.room_id, room_invitations.id FROM rooms INNER JOIN room_invitations
+      // ON rooms.id = room_invitations.room_id WHERE invited_id = ? ORDER BY room_invitations.id DESC
+      const participant = db.prepare("SELECT DISTINCT room_participants.user_id, rooms.rooms_group FROM room_participants INNER JOIN rooms ON room_participants.room_id = rooms.id WHERE room_participants.room_id = ?").all(roomId);
+      if (participant[0].rooms_group === 0 && participant.length === 2) {
+        return res.status(400).send({ error: "Only two people can stay in this room" });
+      }
+      
+console.log(participant[0].rooms_group);
       // check if this invitation is exists
       const existingInvitation = db
         .prepare(
