@@ -33,6 +33,7 @@ const FoxForm: React.FC = () => {
     const response = await fetch("/api/foxes");
     // Update the foxes state with the response data
     setFoxes(await response.json());
+    // console.log(await response.json());
     // Log the foxes data in the console for debugging purposes
     console.log(foxes);
   };
@@ -194,14 +195,9 @@ const FoxForm: React.FC = () => {
                       <li key={fox.id} style={{ margin: "20px 0" }}>
                         {fox.content}
                         <span style={{ marginLeft: "10px" }}></span>
-                        
+
                         {/* like Button */}
-                        <LikeButton
-                          foxId={fox.id}
-                          initialLikes={fox.likes}
-                          userId={users.id}
-                          likedByUser={likedByUser}
-                        />
+                        <LikeButton foxId={fox.id} initialLikes={fox.likes} />
 
                         {/* Delete Button */}
                         <button onClick={() => handleDelete(fox.id)}>

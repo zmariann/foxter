@@ -3,20 +3,32 @@ import { useState } from "react";
 interface Props {
   foxId: number;
   initialLikes: number;
-  userId: number;
-  likedByUser: boolean;
 }
 
-const LikeButton: React.FC<Props> = ({ foxId, initialLikes, userId, likedByUser }) => {
+const LikeButton: React.FC<Props> = ({ foxId, initialLikes }) => {
   const [likes, setLikes] = useState<number>(initialLikes);
-  const [liked, setLiked] = useState<boolean>(likedByUser);
+  const [liked, setLiked] = useState<boolean>(false);
+
+  const isUserLikedFox = async () => {
+    try {
+      const response = await fetch(`/api/fox_likes/${foxId}/likeStatus"`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json();
+      if (data.status) {
+        setLiked(true);
+      } else setLiked(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleLike = async () => {
     try {
       const response = await fetch(`/api/fox_likes/${foxId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userId }),
       });
       const data = await response.json();
       setLikes(data.count);
@@ -31,7 +43,6 @@ const LikeButton: React.FC<Props> = ({ foxId, initialLikes, userId, likedByUser 
       const response = await fetch(`/api/fox_likes/${foxId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userId }),
       });
       const data = await response.json();
       setLikes(data.count);
