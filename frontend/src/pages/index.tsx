@@ -8,8 +8,8 @@ import "react-toastify/dist/ReactToastify.css";
 interface Fox {
   id: number;
   content: string;
-  created_at: Date;
-  user_id: number;
+  createdAt: Date;
+  userId: number;
 }
 
 interface User {
@@ -92,6 +92,7 @@ const FoxForm: React.FC = () => {
   
   // Function to follow someone
  const handleFollowing = async (userId:number) =>{
+    console.log(userId)
     const response = await fetch("/api/following", {
       method: "POST",
       headers: {
@@ -176,7 +177,7 @@ const FoxForm: React.FC = () => {
                       {fox.content}
                         <span style={{ marginLeft: "10px" }}></span>
                         <button onClick={() => handleDelete(fox.id)} className="absolute right-1 top-1 w-5 h-10 p-1 bg-red-500 rounded-tr-2xl"><p>x</p></button>
-                        <button onClick={() => handleFollowing(fox.user_id)} className="absolute right-1 bottom-1 w-5 p-1 bg-blue-400 rounded-br-2xl h-10"><p>f</p></button>
+                        <button onClick={() => handleFollowing(fox.userId)} className="absolute right-1 bottom-1 w-5 p-1 bg-blue-400 rounded-br-2xl h-10"><p>f</p></button>
                     </div>
                   );
                 })}
