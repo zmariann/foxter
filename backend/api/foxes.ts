@@ -7,7 +7,14 @@ import { validateBody } from "./validation";
 const foxRouter = express.Router();
 
 foxRouter.get("/foxes", (req, res) => {
-  const data = db.prepare("SELECT id, content, created_at as createdAt, user_id as userId FROM foxes ORDER BY created_at DESC").all();
+  const data = db
+    .prepare(
+      `SELECT f.*, COUNT(l.id) AS likes
+      FROM foxes f 
+      LEFT JOIN fox_likes l ON f.id = l.fox_id GROUP BY(f.id)
+      ORDER BY f.created_at DESC;`
+    )
+    .all();
   res.send(data);
 });
 
@@ -25,9 +32,30 @@ foxRouter.post("/foxes", validateBody(foxesBodySchema), (req, res) => {
     if (user === null) {
       return res.status(401).send({ error: "Unauthorized." });
     }
-    const stmt = db
+    const hashtagUnfiltered = content.match(/#[a-zA-Z0-9]+/g); // Find all hashtags in the content
+    const hashtags: Array<string> = Array.from(new Set(hashtagUnfiltered));
+
+    const foxStmt = db
       .prepare("INSERT INTO foxes (content, user_id) VALUES (?,?)")
       .run(content, user.id);
+    const foxId = foxStmt.lastInsertRowid;
+    const hashtagsLength = hashtags.length > 10 ? 10 : hashtags.length;
+
+    if (hashtagsLength > 0) {
+      const insertStmt = db.prepare(
+        "INSERT INTO hashtags (tag, fox_id) VALUES (?, ?)"
+      );
+      for (
+        let hashtagCount = 0;
+        hashtagCount < hashtagsLength;
+        hashtagCount++
+      ) {
+        console.log(hashtags[hashtagCount]);
+        let hashTag = hashtags[hashtagCount].replace("#", "");
+        insertStmt.run(hashTag, foxId);
+      }
+    }
+
     res.status(201).send({ message: "Fox created successfully!" });
   } catch (error) {
     res.status(400).send({ error: error.message });
@@ -37,8 +65,11 @@ foxRouter.post("/foxes", validateBody(foxesBodySchema), (req, res) => {
 // Delete a fox
 foxRouter.delete("/foxes/:id", async (req, res) => {
   try {
+    const foxId: number = parseInt(req.params.id);
     // Prepare a DELETE statement to remove the fox with the specified id
-    db.prepare("DELETE FROM foxes WHERE id = ?").run(req.params.id);
+    db.prepare("DELETE FROM hashtags WHERE fox_id = ?").run(foxId);
+    db.prepare("DELETE FROM fox_likes WHERE fox_id = ?").run(foxId);
+    db.prepare("DELETE FROM foxes WHERE id = ?").run(foxId);
     res.status(200).send("Entry deleted");
   } catch (error) {
     res.status(400).send(error.message);

@@ -3,12 +3,14 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import LikeButton from "../components/LikeButton";
 
 // Define the shape of the fox data
 interface Fox {
   id: number;
   content: string;
   createdAt: Date;
+  likes: number;
   userId: number;
 }
 
@@ -33,6 +35,7 @@ const FoxForm: React.FC = () => {
     const response = await fetch("/api/foxes");
     // Update the foxes state with the response data
     setFoxes(await response.json());
+    // console.log(await response.json());
     // Log the foxes data in the console for debugging purposes
     console.log(foxes);
   };
@@ -87,6 +90,7 @@ const FoxForm: React.FC = () => {
       console.error(error);
     }
   };
+
   
 
   
@@ -108,20 +112,27 @@ const FoxForm: React.FC = () => {
 
   const [open, setOpen] = useState(false);
   const Menus = [
-    {title: "Home", src:"Home"}, 
-    {title: "Explore", src:"Explore"},
-    {title: "Notifications", src:"Notifications"},
-    {title: "Messages", src:"Messages"},
-    {title: "Bookmarks", src:"Bookmarks"},
-    {title: "Profile", src:"Profile"},
-    {title: "More", src:"More"},
-    {title: "New Foxter", src:"Foxter"},]
-  
+    { title: "Home", src: "Home" },
+    { title: "Explore", src: "Explore" },
+    { title: "Notifications", src: "Notifications" },
+    { title: "Messages", src: "Messages" },
+    { title: "Bookmarks", src: "Bookmarks" },
+    { title: "Profile", src: "Profile" },
+    { title: "More", src: "More" },
+    { title: "New Foxter", src: "Foxter" },
+  ];
+
   return (
     <>
-      <div className="flex" >
-      <div className={`${open ? "w-[10%]": "w-[5%]"} duration-300 h-screen p-5 pt-8 bg-white relative`}>
-        <img src="/Openicon.png" className={`absolute cursor-pointer
+      <div className="flex">
+        <div
+          className={`${
+            open ? "w-[10%]" : "w-[5%]"
+          } duration-300 h-screen p-5 pt-8 bg-white relative`}
+        >
+          <img
+            src="/Openicon.png"
+            className={`absolute cursor-pointer
         -right-3 top-9 w-4 border-white ${open && "rotate-180"}`}
         onClick={()=> setOpen(!open)}
         />
@@ -200,7 +211,7 @@ const FoxForm: React.FC = () => {
           Footer
         </div>
       </div>
-      </div>;
+      ;
     </>
   );
 };
