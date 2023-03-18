@@ -122,14 +122,13 @@ const FoxForm: React.FC = () => {
     { title: "New Foxter", src: "Foxter" },
   ];
 
-  return (
-    <>
-      <div className="flex">
+return (
+        <>
+          <div className="flex">
         <div
           className={`${
             open ? "w-[10%]" : "w-[5%]"
-          } duration-300 h-screen p-5 pt-8 bg-white relative`}
-        >
+          } duration-300 h-screen p-5 pt-8 bg-white relative`}>
           <img
             src="/Openicon.png"
             className={`absolute cursor-pointer
@@ -187,6 +186,8 @@ const FoxForm: React.FC = () => {
                     <div key={fox.id} className= "flex w-full max-w-md m-auto rounded-2xl bg-whiteFox shadow-md mt-5 p-8 relative">
                       {fox.content}
                         <span style={{ marginLeft: "10px" }}></span>
+                        {/* like Button */}
+                        <LikeButton foxId={fox.id} initialLikes={fox.likes} />
                         <button onClick={() => handleDelete(fox.id)} className="absolute right-1 top-1 w-5 h-10 p-1 bg-red-500 rounded-tr-2xl"><p>x</p></button>
                         <button onClick={() => handleFollowing(fox.userId)} className="absolute right-1 bottom-1 w-5 p-1 bg-blue-400 rounded-br-2xl h-10"><p>f</p></button>
                     </div>
@@ -210,11 +211,10 @@ const FoxForm: React.FC = () => {
         <div className="w-full max-w-md m-auto rounded-2xl bg-white p-5 mt-5">
           Footer
         </div>
-      </div>
-      ;
+      </div>;
     </>
   );
-};
+
 
 const Navigation: React.FC<User> = ({
   isAuthenticated,
