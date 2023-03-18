@@ -9,9 +9,11 @@ require("dotenv").config();
 import { foxRouter } from "./api/foxes";
 import { loggerMiddleware } from "./api/logger";
 import { authRouter } from "./api/auth";
-import { validateBody }  from  "./api/validation";
+// import { authMiddleware } from "./api/authMiddleware";
+// import { validateBody }  from  "./api/validation";
 import { userRouter } from "./api/users";
-import { hTagRouter } from "./api/hashtag"
+import { hTagRouter } from "./api/hashtag";
+import { likesRouter} from "./api/likes";
 
 const app = express();
 
@@ -25,7 +27,8 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(loggerMiddleware);
-app.use("/api", [foxRouter,authRouter, userRouter, hTagRouter]);
+// app.use(authMiddleware);
+app.use("/api", [foxRouter,authRouter, userRouter, hTagRouter, likesRouter]);
 
 app.listen(PORT, () => {
   console.log(`Server listening at port ${PORT}`);
