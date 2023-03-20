@@ -208,35 +208,6 @@ return (
       </div>;
   </div>
 );}
+
+
 export default FoxForm;
-
-
-/* const Navigation: React.FC<User> = ({
-  isAuthenticated,
-  onLoginClick,
-  onLogoutClick}) => {
-  return (
-    <nav>
-      <ul>
-        <li>
-          <Link href="/">
-            <a>Home</a>
-          </Link>
-        </li>
-        <li>
-          <Link href="/Messages">
-            <a>Messages</a>
-          </Link>
-        </li>
-        {isAuthenticated ? (
-          <li>
-            <button onClick={onLogoutClick}>Logout</button>
-          </li>
-        ) : (
-          <li>
-            <button onClick={onLoginClick}>Login</button>
-          </li>
-        )}
-      </ul>
-    </nav>
-); */
