@@ -123,23 +123,19 @@ const FoxForm: React.FC = () => {
   ];
 
 return (
-        <>
-          <div className="flex">
+      <div className="flex">
         <div
           className={`${
             open ? "w-[10%]" : "w-[5%]"
           } duration-300 h-screen p-5 pt-8 bg-white relative`}>
           <img
             src="/Openicon.png"
-            className={`absolute cursor-pointer
-        -right-3 top-9 w-4 border-white ${open && "rotate-180"}`}
-        onClick={()=> setOpen(!open)}
-        />
+            className={`absolute cursor-pointer-right-3 top-9 w-4 border-white ${open && "rotate-180"}`}
+            onClick={()=> setOpen(!open)}/>
         <div className="flex gap-x-4 items-center">
           <img src="/logo.png" className={`w-20 cursor-pointer duration-500 ${open && "rotate-[360deg]"}`} />
         
-          <h1 className={`text-black origin-left font-medium text-clip duration-300 ${!open && "scale-0" }`}
-          >
+          <h1 className={`text-black origin-left font-medium text-clip duration-300 ${!open && "scale-0" }`}>
             Foxter
           </h1>
         </div>
@@ -161,12 +157,10 @@ return (
               type="text"
               value={text}
               onChange={(event) => setText(event.target.value)}
-              className="p-[20px] text-[18px] rounded-l-2xl shadow-md"
-            />
+              className= "p-[20px] text-[18px]rounded-l-2xl shadow-md"/>
             {/* Submit button for posting the fox */}
             <button
-              type="submit" className="p-[20px] text-[18px] bg-greenFox rounded-r-2xl shadow-md"
-            >
+              type="submit" className="p-[20px] text-[18px] bg-greenFox rounded-r-2xl shadow-md">
               Post a fox
             </button>
           </form>
@@ -212,15 +206,15 @@ return (
           Footer
         </div>
       </div>;
-    </>
-  );
+  </div>
+);}
+export default FoxForm;
 
 
-const Navigation: React.FC<User> = ({
+/* const Navigation: React.FC<User> = ({
   isAuthenticated,
   onLoginClick,
-  onLogoutClick,
-}) => {
+  onLogoutClick}) => {
   return (
     <nav>
       <ul>
@@ -245,7 +239,4 @@ const Navigation: React.FC<User> = ({
         )}
       </ul>
     </nav>
-  );
-};
-
-export default FoxForm;
+); */
