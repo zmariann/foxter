@@ -10,10 +10,11 @@ import { foxRouter } from "./api/foxes";
 import { loggerMiddleware } from "./api/logger";
 import { authRouter } from "./api/auth";
 // import { authMiddleware } from "./api/authMiddleware";
-// import { validateBody }  from  "./api/validation";
+// import { validateBody } from "./api/validation";
 import { userRouter } from "./api/users";
+import { followRouter } from "./api/following"
 import { hTagRouter } from "./api/hashtag";
-import { likesRouter} from "./api/likes";
+import { likesRouter } from "./api/likes";
 
 const app = express();
 
@@ -28,7 +29,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(loggerMiddleware);
 // app.use(authMiddleware);
-app.use("/api", [foxRouter,authRouter, userRouter, hTagRouter, likesRouter]);
+app.use("/api", [foxRouter, authRouter, userRouter, followRouter, hTagRouter, likesRouter]);
 
 app.listen(PORT, () => {
   console.log(`Server listening at port ${PORT}`);
