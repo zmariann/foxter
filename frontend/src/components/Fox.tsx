@@ -2,12 +2,12 @@ import React from "react";
 import LikeButton from "../components/LikeButton";
 import type { FoxProps } from "../../../shared/types";
 
-interface Props {
+interface FProps {
   fox: FoxProps;
   onDeleteFox: (id: number) => void;
 }
 
-const Fox: React.FC<Props> = ({ fox, onDeleteFox }) => {
+const Fox: React.FC<FProps> = ({ fox, onDeleteFox }) => {
   const handleDelete = async (id: number) => {
     try {
       await fetch(`/api/foxes/${id}`, {

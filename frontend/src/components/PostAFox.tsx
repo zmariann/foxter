@@ -29,7 +29,7 @@ const PostAFox: React.FC<PostAFoxProps> = ({ onRefresh }) => {
     <div style={{ display: "flex", flexDirection: "column" }}>
       <form onSubmit={handleSubmit}>
         <label>
-          Content:
+          Post a Fox
           <input
             type="text"
             value={text}
