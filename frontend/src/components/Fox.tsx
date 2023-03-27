@@ -21,18 +21,23 @@ const Fox: React.FC<FProps> = ({ fox, onDeleteFox }) => {
 
   return (
     <>
-      <li key={fox.id} style={{ margin: "20px 0" }}>
-        {fox.content}
-        <span style={{ marginLeft: "10px" }}></span>
-
-        {/* like Button */}
-        <LikeButton foxId={fox.id} initialLikes={fox.likes} />
-
-        {/* Delete Button */}
-        <button onClick={() => handleDelete(fox.id)}>Delete</button>
+      <li className="bg-white p-6 rounded shadow mb-8 flex flex-col max-w-xl">
+        {/* Fox Content */}
+        <p className="text-gray-900 text-lg">{fox.content}</p>
+        <div className="flex items-center mt-4">
+          {/* Like Button */}
+          <LikeButton foxId={fox.id} initialLikes={fox.likes} />
+  
+          {/* Delete Button */}
+          <button
+            onClick={() => handleDelete(fox.id)}
+            className="ml-4 bg-yellow-500 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Delete
+          </button>
+        </div>
       </li>
     </>
   );
 };
-
 export default Fox;
