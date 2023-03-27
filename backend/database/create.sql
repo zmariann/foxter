@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
   password TEXT NOT NULL,
+  followers_count INTEGER,
+  profile_image_url TEXT,
   UNIQUE (name)
 );
 
@@ -71,4 +73,12 @@ CREATE TABLE IF NOT EXISTS room_invitations  (
   FOREIGN KEY (host_id) REFERENCES users(id),
   FOREIGN KEY (invited_id) REFERENCES users(id),
   FOREIGN KEY (room_id) REFERENCES rooms(id)
+);
+
+CREATE TABLE IF NOT EXISTS followers (
+  id INTEGER PRIMARY KEY,
+  follower INTEGER NOT NULL,
+  followed INTEGER NOT NULL,
+  FOREIGN KEY (follower) REFERENCES users (id),
+  FOREIGN KEY (followed) REFERENCES users (id)
 );
