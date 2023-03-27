@@ -11,7 +11,7 @@ hTagRouter.get("/htsearch", (req: Request, res: Response) => {
       FROM foxes AS fox
       LEFT JOIN hashtags AS tag ON tag.fox_id = fox.id
       WHERE tag.tag LIKE ?
-      ORDER BY fox.created_at DESC
+      ORDER BY fox.created_at as createdAt DESC
       `
     )
     .all(hashtag);
