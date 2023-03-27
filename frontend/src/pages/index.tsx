@@ -128,7 +128,8 @@ const FoxForm: React.FC = () => {
                 {foxes.map((fox) => {
                   return <Fox fox={fox} onDeleteFox={onDeleteFox} />;
                 })}
-                                  
+                {/* <button onClick={() => handleDelete(fox.id)} className="absolute right-1 top-1 w-5 h-10 p-1 bg-red-500 rounded-tr-2xl"><p>x</p></button>
+                    <button onClick={() => handleFollowing(fox.userId)} className="absolute right-1 bottom-1 w-5 p-1 bg-blue-400 rounded-br-2xl h-10"><p>f</p></button> */}
               </div>
             )}
           </div>
