@@ -1,7 +1,7 @@
 interface FoxProps {
   id: number;
   content: string;
-  created_at: Date;
+  createdAt: Date;
   likes: number;
 }
 export { FoxProps };
