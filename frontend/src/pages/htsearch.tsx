@@ -3,13 +3,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-// Define the shape of the fox data
-interface Fox {
-  id: number;
-  content: string;
-  created_at: Date;
-}
+import type { FoxProps } from "../../../shared/types";
 
 interface User {
   name: string;
@@ -18,14 +12,12 @@ interface User {
   onLogoutClick: () => void;
 }
 
-interface Props {}
-
-const SearchHashTag: React.FC<Props> = () => {
+const SearchHashTag: React.FC = () => {
   const [query, setQuery] = useState("");
   // State to store the search result data
   //const [searchResult, setSearchResult] = useState(null);
 
-  const [searchResult, setSearchResult] = useState<null | Fox[]>(null);
+  const [searchResult, setSearchResult] = useState<null | FoxProps[]>(null);
 
   const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
