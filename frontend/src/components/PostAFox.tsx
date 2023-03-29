@@ -35,7 +35,6 @@ const PostAFox: React.FC<PostAFoxProps> = ({ onRefresh }) => {
   // rendering PostAFox component/
   return (
     <div className="flex flex-col items-center mt-8">
-      Form
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md p-4 bg-white shadow-md rounded"
