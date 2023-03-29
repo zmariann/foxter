@@ -3,5 +3,6 @@ interface FoxProps {
   content: string;
   createdAt: Date;
   likes: number;
+  userId: number;
 }
 export { FoxProps };
