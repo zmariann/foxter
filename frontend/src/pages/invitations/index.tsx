@@ -7,14 +7,18 @@ const Invitations: React.FC = () => {
     id: number;
     room_id: number;
     name: string;
+    host: string;
   }
 
   const [invitations, setInvitations] = useState<Invitations[]>([]);
 
   // fetch rooms
   const roomNameFetch = async () => {
-    //console.log(`/api/rooms/${router.query.roomId}`);
-    const data = await (await fetch("/api/invitations")).json();
+    const response = await fetch("/api/invitations");
+    const data = await response.json();
+    if (!response.ok) {
+      throw data.error;
+    }
     setInvitations(data);
     console.log(data);
   };
@@ -50,7 +54,9 @@ const Invitations: React.FC = () => {
         },
         body: JSON.stringify({ roomId }),
       });
-      if (response.status === 400) {
+      if (response.status === 401) {
+        toast.error((await response.json()).error);
+      } else if (response.status === 400) {
         toast.error((await response.json()).error);
       } else {
         toast.success("Invitation has been successfully sent");
@@ -62,31 +68,51 @@ const Invitations: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="container m-auto grid grid-cols-[20%_minmax(50%,_1fr)_30%]">
       <ToastContainer position="top-center" limit={1} autoClose={1000} />
-      <h1>invitations</h1>
 
-      <ul>
+      <div className="border-x-[3px] border-borderGrey">
+        <div className="flex">
+          <div className="m-[30px] h-8 w-8">
+            <a href="/">
+              <img alt="back" src="/back.png" />
+            </a>
+          </div>
+
+          <div className="flex items-center">
+            <div className="font-bold text-darkFox text-lg">invitations</div>
+          </div>
+        </div>
+
         {invitations.map((invitation) => {
           return (
-            <li>
+            <div className="flex justify-between items-center pl-5 pt-3 pb-3 border-b-[3px] border-borderGrey font-medium text-darkFox text-lg">
+
+<div>
               {invitation.name}
-              <button
-                onClick={() => handleAccept(invitation.room_id, invitation.id)}
-                className="bg-greenFox hover:bg-[#387354] text-whiteFox py-2  rounded-full text-center"
-              >
-                accept invitation
-              </button>
-              <button
-                onClick={() => handleDelete(invitation.id)}
-                className="bg-greenFox hover:bg-[#387354] text-whiteFox py-2  rounded-full text-center"
-              >
-                delete
-              </button>
-            </li>
+              <span className="text-sm text-lightGray justify-start"> sent by <a href="/" className="text-darkFox underline">{invitation.host}</a></span>
+              </div>
+
+              <div>
+                <button
+                  onClick={() =>
+                    handleAccept(invitation.room_id, invitation.id)
+                  }
+                  className="text-sm font-medium bg-greenFox hover:bg-[#387354] text-whiteFox py-1 rounded-full text-center px-[10px] mr-3"
+                >
+                  accept invitation
+                </button>
+                <button
+                  onClick={() => handleDelete(invitation.id)}
+                  className="text-sm font-medium bg-stone-300 text-whiteFox py-1 rounded-full text-center px-[10px] mr-3"
+                >
+                  delete
+                </button>
+              </div>
+            </div>
           );
         })}
-      </ul>
+      </div>
     </div>
   );
 };

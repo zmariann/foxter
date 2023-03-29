@@ -28,17 +28,27 @@ const SendInvitations: React.FC = () => {
     }
   };
 
-  const { roomId } = router.query;
+  // show the name of the room
+  const [roomName, setName] = useState("");
+  const roomNameFetch = async () => {
+    const response = await fetch(`/api/rooms/name/${router.query.roomId}`);
+    const data = await response.json();
+    //console.log(data);
+    setName(data.name);
+  };
 
   const dataFetch = async () => {
-    const data = await (await fetch(`/api/invitations/users`)).json();
+    const response = await fetch(`/api/invitations/users`);
+    const data = await response.json();
     setUsers(data);
-    console.log(data);
+    //console.log(data);
   };
 
   useEffect(() => {
+    if (!router.isReady) return;
     dataFetch();
-  }, []);
+    roomNameFetch();
+  }, [router.isReady]);
 
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
@@ -58,10 +68,11 @@ const SendInvitations: React.FC = () => {
         );
         if (response.status === 400) {
           toast.error((await response.json()).error);
-        } else if (response.status === 403){
+        } else if (response.status === 401) {
+          toast.error("You have to log in to send an invitation");
+        } else if (response.status === 403) {
           toast.error((await response.json()).error);
-        }
-        else {
+        } else {
           toast.success("Invitation has been successfully sent");
         }
       } catch (error: any) {
@@ -71,18 +82,40 @@ const SendInvitations: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="container m-auto grid grid-cols-[20%_minmax(50%,_1fr)_30%]">
       <ToastContainer position="top-center" limit={1} autoClose={1000} />
-      <h1>invitation room id {roomId}</h1>
+      <div className="border-x-[3px] border-borderGrey">
+        <div className="flex">
+          <div className="m-[30px] h-8 w-8">
+            <a href={"/rooms/" + router.query.roomId}>
+              <img alt="back" src="/back.png" />
+            </a>
+          </div>
 
-      <select onChange={optionHandler}>
-        <option>Choose a user</option>
-        {users.map((user) => (
-          <option data-key={user.id}>{user.name}</option>
-        ))}
-      </select>
+          <div className="flex items-center">
+            <div className="font-bold text-darkFox text-lg">{roomName}</div>
+          </div>
+        </div>
 
-      <button onClick={handleSubmit}>Send</button>
+        <div className="flex justify-start border-b-[3px] border-borderGrey pb-10 pl-[75px]">
+          <select
+            className="text-sm shadow border rounded-[8px] w-[118px] py-[2px] px-[3px] text-lightGray bg-whiteFox leading-tight focus:outline-none focus:shadow-outline ml-[15px]"
+            onChange={optionHandler}
+          >
+            <option>Choose a user</option>
+            {users.map((user) => (
+              <option data-key={user.id}>{user.name}</option>
+            ))}
+          </select>
+
+          <button
+            className="text-sm font-medium bg-greenFox hover:bg-[#387354] text-whiteFox py-1 rounded-full text-center px-[10px] ml-3"
+            onClick={handleSubmit}
+          >
+            Send
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

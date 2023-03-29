@@ -89,8 +89,8 @@ messagesRouter.post("/rooms", validateBody(roomsBodySchema), (req, res) => {
     if (user === null) {
       return res.status(401).send({ error: "Unauthorized." });
     }
-    // check if this name in rooms database is exists
-    const result = db.prepare("SELECT * FROM rooms WHERE name = ?").get(name);
+    // check if this name if exists created by this user
+    const result = db.prepare("SELECT * FROM rooms WHERE name = ? AND creator_id = ?").get(name, user.id);
     if (result !== undefined) {
       return res.status(400).send({ error: "This room has already exists" });
     }
@@ -119,14 +119,12 @@ messagesRouter.get("/rooms/:roomId", (req, res) => {
     if (user === null) {
       return res.status(401).send({ error: "Unauthorized." });
     }
-    console.log(user.id);
     // check if he is a participant of the room (if he is the crator of the room he is automatically in the room_participants table)
     const participantOfThisRoom = db
       .prepare(
         "SELECT * FROM room_participants WHERE room_id = ? AND user_id = ?"
       )
       .get(roomId, user.id);
-    console.log(participantOfThisRoom);
     // user can access the room, so he can see the messages
     if (participantOfThisRoom === undefined) {
       return res.status(403).send({
@@ -237,7 +235,7 @@ messagesRouter.post(
             "You can send an invitation if you are the creator of the a room",
         });
       }
-      
+
       // if he has already the part of the room he can't get an invitation
       const invited = db
         .prepare(
@@ -253,15 +251,18 @@ messagesRouter.post(
       // check what type of group is this
       // if this is a one-one chat and the only participant is the creator, another ONE user can be invited
       // if this is a group chat the number of the participants are NOT limited
-      // SELECT rooms.name, room_invitations.room_id, room_invitations.id FROM rooms INNER JOIN room_invitations
-      // ON rooms.id = room_invitations.room_id WHERE invited_id = ? ORDER BY room_invitations.id DESC
-      const participant = db.prepare("SELECT DISTINCT room_participants.user_id, rooms.rooms_group FROM room_participants INNER JOIN rooms ON room_participants.room_id = rooms.id WHERE room_participants.room_id = ?").all(roomId);
+      const participant = db
+        .prepare(
+          "SELECT DISTINCT room_participants.user_id, rooms.rooms_group FROM room_participants INNER JOIN rooms ON room_participants.room_id = rooms.id WHERE room_participants.room_id = ?"
+        )
+        .all(roomId);
       if (participant[0].rooms_group === 0 && participant.length === 2) {
-        return res.status(400).send({ error: "Only two people can stay in this room" });
+        return res
+          .status(400)
+          .send({ error: "Only two people can stay in this room" });
       }
-      
-console.log(participant[0].rooms_group);
-      // check if this invitation is exists
+
+      // check if this invitation is exist
       const existingInvitation = db
         .prepare(
           "SELECT id FROM room_invitations WHERE invited_id = ? AND room_id = ?"
@@ -272,12 +273,33 @@ console.log(participant[0].rooms_group);
           .status(400)
           .send({ error: "This invitation has already exist" });
       }
-      db.prepare(
-        "INSERT INTO room_invitations (host_id, invited_id, room_id) VALUES (?,?,?)"
-      ).run(user.id, invitedUserId, roomId);
-      return res
-        .status(200)
-        .send({ message: "New invitation has successfuly created" });
+
+      const existingOneOne = db
+        .prepare(
+          "SELECT DISTINCT room_invitations.id, rooms.rooms_group FROM room_invitations INNER JOIN rooms ON room_invitations.room_id = rooms.id WHERE room_invitations.room_id = ?"
+        )
+        .get(roomId);
+      if (existingOneOne === undefined) {
+        db.prepare(
+          "INSERT INTO room_invitations (host_id, invited_id, room_id) VALUES (?,?,?)"
+        ).run(user.id, invitedUserId, roomId);
+        return res
+          .status(200)
+          .send({ message: "New invitation has successfuly created" });
+      }
+      // check if any invitation is exist in a one-one room
+      // if it exists creator can't send another
+      if (existingOneOne.rooms_group === 0) {
+        return res
+          .status(400)
+          .send({ error: "You can send only one invitation to this room" });
+      }
+      // if this is a group chat creator can send as much as he wants
+      if (existingOneOne.rooms_group === 1) {
+        return res
+          .status(200)
+          .send({ error: "New invitation has successfuly created" });
+      }
     } catch (error) {
       res.status(400).send({ error: error.message });
     }
@@ -301,7 +323,7 @@ messagesRouter.get("/invitations", (req, res) => {
     // get the room names
     const namesOfRooms = db
       .prepare(
-        "SELECT rooms.name, room_invitations.room_id, room_invitations.id FROM rooms INNER JOIN room_invitations ON rooms.id = room_invitations.room_id WHERE invited_id = ? ORDER BY room_invitations.id DESC"
+        "SELECT rooms.name, room_invitations.room_id, room_invitations.id, users.name AS host FROM rooms INNER JOIN room_invitations ON rooms.id = room_invitations.room_id INNER JOIN users ON room_invitations.host_id = users.id WHERE invited_id = ? ORDER BY room_invitations.id DESC"
       )
       .all(user.id);
     res.status(200).send(namesOfRooms);
@@ -337,6 +359,7 @@ messagesRouter.post(
           error: "This user has already the part of the room",
         });
       }
+      // add invitation
       db.prepare(
         "INSERT INTO room_participants (room_id, user_id) VALUES (?,?)"
       ).run(roomId, user.id);
