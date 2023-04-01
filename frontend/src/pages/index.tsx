@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import PostAFox from "@/components/PostAFox";
 import Fox from "@/components/Fox";
 import type { FoxProps } from "../../../shared/types";
+import { useRouter } from "next/router";
 
 interface User {
   name: string;
@@ -17,6 +18,17 @@ interface User {
 const FoxForm: React.FC = () => {
   // State to store the foxes data
   const [foxes, setFoxes] = useState<FoxProps[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter(); 
+
+  const handleLoginClick = () => {
+    setIsLoggedIn(true);
+    router.push("/"); // redirects the user to the home page
+  };
+
+  const handleLogoutClick = () => {
+    setIsLoggedIn(false);
+  };
 
   // Function to fetch the foxes data from the API
   const fetchFoxes = async () => {
@@ -111,7 +123,7 @@ const FoxForm: React.FC = () => {
       </div>
       <div className={`w-[70%] h-screen bg-whiteFox`}>
         <div className="flex h-[15%] items-center justify-center">
-          <PostAFox onRefresh={fetchFoxes} />
+          <PostAFox onRefresh={fetchFoxes} isLoggedIn={isLoggedIn} />
         </div>
 
         {/* || Render Foxes and Delete Button */}
