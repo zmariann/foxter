@@ -21,14 +21,17 @@ const FoxForm: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter(); 
 
-  const handleLoginClick = () => {
-    setIsLoggedIn(true);
-    router.push("/"); // redirects the user to the home page
-  };
-
-  const handleLogoutClick = () => {
-    setIsLoggedIn(false);
-  };
+    //  function to set the user as logged in and redirects them to the home page
+    const handleLoginClick = () => {
+      setIsLoggedIn(true); // updates the isLoggedIn state to true (logged in)
+      router.push("/"); // redirects the user to the home page
+    };
+  
+    // function to set the user as logged out by updating the isLoggedIn state
+    const handleLogoutClick = () => {
+      setIsLoggedIn(false); // updates the isLoggedIn state to false (logged out)
+    };
+  
 
   // Function to fetch the foxes data from the API
   const fetchFoxes = async () => {
