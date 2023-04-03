@@ -1,5 +1,7 @@
 // importing necesary React packages and FoxProp types
 import React, { useState } from "react";
+import { useRouter } from "next/router";
+import { toast } from "react-toastify";
 import type { FoxProps } from "../../../shared/types";
 
 // defining PostAFox component property
@@ -11,12 +13,13 @@ interface PostAFoxProps {
 const PostAFox: React.FC<PostAFoxProps> = ({ onRefresh }) => {
   // setting initial state for the text input field
   const [text, setText] = useState("");
+  const router = useRouter();
   // method to handle text input submision
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       // sending a POST request to the API to generate a new fox entry
-      await fetch("/api/foxes", {
+      const response = await fetch("/api/foxes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -24,6 +27,17 @@ const PostAFox: React.FC<PostAFoxProps> = ({ onRefresh }) => {
         // converting the text-input to a JSON string as the request body
         body: JSON.stringify({ content: text }),
       });
+
+      if (response.status === 401) {
+        // display an error toast messageprompting the user to login
+        toast.error("Please login to continue");
+
+        // Redirect the user  to the login page
+        router.push("/login");
+
+        // return early to prevent further execution of the function
+        return;
+      }
       // clearing the text input field after input submission is sucessfull
       setText("");
       // Refreshing the list of foxes to get the new Fox entry reflected on screen
