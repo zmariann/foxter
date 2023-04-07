@@ -1,10 +1,7 @@
-import React, { useEffect, useState, useRef } from "react";
-import { ToastContainer, toast, Zoom, Flip } from "react-toastify";
+import {ConfirmDialog, showDialog} from "@/components/confirmDialog";
+import React, { useEffect, useState } from "react";
+import { ToastContainer, toast, Flip } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Dialog } from "primereact/dialog";
-import "primeicons/primeicons.css";
-import "primereact/resources/primereact.min.css";
-import "primereact/resources/themes/fluent-light/theme.css";
 
 interface Rooms {
   name: string;
@@ -68,7 +65,6 @@ const allRooms: React.FC = () => {
           transition: Flip,
         });
         dataFetch();
-        setVisible(false);
       }
     } catch (error: any) {
       toast.error(JSON.stringify(error), {
@@ -77,28 +73,6 @@ const allRooms: React.FC = () => {
       });
     }
   };
-
-  /*
-  // confirmation
-  const handleConfirmation = (roomId: number, roomName: string) => {
-    toast.warn(
-      <div>
-        Are you sure you want to delete
-        <span className="text-greenFox"> {roomName}</span>?{" "}
-        <div className="flex justify-end">
-          {" "}
-          <button
-            className="text-sm font-medium bg-stone-500 text-whiteFox py-1 rounded-full text-center px-[10px] mr-3"
-            onClick={() => handleDelete(roomId)}
-          >
-            Yes
-          </button>
-        </div>
-      </div>,
-      { transition: Zoom, autoClose: false, position: "top-center" }
-    );
-  };
-  */
 
   // send datas to the server
   const handleSubmit = async (event: React.SyntheticEvent) => {
@@ -144,8 +118,7 @@ const allRooms: React.FC = () => {
     }
   };
 
-  // dialog
-  const [visible, setVisible] = useState(false);
+
 
   return (
     <div className="container m-auto grid grid-cols-[20%_minmax(50%,_1fr)_30%]">
@@ -199,7 +172,7 @@ const allRooms: React.FC = () => {
             </div>
           </div>
         </form>
-
+        <ConfirmDialog />
         {rooms.map((room) => {
           return (
             <div className="flex justify-between items-center pl-5 pt-3 pb-3 border-b-[3px] border-borderGrey">
@@ -216,35 +189,10 @@ const allRooms: React.FC = () => {
                   {room.rooms_group === 1 && <p>group chat</p>}
                 </p>
               </div>
-
-              <Dialog
-                className="flex justify-center"
-                header="Delete a room"
-                visible={visible}
-                style={{ width: "20vw" }}
-                onHide={() => setVisible(false)}
-                dismissableMask
-              >
-                <p className="m-0">
-                  Are you sure you want to delete{" "}
-                  <span className="text-greenFox"> {room.name}</span>?{" "}
-                </p>
-                <div className="flex justify-end">
-                  <div>
-                    <button
-                      className="text-sm font-medium bg-stone-500 text-whiteFox rounded-full text-center py-[6px] px-[30px] mt-2"
-                      onClick={() => handleDelete(room.id)}
-                    >
-                      Yes
-                    </button>
-                  </div>
-                </div>
-              </Dialog>
-
+              
               <div>
                 <button
-                  onClick={() => setVisible(true)}
-                  /*onClick={() => handleDelete(room.id)}*/
+                  onClick={() => showDialog({content: room.name, onYes: () => handleDelete(room.id), onNo: () =>{}})}
                   className="text-sm font-medium bg-stone-300 text-whiteFox py-1 rounded-full text-center px-[10px] mr-3"
                 >
                   Delete

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {ConfirmDialog, showDialog} from "@/components/confirmDialog";
 
 const Invitations: React.FC = () => {
   interface Invitations {
@@ -92,18 +93,20 @@ const Invitations: React.FC = () => {
               {invitation.name}
               <span className="text-sm text-lightGray justify-start"> sent by <a href="/" className="text-darkFox underline">{invitation.host}</a></span>
               </div>
-
+              
               <div>
                 <button
                   onClick={() =>
                     handleAccept(invitation.room_id, invitation.id)
                   }
-                  className="text-sm font-medium bg-greenFox hover:bg-[#387354] text-whiteFox py-1 rounded-full text-center px-[10px] mr-3"
+                  className="text-sm font-medium bg-greenFox hover:bg-[#387354] text-whiteFox py-1 rounded-full text-center px-[10px] mr-3 mb-3"
                 >
                   accept invitation
                 </button>
+                
+                <ConfirmDialog content={invitation.name} onYes={() => handleDelete(invitation.id)} />
                 <button
-                  onClick={() => handleDelete(invitation.id)}
+                  onClick={() => showDialog()}
                   className="text-sm font-medium bg-stone-300 text-whiteFox py-1 rounded-full text-center px-[10px] mr-3"
                 >
                   delete

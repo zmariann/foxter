@@ -2,10 +2,10 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Dialog } from "primereact/dialog";
 import "primeicons/primeicons.css";
 import "primereact/resources/primereact.min.css";
 import "primereact/resources/themes/fluent-light/theme.css";
+import { ConfirmDialog, showDialog } from "@/components/confirmDialog";
 
 const singleRoom: React.FC = () => {
   interface Messages {
@@ -101,15 +101,11 @@ const singleRoom: React.FC = () => {
       } else {
         toast.success("Message successfully deleted");
         dataFetch();
-        setVisible(false);
       }
     } catch (error: any) {
       toast.error(JSON.stringify(error));
     }
   };
-
-  //dialog
-  const [visible, setVisible] = useState(false);
 
   return (
     <div className="container m-auto grid grid-cols-[20%_minmax(50%,_1fr)_30%] min-h-screen">
@@ -147,63 +143,41 @@ const singleRoom: React.FC = () => {
           </div>
         </div>
 
-
         {/*content*/}
 
         <div className="overflow-auto bg-borderGrey rounded-3xl flex flex-col-reverse h-[400px]">
           {messages.map((message) => {
             return (
-
-                <div className=" text-darkFox mx-5 my-4 border-b-2 border-stone-300 scroll-smooth">
-                  <div className="flex items-center">
-                    <div className="mr-[10px]">
-                      <img alt="back" src="/profile.png" />
-                    </div>
-
-                    <div className="font-bold text-darkFox text-lg">
-                      {message.name}
-                    </div>
+              <div className=" text-darkFox mx-5 my-4 border-b-2 border-stone-300 scroll-smooth">
+                <div className="flex items-center">
+                  <div className="mr-[10px]">
+                    <img alt="back" src="/profile.png" />
                   </div>
 
-                  <div className="mt-2">{message.content}</div>
+                  <div className="font-bold text-darkFox text-lg">
+                    {message.name}
+                  </div>
+                </div>
 
-                  <Dialog
-                className="flex justify-center"
-                header="Delete a message"
-                visible={visible}
-                style={{ width: "20vw" }}
-                onHide={() => setVisible(false)}
-                dismissableMask
-              >
-                <p className="m-0">
-                  Are you sure you want to delete this message?
-                </p>
+                <div className="mt-2">{message.content}</div>
+
+                <ConfirmDialog
+                  content={message.content}
+                  onYes={() => handleDelete(message.id)}
+                />
+
                 <div className="flex justify-end">
-                  <div>
-                    <button
-                      className="text-sm font-medium bg-stone-500 text-whiteFox rounded-full text-center py-[6px] px-[30px] mt-2"
-                      onClick={() => handleDelete(message.id)}
-                    >
-                      Yes
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => showDialog()}
+                    className="text-sm font-medium bg-stone-300 text-whiteFox py-1 rounded-full text-center px-[10px] mt-3 mb-2"
+                  >
+                    Delete
+                  </button>
                 </div>
-              </Dialog>
-
-
-                  <div className="flex justify-end">
-                    <button
-                      onClick={() => setVisible(true)}
-                      className="text-sm font-medium bg-stone-300 text-whiteFox py-1 rounded-full text-center px-[10px] mt-3 mb-2"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
+              </div>
             );
           })}
         </div>
-
 
         {/*post a message*/}
         <div className="mt-3">
@@ -228,10 +202,9 @@ const singleRoom: React.FC = () => {
             </div>
           </form>
         </div>
-        </div>
-        {/*content in the middle end*/}
       </div>
-
+      {/*content in the middle end*/}
+    </div>
   );
 };
 
