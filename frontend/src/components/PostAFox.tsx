@@ -1,8 +1,8 @@
 // importing necesary React packages and FoxProp types
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import { toast } from "react-toastify";
 import type { FoxProps } from "../../../shared/types";
+import { betterFetch } from "../../../frontend/src/utils/utils";
 
 // defining PostAFox component property
 interface PostAFoxProps {
@@ -14,12 +14,16 @@ const PostAFox: React.FC<PostAFoxProps> = ({ onRefresh }) => {
   // setting initial state for the text input field
   const [text, setText] = useState("");
   const router = useRouter();
+
+  const foxInput = useRef(null);
+  
+
   // method to handle text input submision
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       // sending a POST request to the API to generate a new fox entry
-      const response = await fetch("/api/foxes", {
+      const response = await betterFetch("/api/foxes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -27,17 +31,6 @@ const PostAFox: React.FC<PostAFoxProps> = ({ onRefresh }) => {
         // converting the text-input to a JSON string as the request body
         body: JSON.stringify({ content: text }),
       });
-
-      if (response.status === 401) {
-        // display an error toast messageprompting the user to login
-        toast.error("Please login to continue");
-
-        // Redirect the user  to the login page
-        router.push("/login");
-
-        // return early to prevent further execution of the function
-        return;
-      }
       // clearing the text input field after input submission is sucessfull
       setText("");
       // Refreshing the list of foxes to get the new Fox entry reflected on screen
@@ -46,39 +39,114 @@ const PostAFox: React.FC<PostAFoxProps> = ({ onRefresh }) => {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    foxInput.current?.focus();
+  }, []);
+
   // rendering PostAFox component/
   return (
-    <div className="flex flex-col items-center mt-8">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md p-4 bg-white shadow-md rounded"
-      >
-        <div className="flex items-center border-b-2 border-green-500 py-2">
-          <label htmlFor="fox-input" className="sr-only">
-            Post a Fox
-          </label>
-          {/* Input field to enter the fox content. */}
-          <input
-            id="fox-input"
-            type="text"
+    <form className="flex flex-col w-full" onSubmit={handleSubmit}>
+      <div className="flex">
+        <div className="flex-1 pt-2 mt-2">
+          <textarea
+            className="bg-transparent text-gray-400 font-medium text-lg w-full"
+            rows={2}
+            placeholder="What's happening?"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="What's on your mind?"
-            className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
-          />
-          {/* submit button */}
-          <button
-            type="submit"
-            disabled={!text.trim()}
-            className={`bg-greenFox hover:bg-green-700 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
-              !text.trim() && "opacity-50 cursor-not-allowed"
-            }`}
-          >
+            ref={foxInput}
+          ></textarea>
+        </div>
+      </div>
+      <div className="flex">
+        <div className="w-64 px-2">
+          <div className="flex items-center">
+            <div className="flex-1 text-center px-1 py-1 m-2">
+              <a
+                className="mt-1 group flex items-center text-blue-400 px-2 py-2 text-base leading-6 font-medium rounded-full hover:bg-blue-800 hover:text-blue-300"
+                target="_blank"
+              >
+                <svg
+                  className="text-center h-7 w-6"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+              </a>
+            </div>
+
+            <div className="flex-1 text-center py-2 m-2">
+              <a
+                className="mt-1 group flex items-center text-blue-400 px-2 py-2 text-base leading-6 font-medium rounded-full hover:bg-blue-800 hover:text-blue-300"
+                target="_blank"
+              >
+                <svg
+                  className="text-center h-7 w-6"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                  <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </a>
+            </div>
+
+            <div className="flex-1 text-center py-2 m-2">
+              <a
+                className="mt-1 group flex items-center text-blue-400 px-2 py-2 text-base leading-6 font-medium rounded-full hover:bg-blue-800 hover:text-blue-300"
+                target="_blank"
+              >
+                <svg
+                  className="text-center h-7 w-6"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+              </a>
+            </div>
+
+            <div className="flex-1 text-center py-2 m-2">
+              <a
+                className="mt-1 group flex items-center text-blue-400 px-2 py-2 text-base leading-6 font-medium rounded-full hover:bg-blue-800 hover:text-blue-300"
+                target="_blank"
+              >
+                <svg
+                  className="text-center h-7 w-6"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div className="flex-1">
+          <button className="bg-blue-400 mt-5 hover:bg-blue-600 text-white font-bold py-2 px-8 rounded-full mr-8 float-right">
             FoxIt
           </button>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   );
 };
 

@@ -9,8 +9,9 @@ const foxRouter = express.Router();
 foxRouter.get("/foxes", (req, res) => {
   const data = db
     .prepare(
-      `SELECT f.id, f.content, f.created_at as createdAt, f.user_id as userId, COUNT(l.id) AS likes
+      `SELECT f.id, u.name AS userName, f.content, f.created_at as createdAt, f.user_id as userId, COUNT(l.id) AS likes
       FROM foxes f 
+      LEFT JOIN users u ON f.user_id = u.id
       LEFT JOIN fox_likes l ON f.id = l.fox_id GROUP BY(f.id)
       ORDER BY f.created_at DESC;`
     )

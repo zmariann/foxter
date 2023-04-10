@@ -15,6 +15,8 @@ likesRouter.post("/fox_likes/:fox_id", async (req, res) => {
       return res.status(401).send({ error: "Unauthorized." });
     }
     // Insert the like into the database
+    console.log("Like Request")
+    console.log(fox_id, user.id)
     const result = await db
       .prepare("INSERT INTO fox_likes (fox_id, user_id) VALUES (?, ?)")
       .run(fox_id, user.id);
@@ -36,6 +38,9 @@ likesRouter.delete("/fox_likes/:fox_id", async (req, res) => {
     if (user === null) {
       return res.status(401).send({ error: "Unauthorized." });
     }
+    console.log("UnLike Request")
+    console.log(fox_id, user.id)
+    
     // Delete the like from the fox_likes table
     db.prepare(`DELETE FROM fox_likes WHERE user_id = ? AND fox_id = ?`).run(
       user.id,

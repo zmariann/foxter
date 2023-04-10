@@ -1,7 +1,9 @@
 // Including necessary React Packages, LikeComponent and Types
-import React from "react";
+import React, { useEffect } from "react";
 import LikeButton from "../components/LikeButton";
 import type { FoxProps } from "../../../shared/types";
+import DeleteButton from "./DeleteButton";
+import { authStatus } from "@/utils/authStatus";
 
 // Defining Fox component  property
 interface FProps {
@@ -11,39 +13,37 @@ interface FProps {
 
 // Creating the Fox Component
 const Fox: React.FC<FProps> = ({ fox, onDeleteFox }) => {
-  // Method to delete a fox
-  const handleDelete = async (id: number) => {
-    try {
-      // Sending delete request to the API to delete the fox
-      await fetch(`/api/foxes/${id}`, {
-        method: "DELETE",
-      });
-      // Removing the deleted fox from the list
-      onDeleteFox(id);
-    } catch (error) {
-      console.error(error);
-    }
+  const convertInputString = (input: string) => {
+    input = input.replace(
+      /#[a-z0-9A-Z]+/g,
+      '<span style="color: rgb(96,165,250)">$&</span>'
+    );
+    return input;
   };
-// rendering Fox Component 
+
+  // rendering Fox Component
   return (
-    <>
-      <li className="bg-white p-6 rounded shadow mb-8 flex flex-col max-w-xl">
-        {/* Fox Content */}
-        <p className="text-gray-900 text-lg">{fox.content}</p>
-        <div className="flex items-center mt-4">
-          {/* Like Button */}
+    <div className="flex mb-6 flex-col w-full">
+      <p className="text-base leading-6 text-white w-full mb-3">
+        {fox.userName}
+        <span className="ml-4 text-sm leading-5 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
+          {fox.createdAt.toString()}
+        </span>
+      </p>
+      <p
+        dangerouslySetInnerHTML={{ __html: convertInputString(fox.content) }}
+        className="text-base font-medium text-white"
+      ></p>
+      {authStatus() ? (
+        <div className="flex mt-2">
           <LikeButton foxId={fox.id} initialLikes={fox.likes} />
-  
-          {/* Delete Button */}
-          <button
-            onClick={() => handleDelete(fox.id)}
-            className="ml-4 bg-yellow-500 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Delete
-          </button>
+          <DeleteButton foxId={fox.id} onDeleteFox={onDeleteFox} />
         </div>
-      </li>
-    </>
+      ) : (
+        <></>
+      )}
+      <hr className="mt-4" />
+    </div>
   );
 };
 export default Fox;
