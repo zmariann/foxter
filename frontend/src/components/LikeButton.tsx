@@ -54,8 +54,8 @@ const LikeButton: React.FC<Props> = ({ foxId, initialLikes }) => {
   };
 
   useEffect(() => {
-    isUserLikedFox()
-  })
+    isUserLikedFox();
+  });
 
   return (
     <div>

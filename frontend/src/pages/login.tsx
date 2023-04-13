@@ -69,7 +69,6 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen mx-auto p-20 bg-registerLogoutBG">
-      <ToastContainer position="top-center" limit={1} autoClose={900} />
       <div className="w-full max-w-[350px]">
         <form
           onSubmit={handleSignIn}

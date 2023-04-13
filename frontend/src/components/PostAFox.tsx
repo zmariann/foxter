@@ -14,8 +14,7 @@ const PostAFox: React.FC<PostAFoxProps> = ({ onRefresh }) => {
   // setting initial state for the text input field
   const [text, setText] = useState("");
   const router = useRouter();
-
-  const foxInput = useRef(null);
+  const foxInput = useRef<HTMLTextAreaElement>(null);
   
 
   // method to handle text input submision
@@ -64,7 +63,7 @@ const PostAFox: React.FC<PostAFoxProps> = ({ onRefresh }) => {
           <div className="flex items-center">
             <div className="flex-1 text-center px-1 py-1 m-2">
               <a
-                className="mt-1 group flex items-center text-blue-400 px-2 py-2 text-base leading-6 font-medium rounded-full hover:bg-blue-800 hover:text-blue-300"
+                className="mt-1 group flex items-center text-green-400 px-2 py-2 text-base leading-6 font-medium rounded-full hover:bg-green-800 hover:text-green-300"
                 target="_blank"
               >
                 <svg
@@ -83,7 +82,7 @@ const PostAFox: React.FC<PostAFoxProps> = ({ onRefresh }) => {
 
             <div className="flex-1 text-center py-2 m-2">
               <a
-                className="mt-1 group flex items-center text-blue-400 px-2 py-2 text-base leading-6 font-medium rounded-full hover:bg-blue-800 hover:text-blue-300"
+                className="mt-1 group flex items-center text-green-400 px-2 py-2 text-base leading-6 font-medium rounded-full hover:bg-green-800 hover:text-green-300"
                 target="_blank"
               >
                 <svg
@@ -103,7 +102,7 @@ const PostAFox: React.FC<PostAFoxProps> = ({ onRefresh }) => {
 
             <div className="flex-1 text-center py-2 m-2">
               <a
-                className="mt-1 group flex items-center text-blue-400 px-2 py-2 text-base leading-6 font-medium rounded-full hover:bg-blue-800 hover:text-blue-300"
+                className="mt-1 group flex items-center text-green-400 px-2 py-2 text-base leading-6 font-medium rounded-full hover:bg-green-800 hover:text-green-300"
                 target="_blank"
               >
                 <svg
@@ -122,7 +121,7 @@ const PostAFox: React.FC<PostAFoxProps> = ({ onRefresh }) => {
 
             <div className="flex-1 text-center py-2 m-2">
               <a
-                className="mt-1 group flex items-center text-blue-400 px-2 py-2 text-base leading-6 font-medium rounded-full hover:bg-blue-800 hover:text-blue-300"
+                className="mt-1 group flex items-center text-green-400 px-2 py-2 text-base leading-6 font-medium rounded-full hover:bg-green-800 hover:text-green-300"
                 target="_blank"
               >
                 <svg
@@ -141,7 +140,7 @@ const PostAFox: React.FC<PostAFoxProps> = ({ onRefresh }) => {
           </div>
         </div>
         <div className="flex-1">
-          <button className="bg-blue-400 mt-5 hover:bg-blue-600 text-white font-bold py-2 px-8 rounded-full mr-8 float-right">
+          <button className="bg-green-400 mt-5 hover:bg-green-600 text-white font-bold py-2 px-8 rounded-full mr-8 float-right">
             FoxIt
           </button>
         </div>
