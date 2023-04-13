@@ -4,7 +4,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 interface LayoutProps {
-  children: any;
+  children: React.ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
