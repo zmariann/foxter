@@ -15,9 +15,7 @@ likesRouter.post("/fox_likes/:fox_id", async (req, res) => {
       return res.status(401).send({ error: "Unauthorized." });
     }
     // Insert the like into the database
-    console.log("Like Request")
-    console.log(fox_id, user.id)
-    const result = await db
+      const result = await db
       .prepare("INSERT INTO fox_likes (fox_id, user_id) VALUES (?, ?)")
       .run(fox_id, user.id);
     const count = await countLikes(fox_id);
