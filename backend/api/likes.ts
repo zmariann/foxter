@@ -36,9 +36,7 @@ likesRouter.delete("/fox_likes/:fox_id", async (req, res) => {
     if (user === null) {
       return res.status(401).send({ error: "Unauthorized." });
     }
-    console.log("UnLike Request")
-    console.log(fox_id, user.id)
-    
+     
     // Delete the like from the fox_likes table
     db.prepare(`DELETE FROM fox_likes WHERE user_id = ? AND fox_id = ?`).run(
       user.id,
