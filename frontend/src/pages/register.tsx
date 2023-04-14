@@ -56,7 +56,6 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen mx-auto p-20 bg-registerLogoutBG">
-      <ToastContainer position="top-center" limit={1} autoClose={900} />
       <div className="w-full max-w-[350px]">
         <form className="bg-whiteFox shadow-2xl rounded-[10px] px-8 pt-10 pb-10 mb-10">
           <h1 className="text-xl text-darkFox flex justify-center">
