@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/router";
 
 const RegisterPage: React.FC = () => {
   // States for registration
   const [name, setusername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
+  const router = useRouter(); 
 
   // Handle methods:
   // name
@@ -41,6 +43,7 @@ const RegisterPage: React.FC = () => {
           toast.error((await response.json()).error);
         } else {
           toast.success("User " + name + " successfully registered");
+          router.push("/"); // redirects the user to the home page
         }
       } catch (error: any) {
         toast.error(JSON.stringify(error));

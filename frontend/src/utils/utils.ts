@@ -22,4 +22,4 @@ export async function betterFetch(url: string, options: any | null = {}) {
   }
 
   return await response.json();
-}
+} 
