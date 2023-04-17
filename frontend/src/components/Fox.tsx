@@ -16,7 +16,7 @@ const Fox: React.FC<FProps> = ({ fox, onDeleteFox }) => {
   const convertInputString = (input: string) => {
     input = input.replace(
       /#[a-z0-9A-Z]+/g,
-      '<span style="color: rgb(96,165,250)">$&</span>'
+      '<span style="color: rgb(74,222,128)">$&</span>'
     );
     return input;
   };

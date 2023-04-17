@@ -1,8 +1,7 @@
 // importing necesary React packages and FoxProp types
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import type { FoxProps } from "../../../shared/types";
-import { betterFetch } from "../../../frontend/src/utils/utils";
+import { betterFetch } from "../utils/utils";
 
 // defining PostAFox component property
 interface PostAFoxProps {
