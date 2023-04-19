@@ -43,7 +43,7 @@ const RegisterPage: React.FC = () => {
           toast.error((await response.json()).error);
         } else {
           toast.success("User " + name + " successfully registered");
-          router.push("/"); // redirects the user to the home page
+          router.push("/login"); // redirects the user to the login page
         }
       } catch (error: any) {
         toast.error(JSON.stringify(error));
