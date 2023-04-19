@@ -8,6 +8,25 @@
   font-family: "Nunito" "sans-serif";
 }
 
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgba(223, 223, 223, 1);
+  border-radius: 10px;
+}
+
+
 /*
 :root {
   --max-width: 1100px;

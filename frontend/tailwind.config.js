@@ -20,7 +20,8 @@ module.exports = {
         lightGray: "#B3B3B3",
         whiteFox: "#FCFCFC",
         white:"ffffff",
-        registerLogoutBG: "#D9D9D9"
+        registerLogoutBG: "#D9D9D9",
+        borderGrey: "#f9fafb",
       },
     },
   },

@@ -12,6 +12,7 @@ import { authRouter } from "./api/auth";
 // import { authMiddleware } from "./api/authMiddleware";
 // import { validateBody } from "./api/validation";
 import { userRouter } from "./api/users";
+import { messagesRouter } from "./api/messages";
 import { followRouter } from "./api/following"
 import { hTagRouter } from "./api/hashtag";
 import { likesRouter } from "./api/likes";
@@ -28,8 +29,7 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(loggerMiddleware);
-// app.use(authMiddleware);
-app.use("/api", [foxRouter, authRouter, userRouter, followRouter, hTagRouter, likesRouter]);
+app.use("/api", [foxRouter, authRouter, userRouter,  messagesRouter, followRouter, hTagRouter, likesRouter]);
 
 app.listen(PORT, () => {
   console.log(`Server listening at port ${PORT}`);
