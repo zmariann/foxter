@@ -146,6 +146,7 @@ const singleRoom: React.FC = () => {
         {/*content*/}
 
         <div className="overflow-auto bg-borderGrey rounded-3xl flex flex-col-reverse h-[400px]">
+        <ConfirmDialog/>
           {messages.map((message) => {
             return (
               <div className=" text-darkFox mx-5 my-4 border-b-2 border-stone-300 scroll-smooth">
@@ -158,17 +159,10 @@ const singleRoom: React.FC = () => {
                     {message.name}
                   </div>
                 </div>
-
                 <div className="mt-2">{message.content}</div>
-
-                <ConfirmDialog
-                  content={message.content}
-                  onYes={() => handleDelete(message.id)}
-                />
-
                 <div className="flex justify-end">
                   <button
-                    onClick={() => showDialog()}
+                    onClick={() => showDialog({type: "thisMessage", content: "", onYes: () => handleDelete(message.id), onNo: () =>{}})}
                     className="text-sm font-medium bg-stone-300 text-whiteFox py-1 rounded-full text-center px-[10px] mt-3 mb-2"
                   >
                     Delete

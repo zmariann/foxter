@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ConfirmDialog, showDialog } from "@/components/confirmDialog";
 
 const SendInvitations: React.FC = () => {
   interface User {
@@ -15,6 +16,8 @@ const SendInvitations: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   // get user id
   const [invitedUserId, setinvitedUserId] = useState(0);
+  // get name for confirmation dialog
+  const [userName, setUserName] = useState("");
 
   const optionHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setinvitedUserId(0);
@@ -22,9 +25,18 @@ const SendInvitations: React.FC = () => {
     const content =
       event.target.options[selectedIndex].getAttribute("data-key");
     if (content !== null) {
-      //console.log("OPTION", event.target.options[selectedIndex].getAttribute("data-key"));
+      console.log(
+        "OPTION",
+        event.target.options[selectedIndex].getAttribute("data-key")
+      );
       const result: number = parseInt(content);
       setinvitedUserId(result);
+      users.forEach((user) => {
+        if (user.id === result) {
+          setUserName(user.name);
+          console.log(user.name);
+        }
+      });
     }
   };
 
@@ -50,8 +62,8 @@ const SendInvitations: React.FC = () => {
     roomNameFetch();
   }, [router.isReady]);
 
-  const handleSubmit = async (event: React.SyntheticEvent) => {
-    event.preventDefault();
+  const handleSubmit = async () => {
+    console.log("working");
     if (invitedUserId === 0) {
       toast.warn("Choose a user!");
     } else {
@@ -103,14 +115,23 @@ const SendInvitations: React.FC = () => {
             onChange={optionHandler}
           >
             <option>Choose a user</option>
+            
+            <ConfirmDialog />
             {users.map((user) => (
               <option data-key={user.id}>{user.name}</option>
             ))}
           </select>
 
           <button
+            onClick={() =>
+              showDialog({
+                type: "sendInvitation",
+                content: userName,
+                onYes: handleSubmit,
+                onNo: () => {},
+              })
+            }
             className="text-sm font-medium bg-greenFox hover:bg-[#387354] text-whiteFox py-1 rounded-full text-center px-[10px] ml-3"
-            onClick={handleSubmit}
           >
             Send
           </button>

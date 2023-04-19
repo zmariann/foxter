@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {ConfirmDialog, showDialog} from "@/components/confirmDialog";
+import { ConfirmDialog, showDialog } from "@/components/confirmDialog";
 
 const Invitations: React.FC = () => {
   interface Invitations {
@@ -84,29 +84,45 @@ const Invitations: React.FC = () => {
             <div className="font-bold text-darkFox text-lg">invitations</div>
           </div>
         </div>
-
+        <ConfirmDialog />
         {invitations.map((invitation) => {
           return (
             <div className="flex justify-between items-center pl-5 pt-3 pb-3 border-b-[3px] border-borderGrey font-medium text-darkFox text-lg">
-
-<div>
-              {invitation.name}
-              <span className="text-sm text-lightGray justify-start"> sent by <a href="/" className="text-darkFox underline">{invitation.host}</a></span>
+              <div>
+                {invitation.name}
+                <span className="text-sm text-lightGray justify-start">
+                  {" "}
+                  sent by{" "}
+                  <a href="/" className="text-darkFox underline">
+                    {invitation.host}
+                  </a>
+                </span>
               </div>
-              
+
               <div>
                 <button
                   onClick={() =>
-                    handleAccept(invitation.room_id, invitation.id)
+                    showDialog({
+                      type: "invitationAccept",
+                      content: invitation.name,
+                      onYes: () =>
+                        handleAccept(invitation.room_id, invitation.id),
+                      onNo: () => {},
+                    })
                   }
                   className="text-sm font-medium bg-greenFox hover:bg-[#387354] text-whiteFox py-1 rounded-full text-center px-[10px] mr-3 mb-3"
                 >
                   accept invitation
                 </button>
-                
-                <ConfirmDialog content={invitation.name} onYes={() => handleDelete(invitation.id)} />
                 <button
-                  onClick={() => showDialog()}
+                  onClick={() =>
+                    showDialog({
+                      type: "invitationDelete",
+                      content: invitation.name,
+                      onYes: () => handleDelete(invitation.id),
+                      onNo: () => {},
+                    })
+                  }
                   className="text-sm font-medium bg-stone-300 text-whiteFox py-1 rounded-full text-center px-[10px] mr-3"
                 >
                   delete

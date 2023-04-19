@@ -192,7 +192,7 @@ const allRooms: React.FC = () => {
               
               <div>
                 <button
-                  onClick={() => showDialog({content: room.name, onYes: () => handleDelete(room.id), onNo: () =>{}})}
+                  onClick={() => showDialog({type: "deleteRoom", content: room.name, onYes: () => handleDelete(room.id), onNo: () =>{}})}
                   className="text-sm font-medium bg-stone-300 text-whiteFox py-1 rounded-full text-center px-[10px] mr-3"
                 >
                   Delete
