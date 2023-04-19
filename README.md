@@ -11,14 +11,17 @@ The App is in development. Currently the app provides an input field where users
 
 ## Features
 
--   Text input field for posting messages
--   "Post a Fox" button for submitting messages
--   Display of posted messages in a list
--   Ability to delete individual messages
+- Account Creation: Provide a username and password to create your user account.
+- Text Input Field: Type and share thoughts, opinions, questions, or links in the text input field on your home page or news feed.
+- Hashtags: Use "#" before words or phrases to group related posts by topic or type, making them easier to find.
+- "FoxIt" Button: Click to submit your post and make it visible to others. Delete by clicking the delete icon underneath.
+- Content Display: View posted content in a list on the news feed or home page.
+- Delete Posts: Click the delete icon next to your own post to remove it from the website.
+- Chat: Communicate with users directly or in groups using the chat feature.
 
 ## Technologies
 
--   React
+-   React, Next.js, Node.js, SQLite
 -   HTML
 -   CSS
 
@@ -45,3 +48,7 @@ The app should now be running on `http://localhost:3000` in your browser.
 ## Conclusion 
 
 Foxter is a simple and fun application that demonstrates the basic concepts of building a web application using React. Whether you're a beginner or an experienced developer, Foxter is a great starting point for learning how to build modern web applications.
+
+<!---
+This is a test of Marzena's docker automation.
+-->

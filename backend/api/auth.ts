@@ -30,6 +30,11 @@ function generateUserToken(userId, res) {
     httpOnly: true,
     maxAge: 2 * 60 * 60 * 1000,
   });
+
+  res.cookie("loggedInUser", userId, {
+    httpOnly: false,
+    maxAge: 2 * 60 * 60 * 1000,
+  })
 }
 
 // delete userToken Function

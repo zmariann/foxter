@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/router";
 
 const RegisterPage: React.FC = () => {
   // States for registration
   const [name, setusername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
+  const router = useRouter(); 
 
   // Handle methods:
   // name
@@ -41,6 +43,7 @@ const RegisterPage: React.FC = () => {
           toast.error((await response.json()).error);
         } else {
           toast.success("User " + name + " successfully registered");
+          router.push("/login"); // redirects the user to the login page
         }
       } catch (error: any) {
         toast.error(JSON.stringify(error));
@@ -56,7 +59,6 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen mx-auto p-20 bg-registerLogoutBG">
-      <ToastContainer position="top-center" limit={1} autoClose={900} />
       <div className="w-full max-w-[350px]">
         <form className="bg-whiteFox shadow-2xl rounded-[10px] px-8 pt-10 pb-10 mb-10">
           <h1 className="text-xl text-darkFox flex justify-center">

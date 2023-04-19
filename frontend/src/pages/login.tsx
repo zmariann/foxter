@@ -5,10 +5,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/router";
 
 const LoginPage: React.FC = () => {
   const [name, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter(); 
 
   // handleUsernameChange and handlePasswordChange functions are called
   // whenever values of the username and password input fields are changed
@@ -45,6 +47,7 @@ const LoginPage: React.FC = () => {
       }
       // handle successful login
       toast.success(data.message.toString());
+      router.push("/"); // redirects the user to the home page
     } catch (error: any) {
       if ("error" in error) {
         toast.warn(error.error);
@@ -66,7 +69,6 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen mx-auto p-20 bg-registerLogoutBG">
-      <ToastContainer position="top-center" limit={1} autoClose={900} />
       <div className="w-full max-w-[350px]">
         <form
           onSubmit={handleSignIn}
