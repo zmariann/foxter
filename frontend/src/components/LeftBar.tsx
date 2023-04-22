@@ -1,4 +1,6 @@
 import { useState } from "react";
+import UserButton from "./UserButton";
+import { authStatus } from "@/utils/authStatus";
 
 export default function LeftBar() {
   const [open, setOpen] = useState(true);
@@ -55,6 +57,7 @@ export default function LeftBar() {
             </div>
           ))}
         </div>
+        {authStatus() ? <UserButton /> : <></>}
       </div>
     </>
   );
