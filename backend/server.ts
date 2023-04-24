@@ -16,6 +16,7 @@ import { messagesRouter } from "./api/messages";
 import { followRouter } from "./api/following"
 import { hTagRouter } from "./api/hashtag";
 import { likesRouter } from "./api/likes";
+import { profileRouter } from "./api/profile";
 
 const app = express();
 
@@ -29,7 +30,7 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(loggerMiddleware);
-app.use("/api", [foxRouter, authRouter, userRouter,  messagesRouter, followRouter, hTagRouter, likesRouter]);
+app.use("/api", [foxRouter, authRouter, userRouter, messagesRouter, followRouter, hTagRouter, likesRouter, profileRouter]);
 
 app.listen(PORT, () => {
   console.log(`Server listening at port ${PORT}`);
