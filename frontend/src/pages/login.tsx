@@ -6,11 +6,12 @@ import Image from "next/image";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
+import { betterFetch } from "@/utils/utils";
 
 const LoginPage: React.FC = () => {
   const [name, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter(); 
+  const router = useRouter();
 
   // handleUsernameChange and handlePasswordChange functions are called
   // whenever values of the username and password input fields are changed
@@ -34,17 +35,11 @@ const LoginPage: React.FC = () => {
       return;
     }
     try {
-      const response = await fetch("api/login", {
+      const data = await betterFetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, password }),
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw data;
-      }
       // handle successful login
       toast.success(data.message.toString());
       router.push("/"); // redirects the user to the home page

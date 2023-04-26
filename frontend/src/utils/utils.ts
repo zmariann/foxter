@@ -21,5 +21,5 @@ export async function betterFetch(url: string, options: any | null = {}) {
     throw new Error((await response.json()).error);
   }
 
-  return await response.json();
+  return await response.json(); 
 } 

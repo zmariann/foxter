@@ -1,10 +1,12 @@
+import { betterFetch } from "@/utils/utils";
+
 export default function DeleteButton({ foxId, onDeleteFox }) {
 
   // Method to delete a fox
   const handleDelete = async () => {
     try {
       // Sending delete request to the API to delete the fox
-      await fetch(`/api/foxes/${foxId}`, {
+      await betterFetch(`/api/foxes/${foxId}`, {
         method: "DELETE",
       });
       // Removing the deleted fox from the list
