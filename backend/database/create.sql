@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS fox_likes (
 
 CREATE TABLE IF NOT EXISTS messages (
   id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  content TEXT,
+  content TEXT NOT NULL,
   room_id INT NOT NULL,
   user_id INTEGER NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users(id)
@@ -52,7 +52,8 @@ CREATE TABLE IF NOT EXISTS messages (
 
 CREATE TABLE IF NOT EXISTS rooms (
   id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  is_group INTEGER NOT NULL,
+  name TEXT NOT NULL,
+  rooms_group INTEGER NOT NULL,
   creator_id INTEGER NOT NULL,
   FOREIGN KEY (creator_id) REFERENCES users(id)
 );
@@ -82,3 +83,4 @@ CREATE TABLE IF NOT EXISTS followers (
   FOREIGN KEY (follower) REFERENCES users (id),
   FOREIGN KEY (followed) REFERENCES users (id)
 );
+
