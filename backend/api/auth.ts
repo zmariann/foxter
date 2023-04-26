@@ -13,7 +13,7 @@ function generateToken(): string {
 }
 
 // generate User token function
-function generateUserToken(userId, res) {
+function generateUserToken(userId, res, userName = null) {
   // Generate a new token
   const token = generateToken();
 
@@ -35,6 +35,12 @@ function generateUserToken(userId, res) {
     httpOnly: false,
     maxAge: 2 * 60 * 60 * 1000,
   })
+
+  res.cookie("userName", userName, {
+    httpOnly: false,
+    maxAge: 2 * 60 * 60 * 1000,
+  })
+
 }
 
 // delete userToken Function
@@ -48,6 +54,9 @@ function deleteUserToken(req: Request, res: Response): void {
   // Remove the token cookie from the response
   res.clearCookie("token");
   res.clearCookie("userId");
+  res.clearCookie("loggedInUser");
+  res.clearCookie("userName");
+
 }
 
 const RegisterBodySchema = z.object({
@@ -81,7 +90,7 @@ authRouter.post(
         )
         .get(name, hashedPassword);
 
-      generateUserToken(userId, res);
+      generateUserToken(userId, res, name);
 
       res.send({ message: "Successfuly registered!" });
     } catch (error) {
@@ -117,7 +126,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
         .json({ status: false, error: "Invalid credentials." });
     }
     // Generate a new token
-    generateUserToken(user.id, res);
+    generateUserToken(user.id, res, name);
     res.json({ status: true, message: "Logged in successfully!" });
   } catch (error) {
     res.status(400).json({ status: false, error: error.message });

@@ -2,13 +2,14 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
+import { betterFetch } from "@/utils/utils";
 
 const RegisterPage: React.FC = () => {
   // States for registration
   const [name, setusername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
-  const router = useRouter(); 
+  const router = useRouter();
 
   // Handle methods:
   // name
@@ -32,19 +33,17 @@ const RegisterPage: React.FC = () => {
       toast.warn("Passwords doesn't match");
     } else {
       try {
-        const response = await fetch("/api/register", {
+        const response = await betterFetch("/api/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ name, password }),
         });
-        if (response.status === 400) {
-          toast.error((await response.json()).error);
-        } else {
-          toast.success("User " + name + " successfully registered");
-          router.push("/login"); // redirects the user to the login page
-        }
+        toast.success(
+          "User " + name + " successfully registered. Please login to continue"
+        );
+        router.push("/"); // redirects the user to the Home page
       } catch (error: any) {
         toast.error(JSON.stringify(error));
       }

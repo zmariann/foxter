@@ -67,11 +67,22 @@ foxRouter.post("/foxes", validateBody(foxesBodySchema), (req, res) => {
 foxRouter.delete("/foxes/:id", async (req, res) => {
   try {
     const foxId: number = parseInt(req.params.id);
-    // Prepare a DELETE statement to remove the fox with the specified id
-    db.prepare("DELETE FROM hashtags WHERE fox_id = ?").run(foxId);
-    db.prepare("DELETE FROM fox_likes WHERE fox_id = ?").run(foxId);
-    db.prepare("DELETE FROM foxes WHERE id = ?").run(foxId);
-    res.status(200).send("Entry deleted");
+    const user = verifyUser(req);
+    if (user === null) {
+      return res.status(401).send({ error: "Unauthorized." });
+    }
+    const data = db
+      .prepare("SELECT * FROM foxes WHERE id=? AND  user_id= ?")
+      .all(foxId, user.id);
+    if (data.length == 1) {
+      // Prepare a DELETE statement to remove the fox with the specified id
+      db.prepare("DELETE FROM hashtags WHERE fox_id = ?").run(foxId);
+      db.prepare("DELETE FROM fox_likes WHERE fox_id = ?").run(foxId);
+      db.prepare("DELETE FROM foxes WHERE id = ?").run(foxId);
+      res.status(200).send({ message: "Entry deleted" });
+    } else {
+      res.status(400).send({ message: "Cannot delete fox" });
+    }
   } catch (error) {
     res.status(400).send(error.message);
   }

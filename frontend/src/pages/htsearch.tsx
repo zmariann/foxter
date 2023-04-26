@@ -3,6 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 import type { FoxProps } from "../../../shared/types";
 import Fox from "@/components/Fox";
 import Layout from "@/components/layout";
+import { betterFetch } from "@/utils/utils";
 
 interface User {
   name: string;
@@ -24,14 +25,13 @@ const SearchHashTag: React.FC = () => {
 
   const handleSearch = async () => {
     try {
-      const response = await fetch(
+      const response = await betterFetch(
         `/api/htsearch?hashtag=${query.replace("#", "")}`,
         {
           method: "GET",
         }
       );
-      const result = await response.json();
-      setFoxes(result);
+      setFoxes(response);
     } catch (error) {
       console.error(error);
     }
@@ -44,7 +44,6 @@ const SearchHashTag: React.FC = () => {
   };
 
   return (
-    <Layout>
       <div className={`h-screen mt-10 bg-whiteFox`}>
         {/* Form to render hashtag search bar starts */}
         <form className="flex items-center" onSubmit={handleSubmit}>
@@ -101,7 +100,6 @@ const SearchHashTag: React.FC = () => {
         </div>
         {/* Render search result ends */}
       </div>
-    </Layout>
   );
 };
 export default SearchHashTag;
