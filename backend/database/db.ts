@@ -1,9 +1,8 @@
 import fs from 'fs'
-const sqlite = require('better-sqlite3')
+import sqlite from 'better-sqlite3'
 
-const name = process.env['DB_NAME'] || 'foxter'
-
-const db = sqlite(name + '.db')
+const name = process.env['NODE_ENV'] == 'test' ? 'test' : 'foxter'
+const db: any = sqlite(name + '.db')
 
 db.exec(fs.readFileSync('./database/create.sql').toString())
 
