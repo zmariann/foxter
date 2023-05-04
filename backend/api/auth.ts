@@ -92,7 +92,7 @@ authRouter.post(
 
       generateUserToken(userId, res, name);
 
-      res.send({ message: "Successfuly registered!" });
+      res.send({ message: "Successfully registered!" });
     } catch (error) {
       console.error(error);
       res.status(500).send({ error: "Internal server error" });
