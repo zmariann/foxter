@@ -57,17 +57,6 @@ export default function LeftBar() {
             </div>
           ))}
         </div>
-        {/* {authStatus() ? (
-          <UserButton />
-        ) : (
-          <>
-            <div className="flex-1">
-              <a href="/login" className="bg-green-400 mt-5 hover:bg-green-600 text-white font-bold py-2 px-8 rounded-full mr-8 float-right">
-                Login
-              </a>
-            </div>
-          </>
-        )} */}
         <UserButton />
       </div>
     </>
