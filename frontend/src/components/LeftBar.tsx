@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import UserButton from "./UserButton";
 import { authStatus } from "@/utils/authStatus";
+import Link from "next/link";
 
 export default function LeftBar() {
   const [open, setOpen] = useState(true);
@@ -53,16 +54,19 @@ export default function LeftBar() {
         </div>
         <div className="pt-6">
           {Menus.map((menu, index) => (
-            <div
-              key={index}
-              className="text-greenFox text-sm flex items-center
-            gap-x-4 cursor-pointer p-2 rounded-md w-12 hover:scale-125"
-            >
-              <img src={`/${menu.src}.png`} />
-              <span className={`${!open && "hidden"} origin-left duration-200`}>
-                <a href={`/${menu.url}`}>{menu.title}</a>
-              </span>
-            </div>
+            <Link key={index} href={`/${menu.url}`} className="">
+              <div
+                className="text-greenFox text-sm flex items-center
+                gap-x-4 cursor-pointer p-2 rounded-md w-12 hover:scale-110 duration-100"
+              >
+                <img src={`/${menu.src}.png`} />
+                <span
+                  className={`${!open && "hidden"} origin-left duration-200`}
+                >
+                  {menu.title}
+                </span>
+              </div>
+            </Link>
           ))}
         </div>
         {authStatus() ? <UserButton /> : <></>}
