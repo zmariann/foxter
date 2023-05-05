@@ -1,11 +1,17 @@
-import { betterFetch } from "@/utils/utils";
 import { useEffect, useState } from "react";
-import { Menu, MenuItem, MenuButton } from "@szhsin/react-menu";
+import { Menu, MenuItem } from "@szhsin/react-menu";
 import "@szhsin/react-menu/dist/index.css";
 import "@szhsin/react-menu/dist/transitions/slide.css";
+import Link from "next/link";
+
+interface User {
+  name: string | null;
+  handle: string | null;
+  image: string;
+}
 
 export default function UserButton() {
-  const [user, setUser] = useState({
+  const [user, setUser] = useState<User>({
     name: null,
     handle: null,
     image: "",
@@ -28,8 +34,8 @@ export default function UserButton() {
 
   return user.name ? (
     <>
-      <div className="flex-shrink-0 flex hover:bg-blue-00 rounded-full p-4 mt-12 mr-2 fixed left-2 bottom-0">
-        <a className="flex-shrink-0 group block" target="_blank">
+      <div className="flex-shrink-0 flex hover:bg-blue-00 rounded-full p-4 mt-12 mr-2 fixed left-2 bottom-0 cursor-pointer">
+        <a className="flex-shrink-0 group block" target="_blank" rel="noreferrer">
           <div className="flex items-center">
             <div>
               <img
@@ -64,8 +70,11 @@ export default function UserButton() {
                 <MenuItem>
                   <a href="/logout">Logout</a>
                 </MenuItem>
-                <MenuItem>Profile</MenuItem>
-                <MenuItem>Add Another Account</MenuItem>
+                <MenuItem>
+                  <Link href={`/profiles/${user.name}`}>
+                    <a>Profile</a>
+                  </Link>
+                </MenuItem>
               </Menu>
             </div>
           </div>
@@ -73,6 +82,15 @@ export default function UserButton() {
       </div>
     </>
   ) : (
-    <></>
+    <>
+      <div className="flex">
+        <a
+          href="/login"
+          className="bg-green-400 mt-5 hover:bg-green-600 text-white font-bold py-2 px-8 rounded-full mr-8 float-right"
+        >
+          Login
+        </a>
+      </div>
+    </>
   );
 }

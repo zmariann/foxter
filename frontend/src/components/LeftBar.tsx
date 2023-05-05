@@ -57,7 +57,7 @@ export default function LeftBar() {
             </div>
           ))}
         </div>
-        {authStatus() ? <UserButton /> : <></>}
+        <UserButton />
       </div>
     </>
   );

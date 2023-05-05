@@ -104,7 +104,7 @@ messagesRouter.post("/rooms", validateBody(roomsBodySchema), (req, res) => {
     db.prepare(
       "INSERT INTO room_participants (room_id, user_id) VALUES (?,?)"
     ).run(roomId.lastInsertRowid, user.id);
-    res.status(200).send({ message: "New room has successfuly created" });
+    res.status(200).send({ message: "New room has successfuly created", "roomId": roomId.lastInsertRowid });
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
@@ -193,7 +193,7 @@ messagesRouter.delete("/rooms/:roomId", (req, res) => {
       db.prepare("DELETE FROM room_participants WHERE room_id = ?").run(roomId);
       db.prepare("DELETE FROM room_invitations WHERE room_id = ?").run(roomId);
       db.prepare("DELETE FROM rooms WHERE id = ?").run(roomId);
-      return res.status(200).send("Room is successfully deleted.");
+      return res.status(200).send({message: "Room is successfully deleted."});
     }
     // otherwise send an error
     res
