@@ -68,12 +68,10 @@ export default function UserButton() {
                 transition
               >
                 <MenuItem>
-                  <a href="/logout">Logout</a>
+                  <Link href="/logout">Logout</Link>
                 </MenuItem>
                 <MenuItem>
-                  <Link href={`/profiles/${user.name}`}>
-                    <a>Profile</a>
-                  </Link>
+                  <Link href={`/profiles/${user.name}`}>Profile</Link>
                 </MenuItem>
               </Menu>
             </div>
