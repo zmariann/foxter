@@ -1,29 +1,33 @@
-import { useState } from "react";
-import{useEffect} from "react";
+import { useEffect, useState } from "react";
 import UserButton from "./UserButton";
-import { authStatus, getCurrentUserId } from "@/utils/authStatus";
-import Profile from "../pages/profiles/[username]";
-
+import { authStatus } from "@/utils/authStatus";
 
 export default function LeftBar() {
   const [open, setOpen] = useState(true);
-  
-  const username = Profile.name
-  
- 
+  const [userName, setUserName] = useState("");
+  const getCookieValue = (name: string): string =>
+    document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)")?.pop() || "";
+
+  const getUserData = async () => {
+    setUserName(getCookieValue("userName"));
+  };
+  useEffect(() => {
+    getUserData();
+  }, []);
+
   const Menus = [
-    { title: "Home", src: "Home", url:"" },
-    { title: "Explore", src: "Explore", url:"htsearch"},
-    { title: "Messages", src: "Messages", url:"rooms"},
-    { title: "Invitations", src: "Invitations", url:"invitations" },
-    { title: "Profile", src: "Profile", url:`profiles/?id${username}`},
+    { title: "Home", src: "Home", url: "" },
+    { title: "Explore", src: "Explore", url: "htsearch" },
+    { title: "Messages", src: "Messages", url: "rooms" },
+    { title: "Invitations", src: "Invitations", url: "invitations" },
+    { title: "Profile", src: "Profile", url: `profiles/${userName}` },
   ];
 
   return (
     <>
       <div
         className={`w-3/12 duration-300 h-screen p-5 pt-8 bg-white relative`}
-        >
+      >
         <img
           src="/Openicon.png"
           className={`absolute top-0 right-16 cursor-pointer-right-3 top-9 w-4 border-white ${
@@ -54,11 +58,9 @@ export default function LeftBar() {
               className="text-greenFox text-sm flex items-center
             gap-x-4 cursor-pointer p-2 rounded-md w-12 hover:scale-125"
             >
-                <img src={`/${menu.src}.png`} />
+              <img src={`/${menu.src}.png`} />
               <span className={`${!open && "hidden"} origin-left duration-200`}>
-                <a href={`/${menu.url}`}>
-                {menu.title}
-              </a>
+                <a href={`/${menu.url}`}>{menu.title}</a>
               </span>
             </div>
           ))}
