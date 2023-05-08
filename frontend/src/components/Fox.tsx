@@ -4,6 +4,7 @@ import LikeButton from "../components/LikeButton";
 import type { FoxProps } from "../../../shared/types";
 import DeleteButton from "./DeleteButton";
 import { authStatus, getCurrentUserId } from "@/utils/authStatus";
+import Link from "next/link";
 
 // Defining Fox component  property
 interface FProps {
@@ -25,7 +26,7 @@ const Fox: React.FC<FProps> = ({ fox, onDeleteFox }) => {
   return (
     <div className="flex mb-6 flex-col w-full">
       <p className="text-base leading-6 text-white w-full mb-3">
-        {fox.userName}
+        <Link href={`/profiles/${fox.userName}`}>{fox.userName}</Link>
         <span className="ml-4 text-sm leading-5 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
           {fox.createdAt.toString()}
         </span>
