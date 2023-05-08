@@ -35,7 +35,11 @@ export default function UserButton() {
   return user.name ? (
     <>
       <div className="flex-shrink-0 flex hover:bg-blue-00 rounded-full p-4 mt-12 mr-2 fixed left-2 bottom-0 cursor-pointer">
-        <a className="flex-shrink-0 group block" target="_blank" rel="noreferrer">
+        <a
+          className="flex-shrink-0 group block"
+          target="_blank"
+          rel="noreferrer"
+        >
           <div className="flex items-center">
             <div>
               <img
@@ -46,7 +50,7 @@ export default function UserButton() {
             </div>
             <div className="ml-3">
               <p className="text-base leading-6 font-medium text-white">
-                {user.name}
+                <Link href={`/profiles/${user.name}`}>{user.name}</Link>
               </p>
               <p className="text-sm leading-5 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
                 {user.handle}
