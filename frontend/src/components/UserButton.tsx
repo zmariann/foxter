@@ -46,7 +46,7 @@ export default function UserButton() {
             </div>
             <div className="ml-3">
               <p className="text-base leading-6 font-medium text-white">
-                {user.name}
+                <Link href={`/profiles/${user.name}`}>{user.name}</Link>
               </p>
               <p className="text-sm leading-5 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
                 {user.handle}
