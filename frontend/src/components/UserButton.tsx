@@ -26,7 +26,6 @@ export default function UserButton() {
       handle: getCookieValue("userName"),
       image: "/NoProfilePicture.png",
     });
-    console.log(user)
   };
 
   useEffect(() => {
@@ -36,7 +35,7 @@ export default function UserButton() {
   return user.name != "" ? (
     <>
       <div className="flex-shrink-0 flex hover:bg-blue-00 rounded-full p-4 mt-12 mr-2 fixed left-2 bottom-0 cursor-pointer">
-        <Link href={`profiles/${user.name}`} className="flex-shrink-0 group block">
+        <Link href={`/profiles/${user.name}`} className="flex-shrink-0 group block">
           <div className="flex items-center">
             <div>
               <img
