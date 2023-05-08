@@ -23,14 +23,14 @@ followRouter.post("/following/:id", async (req, res) => {
       return res.status(400).send({ error: "User cannot follow self" })
     }
 
-    const stat = checkFollowingStatus(user.id, followedId)
+    const stat = await checkFollowingStatus(user.id, followedId)
 
     if (stat) {
       //unfollow > delete the record from DB
       db.prepare("DELETE FROM followers WHERE follower = ? AND followed = ?").run(user.id, followedId)
     } else {
       //follow > insert record into db
-      db.prepare("INSERT INTO followers VALUE(?, ?)").run(user.id, followedId)
+      db.prepare("INSERT INTO followers VALUES(NULL, ?, ?)").run(user.id, followedId)
     }
 
     res.send({ status: !stat })
@@ -51,7 +51,7 @@ followRouter.get('/following/:id', async (req, res) => {
     // followed -> external user passed through param :id
     // follower -> signed in user / current auth user
     const followedId = parseInt(req.params.id);
-    const stat = checkFollowingStatus(user.id, followedId)
+    const stat = await checkFollowingStatus(user.id, followedId)
     if (stat) {
       res.send({ status: true })
     } else {
@@ -66,8 +66,7 @@ followRouter.get('/following/:id', async (req, res) => {
 })
 
 const checkFollowingStatus = async (followerId: number, followedId: number) => {
-  const count = db.prepar("SELECT * FROM followers WHERE follower = ? AND followed = ?").run(followerId, followedId)
-
+  const count = db.prepare("SELECT * FROM followers WHERE follower = ? AND followed = ?").all(followerId, followedId)
   if (count.length == 0) {
     return false;
   } else {

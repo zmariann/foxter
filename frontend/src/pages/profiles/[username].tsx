@@ -8,48 +8,59 @@ const Profile = () => {
   const [profile, setProfile] = useState<any>(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const { username } = router.query;
+  const [loggedInUser, setLoggedInUser] = useState("")
 
   const fetchProfile = async () => {
     try {
       const response = await betterFetch(`/api/profile/${username}`);
       setProfile(response);
-      setIsFollowing(response.isFollowing);
-      console.log(response);
+      getFollowingStatus(response.user.id)
     } catch (e) {
       console.log(e);
     }
   };
 
-  const handleFollow = async () => {
+  const toggleFollowing = async () => {
     try {
-      const response = await betterFetch(`/api/follow/${profile.user.id}`, {
+      const response = await betterFetch(`/api/following/${profile.user.id}`, {
         method: "POST",
       });
-      setIsFollowing(true);
+      getFollowingStatus(profile.user.id)
     } catch (e) {
       console.log(e);
     }
   };
 
-  const handleUnfollow = async () => {
+  const getFollowingStatus = async (profileId: number) => {
     try {
-      const response = await betterFetch(`/api/unfollow/${profile.user.id}`, {
-        method: "POST",
+      const response = await betterFetch(`/api/following/${profileId}`, {
+        method: "GET",
       });
-      setIsFollowing(false);
+      if(response.status)
+        setIsFollowing(true)
+      else
+        setIsFollowing(false)
     } catch (e) {
       console.log(e);
     }
-  };
+  }
 
   const onDeleteFox = (id: number) => {
     fetchProfile();
   };
 
+  const getCookieValue = (name: string): string =>
+    document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)")?.pop() || "";
+
+  const getLoggedInUser = () => {
+    setLoggedInUser(getCookieValue("loggedInUser"))
+  }
+
   useEffect(() => {
     if (!username) {
       return;
     }
+    getLoggedInUser();
     fetchProfile();
   }, [username]);
 
@@ -67,23 +78,31 @@ const Profile = () => {
         />
         <div>
           <h2 className="pb-4">{profile.user.name}</h2>
-          {isFollowing ? (
-            <button
-              className="bg-red-400 hover:bg-red-600 hover:text-white py-2 px-4 m-5 rounded-full"
-              onClick={handleUnfollow}
-            >
-              Unfollow
-            </button>
-          ) : (
-            <button
-              className="bg-blue-400 hover:bg-blue-600 hover:text-white py-2 px-4 m-5 rounded-full"
-              onClick={handleFollow}
-            >
-              Follow
-            </button>
-          )}
+          {
+            loggedInUser != profile.user.id ?
+              (
+                isFollowing ?
+                  (
+                    <button
+                      className="bg-red-400 hover:bg-red-600 hover:text-white py-2 px-4 m-5 rounded-full"
+                      onClick={toggleFollowing}
+                    >
+                      Unfollow
+                    </button>
+                  ) : (
+                    <button
+                      className="bg-blue-400 hover:bg-blue-600 hover:text-white py-2 px-4 m-5 rounded-full"
+                      onClick={toggleFollowing}
+                    >
+                      Follow
+                    </button>
+                  ))
+              :
+              <></>
+          }
+
         </div>
-      </div>
+      </div >
       <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-10">
         {profile.foxes.map((fox: any) => (
           <Fox key={fox.id} fox={fox} onDeleteFox={onDeleteFox} />
