@@ -24,7 +24,7 @@ export default function UserButton() {
     setUser({
       name: getCookieValue("userName"),
       handle: getCookieValue("userName"),
-      image: "https://placehold.co/100",
+      image: "/NoProfilePicture.png",
     });
   };
 
@@ -32,14 +32,10 @@ export default function UserButton() {
     getUserData();
   }, []);
 
-  return user.name ? (
+  return user.name != "" ? (
     <>
       <div className="flex-shrink-0 flex hover:bg-blue-00 rounded-full p-4 mt-12 mr-2 fixed left-2 bottom-0 cursor-pointer">
-        <a
-          className="flex-shrink-0 group block"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <Link href={`/profiles/${user.name}`} className="flex-shrink-0 group block">
           <div className="flex items-center">
             <div>
               <img
@@ -80,7 +76,7 @@ export default function UserButton() {
               </Menu>
             </div>
           </div>
-        </a>
+        </Link>
       </div>
     </>
   ) : (
