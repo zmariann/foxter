@@ -1,18 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserButton from "./UserButton";
 import { authStatus } from "@/utils/authStatus";
+import Link from "next/link";
 
 export default function LeftBar() {
   const [open, setOpen] = useState(true);
+  const [userName, setUserName] = useState("");
+  const getCookieValue = (name: string): string =>
+    document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)")?.pop() || "";
+
+  const getUserData = async () => {
+    setUserName(getCookieValue("userName"));
+  };
+  useEffect(() => {
+    getUserData();
+  }, []);
+
   const Menus = [
-    { title: "Home", src: "Home" },
-    { title: "Explore", src: "Explore" },
-    { title: "Notifications", src: "Notifications" },
-    { title: "Messages", src: "Messages" },
-    { title: "Bookmarks", src: "Bookmarks" },
-    { title: "Profile", src: "Profile" },
-    { title: "More", src: "More" },
-    { title: "New Fox", src: "Foxter" },
+    { title: "Home", src: "Home", url: "" },
+    { title: "Explore", src: "Explore", url: "htsearch" },
+    { title: "Messages", src: "Messages", url: "rooms" },
+    { title: "Invitations", src: "Invitations", url: "invitations" },
+    { title: "Profile", src: "Profile", url: `profiles/${userName}` },
   ];
 
   return (
@@ -22,7 +31,7 @@ export default function LeftBar() {
       >
         <img
           src="/Openicon.png"
-          className={`absolute cursor-pointer-right-3 top-9 w-4 border-white ${
+          className={`absolute top-0 right-16 cursor-pointer-right-3 top-9 w-4 border-white ${
             open && "rotate-180"
           }`}
           onClick={() => setOpen(!open)}
@@ -45,19 +54,22 @@ export default function LeftBar() {
         </div>
         <div className="pt-6">
           {Menus.map((menu, index) => (
-            <div
-              key={index}
-              className="text-greenFox text-sm flex items-center
-            gap-x-4 cursor-pointer p-2 hover:bg-blue-100 rounded-md w-12 hover:scale-125"
-            >
-              <img src={`/${menu.src}.png`} />
-              <span className={`${!open && "hidden"} origin-left duration-200`}>
-                {menu.title}
-              </span>
-            </div>
+            <Link key={index} href={`/${menu.url}`} className="">
+              <div
+                className="text-greenFox text-sm flex items-center
+                gap-x-4 cursor-pointer p-2 rounded-md w-12 hover:scale-110 duration-100"
+              >
+                <img src={`/${menu.src}.png`} />
+                <span
+                  className={`${!open && "hidden"} origin-left duration-200`}
+                >
+                  {menu.title}
+                </span>
+              </div>
+            </Link>
           ))}
         </div>
-        {authStatus() ? <UserButton /> : <></>}
+        <UserButton />
       </div>
     </>
   );

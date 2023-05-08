@@ -1,62 +1,118 @@
-import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
-import React from "react";
-import SideMenu from "../../components/LeftBar"; // Import the SideMenu component
-import { betterFetch } from "@/utils/utils";
+import React, { useEffect, useState } from "react";
 import Fox from "@/components/Fox";
-const API_URL = process.env.API_URL || 'http://localhost:5000'
+import { betterFetch } from "@/utils/utils";
+import { useRouter } from "next/router";
 
-const Profile = ({ user, foxes }) => {
+const Profile = () => {
+  const router = useRouter();
+  const [profile, setProfile] = useState<any>(null);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const { username } = router.query;
+  const [loggedInUser, setLoggedInUser] = useState("")
 
-  if (!user) {
-    return <div>User not found</div>;
+  const fetchProfile = async () => {
+    try {
+      const response = await betterFetch(`/api/profile/${username}`);
+      setProfile(response);
+      getFollowingStatus(response.user.id)
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const toggleFollowing = async () => {
+    try {
+      const response = await betterFetch(`/api/following/${profile.user.id}`, {
+        method: "POST",
+      });
+      getFollowingStatus(profile.user.id)
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getFollowingStatus = async (profileId: number) => {
+    try {
+      const response = await betterFetch(`/api/following/${profileId}`, {
+        method: "GET",
+      });
+      if(response.status)
+        setIsFollowing(true)
+      else
+        setIsFollowing(false)
+    } catch (e) {
+      console.log(e);
+    }
   }
 
-  const defaultProfileImage = "/NoProfilePicture.png"
+  const onDeleteFox = (id: number) => {
+    fetchProfile();
+  };
 
-  return (
+  const getCookieValue = (name: string): string =>
+    document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)")?.pop() || "";
+
+  const getLoggedInUser = () => {
+    setLoggedInUser(getCookieValue("loggedInUser"))
+  }
+
+  useEffect(() => {
+    if (!username) {
+      return;
+    }
+    getLoggedInUser();
+    fetchProfile();
+  }, [username]);
+
+  const defaultProfileImage = "/NoProfilePicture.png";
+
+  return profile ? (
     <>
       {/* <SideMenu /> */}
       <div className="py-8 px-8 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-2 sm:py-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-6">
-
-        <img className="block mx-auto h-24 rounded-full sm:mx-0 sm:flex-shrink-0"
-          src={ user.profile_image_url || defaultProfileImage}
-          alt={user.name}
+        <img
+          className="block mx-auto h-24 rounded-full sm:mx-0 sm:flex-shrink-0"
+          src={profile.user.profile_image_url || defaultProfileImage}
+          alt={profile.user.name}
           style={{ borderRadius: "50%" }}
         />
         <div>
-          <h2 className="pb-4">{user.name}</h2>
-          <button className="bg-green-400 hover:bg-green-500 hover:text-whiteFox py-2 px-4 p-3 rounded-full">Message</button>
-          <button className="bg-blue-400 hover:bg-blue-600 hover:text-whiteFox py-2 px-4 m-5 rounded-full">Follow</button>
+          <h2 className="pb-4">{profile.user.name}</h2>
+          {
+            loggedInUser != profile.user.id ?
+              (
+                isFollowing ?
+                  (
+                    <button
+                      className="bg-red-400 hover:bg-red-600 hover:text-white py-2 px-4 m-5 rounded-full"
+                      onClick={toggleFollowing}
+                    >
+                      Unfollow
+                    </button>
+                  ) : (
+                    <button
+                      className="bg-blue-400 hover:bg-blue-600 hover:text-white py-2 px-4 m-5 rounded-full"
+                      onClick={toggleFollowing}
+                    >
+                      Follow
+                    </button>
+                  ))
+              :
+              <></>
+          }
+
         </div>
-      </div>
+      </div >
       <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-10">
-        {foxes.map((fox:any) => (
-          <Fox key={fox.id} fox={fox} /> 
+        {profile.foxes.map((fox: any) => (
+          <Fox key={fox.id} fox={fox} onDeleteFox={onDeleteFox} />
         ))}
       </div>
     </>
+  ) : (
+    <p>User not found</p>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { username } = context.query;
-  const res = await fetch(`${API_URL}/api/profile/${username}`);
-  if (res.status === 404) {
-    return {
-      notFound: true,
-    };
-  }
-
-  const data = await res.json();
-  
-
-  return {
-    props: {
-      user: data.user,
-      foxes: data.foxes,
-    },
-  };
-};
-
 export default Profile;
+

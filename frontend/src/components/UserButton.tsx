@@ -1,11 +1,17 @@
-import { betterFetch } from "@/utils/utils";
 import { useEffect, useState } from "react";
-import { Menu, MenuItem, MenuButton } from "@szhsin/react-menu";
+import { Menu, MenuItem } from "@szhsin/react-menu";
 import "@szhsin/react-menu/dist/index.css";
 import "@szhsin/react-menu/dist/transitions/slide.css";
+import Link from "next/link";
+
+interface User {
+  name: string | null;
+  handle: string | null;
+  image: string;
+}
 
 export default function UserButton() {
-  const [user, setUser] = useState({
+  const [user, setUser] = useState<User>({
     name: null,
     handle: null,
     image: "",
@@ -18,7 +24,7 @@ export default function UserButton() {
     setUser({
       name: getCookieValue("userName"),
       handle: getCookieValue("userName"),
-      image: "https://placehold.co/100",
+      image: "/NoProfilePicture.png",
     });
   };
 
@@ -26,10 +32,10 @@ export default function UserButton() {
     getUserData();
   }, []);
 
-  return user.name ? (
+  return user.name != "" ? (
     <>
-      <div className="flex-shrink-0 flex hover:bg-blue-00 rounded-full p-4 mt-12 mr-2 fixed left-2 bottom-0">
-        <a className="flex-shrink-0 group block" target="_blank">
+      <div className="flex-shrink-0 flex hover:bg-blue-00 rounded-full p-4 mt-12 mr-2 fixed left-2 bottom-0 cursor-pointer">
+        <Link href={`/profiles/${user.name}`} className="flex-shrink-0 group block">
           <div className="flex items-center">
             <div>
               <img
@@ -40,7 +46,7 @@ export default function UserButton() {
             </div>
             <div className="ml-3">
               <p className="text-base leading-6 font-medium text-white">
-                {user.name}
+                <Link href={`/profiles/${user.name}`}>{user.name}</Link>
               </p>
               <p className="text-sm leading-5 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
                 {user.handle}
@@ -62,17 +68,27 @@ export default function UserButton() {
                 transition
               >
                 <MenuItem>
-                  <a href="/logout">Logout</a>
+                  <Link href="/logout">Logout</Link>
                 </MenuItem>
-                <MenuItem>Profile</MenuItem>
-                <MenuItem>Add Another Account</MenuItem>
+                <MenuItem>
+                  <Link href={`/profiles/${user.name}`}>Profile</Link>
+                </MenuItem>
               </Menu>
             </div>
           </div>
-        </a>
+        </Link>
       </div>
     </>
   ) : (
-    <></>
+    <>
+      <div className="flex">
+        <a
+          href="/login"
+          className="bg-green-400 mt-5 hover:bg-green-600 text-white font-bold py-2 px-8 rounded-full mr-8 float-right"
+        >
+          Login
+        </a>
+      </div>
+    </>
   );
 }
