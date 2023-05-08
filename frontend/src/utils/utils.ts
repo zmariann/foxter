@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 export async function betterFetch(url: string, options: any | null = {}) {
   const response = await fetch(url, options);
 
-  if (response.status === 401) {
+  if (response.status === 400) {
     // Display an error toast message prompting the user to login
     toast.error("Please login or register to continue");
 

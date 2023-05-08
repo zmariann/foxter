@@ -6,15 +6,44 @@ import { useRouter } from "next/router";
 const Profile = () => {
   const router = useRouter();
   const [profile, setProfile] = useState<any>(null);
+  const [isFollowing, setIsFollowing] = useState(false);
   const { username } = router.query;
+
   const fetchProfile = async () => {
     try {
       const response = await betterFetch(`/api/profile/${username}`);
       setProfile(response);
+      setIsFollowing(response.isFollowing);
       console.log(response);
     } catch (e) {
       console.log(e);
     }
+  };
+
+  const handleFollow = async () => {
+    try {
+      const response = await betterFetch(`/api/follow/${profile.user.id}`, {
+        method: "POST",
+      });
+      setIsFollowing(true);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleUnfollow = async () => {
+    try {
+      const response = await betterFetch(`/api/unfollow/${profile.user.id}`, {
+        method: "POST",
+      });
+      setIsFollowing(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const onDeleteFox = (id: number) => {
+    fetchProfile();
   };
 
   useEffect(() => {
@@ -38,17 +67,26 @@ const Profile = () => {
         />
         <div>
           <h2 className="pb-4">{profile.user.name}</h2>
-          <button className="bg-green-400 hover:bg-green-500 hover:text-whiteFox py-2 px-4 p-3 rounded-full">
-            Message
-          </button>
-          <button className="bg-blue-400 hover:bg-blue-600 hover:text-whiteFox py-2 px-4 m-5 rounded-full">
-            Follow
-          </button>
+          {isFollowing ? (
+            <button
+              className="bg-red-400 hover:bg-red-600 hover:text-white py-2 px-4 m-5 rounded-full"
+              onClick={handleUnfollow}
+            >
+              Unfollow
+            </button>
+          ) : (
+            <button
+              className="bg-blue-400 hover:bg-blue-600 hover:text-white py-2 px-4 m-5 rounded-full"
+              onClick={handleFollow}
+            >
+              Follow
+            </button>
+          )}
         </div>
       </div>
       <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-10">
         {profile.foxes.map((fox: any) => (
-          <Fox key={fox.id} fox={fox} />
+          <Fox key={fox.id} fox={fox} onDeleteFox={onDeleteFox} />
         ))}
       </div>
     </>
@@ -58,3 +96,4 @@ const Profile = () => {
 };
 
 export default Profile;
+
