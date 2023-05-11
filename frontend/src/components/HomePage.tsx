@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { FoxProps } from "../../../shared/types";
 import PostAFox from "./PostAFox";
 import Fox from "./Fox";
 import { betterFetch } from "@/utils/utils";
