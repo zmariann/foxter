@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { FoxProps } from "../../../shared/types";
 import PostAFox from "./PostAFox";
 import Fox from "./Fox";
 import { betterFetch } from "@/utils/utils";
+import { useStoreState, useStoreActions } from "easy-peasy";
 
 export default function HomePage() {
-  const [foxes, setFoxes] = useState<FoxProps[]>([]);
+  const foxes = useStoreState((state) => state.foxes);
+  const setFoxes = useStoreActions((actions) => actions.setFoxes);
+  const deleteFox = useStoreActions((actions) => actions.deleteFox);
 
   // Function to fetch the foxes data from the API
   const fetchFoxes = async () => {
@@ -24,7 +27,7 @@ export default function HomePage() {
   }, []);
 
   const onDeleteFox = (id: number) => {
-    setFoxes(foxes.filter((fox) => fox.id !== id));
+    deleteFox(id);
   };
 
   return (

@@ -1,30 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useStoreState, useStoreActions } from "easy-peasy";
 
 export default function RightBar() {
-  const [input, setInput] = useState("");
-  const [searchResult, setSearchResult] = useState([]);
-  const fetchData = (value) => {
-    fetch("/api/foxes")
-      .then((response) => response.json())
-      .then((json) => {
-        const results = json.filter((fox) => {
-          return (
-            fox && fox.content && fox.content.toLowerCase().includes(value)
-          );
-        });
-        console.log(results);
-        setSearchResult(results);
-      });
+  const search = useStoreState((state) => state.search);
+  const setSearch = useStoreActions((actions) => actions.setSearch);
+  const foxes = useStoreState((state) => state.foxes);
+
+  const handleChange = (value: string) => {
+    setSearch(value);
   };
 
-  const handleChange = (value) => {
-    setInput(value);
-    if (value.length < 3) {
-      setSearchResult([]);
-    } else {
-      fetchData(value);
-    }
-  };
+  const searchResult = foxes.filter((fox) =>
+    fox.content.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <>
@@ -35,15 +23,16 @@ export default function RightBar() {
             className="focus:ring-2 focus:ring-offset-lime-300 outline-none rounded-2xl w-full pl-5 p-5"
             type="text"
             placeholder="Search foxes"
-            value={input}
+            value={search}
             onChange={(e) => handleChange(e.target.value)}
           />
         </div>
         <div className="w-full max-w-md m-auto rounded-2xl bg-whiteFox shadow-md p-5 mt-5 flex-col place-items-center">
           <img src="logo"></img> Foxter
-          {input.length > 0 && input.length < 3 ? (
+          {search.length > 0 && search.length < 3 ? (
             <div>Enter at least 3 characters</div>
           ) : (
+            search.length >= 3 &&
             searchResult.map((result) => {
               return <div key={result.id}>{result.content}</div>;
             })
