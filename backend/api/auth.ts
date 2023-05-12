@@ -1,62 +1,27 @@
 import express, { Request, Response } from "express";
 import { db } from "../database/db";
-// import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { z } from "zod";
 import { validateBody } from "./validation";
 
 const authRouter = express.Router();
 
-// Generate a random token
-function generateToken(): string {
-  return Math.random().toString(36).substring(2);
+interface UserJWTObject {
+  userId: number,
+  userName: string,
 }
 
-// generate User token function
-function generateUserToken(userId, res, userName = null) {
-  // Generate a new token
-  const token = generateToken();
-
-  // Save the token in the database
-  db.prepare(
-    "INSERT OR REPLACE INTO tokens (user_id, token) VALUES (?, ?)"
-  ).run(userId, token);
-
-  // Set the token as a cookie in the response
+// Generate a random token
+function generateJWT(user: UserJWTObject, res: Response) {
+  let token: string = jwt.sign({ userName: user.userName, userId: user.userId }, process.env.JWT_SECRET);
   res.cookie("token", token, { httpOnly: true, maxAge: 2 * 60 * 60 * 1000 });
-
-  // Set the user_id as a cookie in the response
-  res.cookie("userId", userId, {
-    httpOnly: true,
-    maxAge: 2 * 60 * 60 * 1000,
-  });
-
-  res.cookie("loggedInUser", userId, {
-    httpOnly: false,
-    maxAge: 2 * 60 * 60 * 1000,
-  })
-
-  res.cookie("userName", userName, {
-    httpOnly: false,
-    maxAge: 2 * 60 * 60 * 1000,
-  })
-
 }
 
 // delete userToken Function
 function deleteUserToken(req: Request, res: Response): void {
-  const { token, userId } = req.cookies;
-  // Delete the token from the database
-  db.prepare("DELETE FROM tokens WHERE user_id = ? AND token =?").run(
-    userId,
-    token
-  );
-  // Remove the token cookie from the response
+  const { token } = req.cookies;
   res.clearCookie("token");
-  res.clearCookie("userId");
-  res.clearCookie("loggedInUser");
-  res.clearCookie("userName");
-
 }
 
 const RegisterBodySchema = z.object({
@@ -84,15 +49,15 @@ authRouter.post(
       }
       const hashedPassword = await hashPassword(password);
 
-      const { id: userId } = db
+      const userId = db
         .prepare(
           "INSERT INTO users (name, password) VALUES (?, ?) RETURNING id"
         )
         .get(name, hashedPassword);
 
-      generateUserToken(userId, res, name);
+        generateJWT({ userId: userId.id, userName: name }, res);
 
-      res.send({ message: "Successfully registered!" });
+      res.send({ message: "Successfully registered!", data : { userId: userId.id, userName: name }, status: true });
     } catch (error) {
       console.error(error);
       res.status(500).send({ error: "Internal server error" });
@@ -125,9 +90,9 @@ authRouter.post("/login", async (req: Request, res: Response) => {
         .status(401)
         .json({ status: false, error: "Invalid credentials." });
     }
-    // Generate a new token
-    generateUserToken(user.id, res, name);
-    res.json({ status: true, message: "Logged in successfully!" });
+  // Generate a new token
+  generateJWT({ userId: user.id, userName: name }, res);
+    res.json({ status: true, message: "Logged in successfully!", data: { userId: user.id, userName: name } });
   } catch (error) {
     res.status(400).json({ status: false, error: error.message });
   }
@@ -156,21 +121,20 @@ authRouter.get("/verify", (req: Request, res: Response) => {
 // Verify user token
 function verifyUser(req: Request): { id: number; name: string } | null {
   try {
-    const { token, userId } = req.cookies;
+    const { token } = req.cookies;
 
-    const tokenData = db
-      .prepare("SELECT * FROM tokens WHERE user_id = ? and token= ?")
-      .get(userId, token);
+    const jwtResponse = jwt.verify(token, process.env.JWT_SECRET) as UserJWTObject | string | null;
 
-    if (tokenData === undefined) {
+    if (jwtResponse && typeof jwtResponse != "string") {
+      return {
+        id: jwtResponse.userId,
+        name: jwtResponse.userName!,
+      };
+
+    } else {
       return null;
     }
 
-    const userData = db
-      .prepare("SELECT id, name from users WHERE id=?")
-      .get(userId);
-
-    return userData;
   } catch (error) {
     console.error(error);
   }
