@@ -1,3 +1,4 @@
+import { setAuthStatus, setCurrentUserId, setCurrentUserName } from "@/utils/authStatus";
 import { useRouter } from "next/router";
 
 const deleteCookies = (cookies: any, res: any) => {
@@ -25,6 +26,9 @@ export async function getServerSideProps({ req, res }: any) {
 
 export default function Logout(){
     if(typeof window !== "undefined"){
+        setAuthStatus(null)
+        setCurrentUserId(null)
+        setCurrentUserName(null)
         window.location.href = '/login'
     }
 }

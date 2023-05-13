@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import UserButton from "./UserButton";
-import { authStatus } from "@/utils/authStatus";
+import { getAuthStatus, getCurrentUserName } from "@/utils/authStatus";
 import Link from "next/link";
 
 export default function LeftBar() {
   const [open, setOpen] = useState(true);
   const [userName, setUserName] = useState("");
-  const getCookieValue = (name: string): string =>
-    document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)")?.pop() || "";
-
+  
   const getUserData = async () => {
-    setUserName(getCookieValue("userName"));
+    let tempUserName = getCurrentUserName();
+    if(tempUserName)
+      setUserName(tempUserName);
   };
   useEffect(() => {
     getUserData();
