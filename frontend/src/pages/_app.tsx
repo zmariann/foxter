@@ -5,6 +5,7 @@ import React from "react";
 import { useState, useEffect } from 'react';
 import { useRouter } from "next/router";
 import { StoreProvider } from "easy-peasy";
+import { ToastContainer } from "react-toastify";
 import store from "../store";
 
 function showLeftRightBars() {
@@ -15,21 +16,11 @@ function showLeftRightBars() {
 }
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [showChild, setShowChild] = useState(false);
-  
-  useEffect(() => {
-    setShowChild(true);
-  }, []);
 
-  if (!showChild) {
-    return null;
-  }
 
-  if (typeof window == "undefined") {
-    return <></>;
-  } else {
     return (
       <StoreProvider store={store}>
+        <ToastContainer position="top-center" limit={1} autoClose={900} />
         {showLeftRightBars() ? (
           <Layout>
             <Component {...pageProps} />
@@ -39,5 +30,5 @@ export default function App({ Component, pageProps }: AppProps) {
         )}
       </StoreProvider>
     );
-  }
+  
 }

@@ -1,6 +1,6 @@
 import { betterFetch } from "@/utils/utils";
 
-export default function DeleteButton({ foxId, onDeleteFox }) {
+export default function DeleteButton({ foxId, onDeleteFox }: any) {
 
   // Method to delete a fox
   const handleDelete = async () => {
@@ -17,10 +17,9 @@ export default function DeleteButton({ foxId, onDeleteFox }) {
   };
 
   return (
-    <a
+    <button
       onClick={handleDelete}
       className="w-12 group flex items-center text-gray-500 mr-2 text-base leading-6 font-medium rounded-full"
-      target="_blank"
     >
       <svg
         fill="#000000"
@@ -58,6 +57,6 @@ export default function DeleteButton({ foxId, onDeleteFox }) {
           </g>
         </g>
       </svg>
-    </a>
+    </button>
   );
 }

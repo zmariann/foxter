@@ -6,6 +6,7 @@ import "primeicons/primeicons.css";
 import "primereact/resources/primereact.min.css";
 import "primereact/resources/themes/fluent-light/theme.css";
 import { ConfirmDialog, showDialog } from "@/components/confirmDialog";
+import Link from 'next/link';
 
 const singleRoom: React.FC = () => {
   interface Messages {
@@ -112,9 +113,9 @@ const singleRoom: React.FC = () => {
         {/*header*/}
         <div className="flex">
           <div className="m-[30px] h-8 w-8">
-            <a href="/rooms">
+            <Link href="/rooms">
               <img alt="back" src="/back.png" />
-            </a>
+            </Link>
           </div>
 
           <div className="flex items-center">
@@ -123,9 +124,9 @@ const singleRoom: React.FC = () => {
               {/*invitation*/}
               <div className="text-sm text-lightGray">
                 <div className="text-sm text-darkFox">
-                  <a href={"/invitations/" + router.query.roomId}>
+                  <Link href={"/invitations/" + router.query.roomId}>
                     Send invitation to {roomName}
-                  </a>
+                  </Link>
                 </div>
                 Participants:{" "}
                 {participants.map((participant, index) => {

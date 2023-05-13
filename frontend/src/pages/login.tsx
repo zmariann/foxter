@@ -30,8 +30,10 @@ const LoginPage: React.FC = () => {
   const handleSignIn = async (event: any) => {
     event.preventDefault();
     // Check if user is already logged in
-    const token = localStorage.getItem("token");
+    const token = "";
+    console.log(document.cookie);
     if (token) {
+      console.log("TOKEN ALREAD YEXISST")
       toast.warn("User has already been logged in");
       return;
     }
@@ -48,10 +50,11 @@ const LoginPage: React.FC = () => {
       toast.success(data.message.toString());
       router.push("/"); // redirects the user to the home page
     } catch (error: any) {
+      console.log(error)
       if ("error" in error) {
         toast.warn(error.error);
       } else {
-        toast.error(JSON.stringify(error));
+        toast.error(error.message);
       }
       // Handle login error
     }
@@ -130,12 +133,12 @@ const LoginPage: React.FC = () => {
           <div className="text-center mb-6">
             <p className="text-center font-bold text-darkFox mb-4 text-sm">
               Don't have an account?
+            </p>
               <Link href="/register" passHref>
                 <span className="inline-block font-bold text-greenFox hover:text-[#387354] ml-1">
                   Sign Up
                 </span>
               </Link>
-            </p>
           </div>
         </form>
       </div>

@@ -1,16 +1,12 @@
 import { setAuthStatus, setCurrentUserId, setCurrentUserName } from "@/utils/authStatus";
+import { betterFetch } from '@/utils/utils'
 
-export default function Logout(){
-    if(typeof window !== "undefined"){
-        setAuthStatus(null)
-        setCurrentUserId(null)
-        setCurrentUserName(null)
-        window.location.href = '/login'
-    }
+export default function Logout(){    
+    setAuthStatus(null)
+    setCurrentUserId(null)
+    setCurrentUserName(null)
 
-    document.cookie.split(";").forEach(function(c) {
-      document.cookie = c
-        .replace(/^ +/, "")
-        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-    });
+    betterFetch("/api/logout", { method: 'POST' });
+    
+    window.location.href = "/login";
 }

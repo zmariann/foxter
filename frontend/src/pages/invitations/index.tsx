@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ConfirmDialog, showDialog } from "@/components/confirmDialog";
+import Link from 'next/link'
 
 const Invitations: React.FC = () => {
   interface Invitations {
@@ -73,9 +74,9 @@ const Invitations: React.FC = () => {
       <div className="border-x-[3px] border-borderGrey">
         <div className="flex">
           <div className="m-[30px] h-8 w-8">
-            <a href="/">
+            <Link href="/">
               <img alt="back" src="/back.png" />
-            </a>
+            </Link>
           </div>
 
           <div className="flex items-center">
@@ -91,9 +92,9 @@ const Invitations: React.FC = () => {
                 <span className="text-sm text-lightGray justify-start">
                   {" "}
                   sent by{" "}
-                  <a href="/" className="text-darkFox underline">
+                  <Link href={`/profiles/${invitation.host}`} className="text-darkFox underline">
                     {invitation.host}
-                  </a>
+                  </Link>
                 </span>
               </div>
 

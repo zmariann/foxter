@@ -15,13 +15,12 @@ interface UserJWTObject {
 // Generate a random token
 function generateJWT(user: UserJWTObject, res: Response) {
   let token: string = jwt.sign({ userName: user.userName, userId: user.userId }, process.env.JWT_SECRET);
-  res.cookie("token", token, { httpOnly: true, maxAge: 2 * 60 * 60 * 1000 });
+  res.cookie("token", token, { path: "/" });
 }
 
 // delete userToken Function
 function deleteUserToken(req: Request, res: Response): void {
-  const { token } = req.cookies;
-  res.clearCookie("token");
+  res.clearCookie("token", { path: "/" });
 }
 
 const RegisterBodySchema = z.object({
@@ -73,21 +72,21 @@ authRouter.post("/login", async (req: Request, res: Response) => {
     // Check if user is already logged in
     if (req.cookies.token) {
       return res
-        .status(401)
+        .status(400)
         .json({ status: false, error: "You are already logged in." });
     }
 
     // Check if user exists
     const user = db.prepare("SELECT * FROM users WHERE name = ?").get(name);
     if (!user) {
-      return res.status(401).json({ status: false, error: "No user found" });
+      return res.status(400).json({ status: false, error: "No user found" });
     }
 
     // Check if password is correct
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res
-        .status(401)
+        .status(400)
         .json({ status: false, error: "Invalid credentials." });
     }
   // Generate a new token

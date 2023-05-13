@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Fox from "@/components/Fox";
 import { betterFetch } from "@/utils/utils";
 import { useRouter } from "next/router";
+import { toast } from 'react-toastify';
 
 const Profile = () => {
   const router = useRouter();
@@ -15,8 +16,8 @@ const Profile = () => {
       const response = await betterFetch(`/api/profile/${username}`);
       setProfile(response);
       getFollowingStatus(response.user.id)
-    } catch (e) {
-      console.log(e);
+    } catch (e: any) {
+      toast.error(e.message);
     }
   };
 
@@ -26,8 +27,8 @@ const Profile = () => {
         method: "POST",
       });
       getFollowingStatus(profile.user.id)
-    } catch (e) {
-      console.log(e);
+    } catch (e: any) {
+      toast.error(e.message);
     }
   };
 
@@ -60,8 +61,8 @@ const Profile = () => {
     if (!username) {
       return;
     }
-    getLoggedInUser();
     fetchProfile();
+    getLoggedInUser();
   }, [username]);
 
   const defaultProfileImage = "/NoProfilePicture.png";
@@ -69,7 +70,7 @@ const Profile = () => {
   return profile ? (
     <>
       {/* <SideMenu /> */}
-      <div className="py-8 px-8 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-2 sm:py-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-6">
+      <div className="py-8 px-8 my-4 mx-auto bg-white rounded-xl shadow-md space-y-2 sm:py-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-6">
         <img
           className="block mx-auto h-24 rounded-full sm:mx-0 sm:flex-shrink-0"
           src={profile.user.profile_image_url || defaultProfileImage}
@@ -77,21 +78,21 @@ const Profile = () => {
           style={{ borderRadius: "50%" }}
         />
         <div>
-          <h2 className="pb-4">{profile.user.name}</h2>
+          <h2 className="pb-4 mx-3">{profile.user.name}</h2>
           {
             loggedInUser != profile.user.id ?
               (
                 isFollowing ?
                   (
                     <button
-                      className="bg-red-400 hover:bg-red-600 hover:text-white py-2 px-4 m-5 rounded-full"
+                      className="bg-red-400 hover:bg-red-600 hover:text-white py-2 px-4 m-1 rounded-full"
                       onClick={toggleFollowing}
                     >
                       Unfollow
                     </button>
                   ) : (
                     <button
-                      className="bg-blue-400 hover:bg-blue-600 hover:text-white py-2 px-4 m-5 rounded-full"
+                      className="bg-blue-400 hover:bg-blue-600 hover:text-white py-2 px-4 m-1 rounded-full"
                       onClick={toggleFollowing}
                     >
                       Follow
@@ -103,7 +104,7 @@ const Profile = () => {
 
         </div>
       </div >
-      <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-10">
+      <div className="mx-auto my-4 bg-white rounded-xl shadow-md overflow-hidden p-10">
         {profile.foxes.map((fox: any) => (
           <Fox key={fox.id} fox={fox} onDeleteFox={onDeleteFox} />
         ))}

@@ -2,6 +2,7 @@ import {ConfirmDialog, showDialog} from "@/components/confirmDialog";
 import React, { useEffect, useState } from "react";
 import { toast, Flip } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Link from 'next/link'
 
 interface Rooms {
   name: string;
@@ -124,9 +125,9 @@ const allRooms: React.FC = () => {
       <div className="border-x-[3px] border-borderGrey">
         <div className="flex">
           <div className="m-[30px] h-8 w-8">
-            <a href="/">
+            <Link href="/">
               <img alt="back" src="/back.png" />
-            </a>
+            </Link>
           </div>
 
           <div className="flex items-center">
@@ -174,12 +175,12 @@ const allRooms: React.FC = () => {
           return (
             <div className="flex justify-between items-center pl-5 pt-3 pb-3 border-b-[3px] border-borderGrey">
               <div>
-                <a
+                <Link
                   className="font-bold text-darkFox text-lg"
                   href={"/rooms/" + room.id}
                 >
                   {room.name}
-                </a>
+                </Link>
 
                 <p className="text-sm text-lightGray">
                   {room.rooms_group === 0 && <p>one-one chat</p>}

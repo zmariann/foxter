@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ConfirmDialog, showDialog } from "@/components/confirmDialog";
+import Link from 'next/link'
 
 const SendInvitations: React.FC = () => {
   interface User {
@@ -97,9 +98,9 @@ const SendInvitations: React.FC = () => {
       <div className="border-x-[3px] border-borderGrey">
         <div className="flex">
           <div className="m-[30px] h-8 w-8">
-            <a href={"/rooms/" + router.query.roomId}>
+            <Link href={"/rooms/" + router.query.roomId}>
               <img alt="back" src="/back.png" />
-            </a>
+            </Link>
           </div>
 
           <div className="flex items-center">

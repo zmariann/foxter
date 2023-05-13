@@ -11,7 +11,7 @@ export default function RightBar() {
     setSearch(value);
   };
 
-  const searchResult = foxes.filter((fox) =>
+  const searchResult = foxes.filter((fox: any) =>
     fox.content.toLowerCase().includes(search.toLowerCase())
   );
   const imageClass = search.length > 0 ? "max-h-10 ease-out druation-500" : "";
@@ -19,8 +19,8 @@ export default function RightBar() {
   return (
     <>
       <div className={`w-3/12 h-screen bg-white mt-4 px-2`}>
-        <div className=" flex-col justify-items-center">
-          <img src="/Search.png" className=" max-h-8"></img>
+        <div className="flex justify-items-center items-center">
+          <img src="/Search.png" className="max-h-8"></img>
           <input
             className="focus:ring-2 focus:ring-offset-lime-300 outline-none rounded-2xl w-full pl-5 p-5"
             type="text"
@@ -35,7 +35,7 @@ export default function RightBar() {
             <div>Enter at least 3 characters</div>
           ) : (
             search.length >= 3 &&
-            searchResult.map((result) => {
+            searchResult.map((result: any) => {
               return <div key={result.id}>{result.content}</div>;
             })
           )}

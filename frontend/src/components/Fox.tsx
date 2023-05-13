@@ -25,12 +25,12 @@ const Fox: React.FC<FProps> = ({ fox, onDeleteFox }) => {
   // rendering Fox Component
   return (
     <div className="flex mb-6 flex-col w-full">
-      <p className="text-base leading-6 text-white w-full mb-3">
+      <div className="text-base leading-6 text-white w-full mb-3">
         <Link href={`/profiles/${fox.userName}`}>{fox.userName}</Link>
         <span className="ml-4 text-sm leading-5 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
           {fox.createdAt.toString()}
         </span>
-      </p>
+      </div>
       <p
         dangerouslySetInnerHTML={{ __html: convertInputString(fox.content) }}
         className="text-base font-medium text-white"

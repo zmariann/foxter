@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import { betterFetch } from "@/utils/utils";
 import { setAuthStatus, setCurrentUserId, setCurrentUserName } from "@/utils/authStatus";
+import Link from 'next/link'
 
 const RegisterPage: React.FC = () => {
   // States for registration
@@ -148,12 +149,12 @@ const RegisterPage: React.FC = () => {
             <h2 className="inline-block align-baseline font-bold text-sm text-darkFox mb-1">
               Already have an account? &nbsp;
             </h2>
-            <a
+            <Link
               href="/login"
               className="inline-block align-baseline font-bold text-sm text-greenFox hover:text-[#387354] mb-1 cursor-pointer"
             >
               Log In
-            </a>
+            </Link>
           </div>
         </form>
       </div>

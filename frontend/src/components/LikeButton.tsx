@@ -60,9 +60,8 @@ const LikeButton: React.FC<Props> = ({ foxId, initialLikes }) => {
   return (
     <div>
       {liked ? (
-        <a
+        <button
           className="w-12 group flex items-center text-blue-500 mr-2 text-base leading-6 font-medium rounded-full"
-          target="_blank"
           onClick={handleUnlike}
         >
           <svg
@@ -77,11 +76,10 @@ const LikeButton: React.FC<Props> = ({ foxId, initialLikes }) => {
             <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
           </svg>
           <span className="ml-2">{likes}</span>
-        </a>
+        </button>
       ) : (
-        <a
+        <button
           className="w-12 group flex items-center text-gray-500 mr-2 text-base leading-6 font-medium rounded-full"
-          target="_blank"
           onClick={handleLike}
         >
           <svg
@@ -96,7 +94,7 @@ const LikeButton: React.FC<Props> = ({ foxId, initialLikes }) => {
             <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
           </svg>
           <span className="ml-2">{likes}</span>
-        </a>
+        </button>
       )}
     </div>
   );
