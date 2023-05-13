@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import { setAuthStatus, setCurrentUserId, setCurrentUserName } from "./authStatus";
 
 export async function betterFetch(url: string, options: any | null = {}) {
   const response = await fetch(url, options);
@@ -6,7 +7,9 @@ export async function betterFetch(url: string, options: any | null = {}) {
   if (response.status === 400) {
     // Display an error toast message prompting the user to login
     toast.error("Please login or register to continue");
-
+    setAuthStatus(null)
+    setCurrentUserId(null)
+    setCurrentUserName(null)
     setTimeout(() => {
       window.location.href = "/login";
     }, 1000)
@@ -21,5 +24,5 @@ export async function betterFetch(url: string, options: any | null = {}) {
     throw new Error((await response.json()).error);
   }
 
-  return await response.json(); 
+  return await response.json();
 } 

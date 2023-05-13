@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import { betterFetch } from "@/utils/utils";
+import { setAuthStatus, setCurrentUserId, setCurrentUserName } from "@/utils/authStatus";
 
 const RegisterPage: React.FC = () => {
   // States for registration
@@ -40,6 +41,9 @@ const RegisterPage: React.FC = () => {
           },
           body: JSON.stringify({ name, password }),
         });
+        setAuthStatus(true)
+        setCurrentUserId(response.data.userId)
+        setCurrentUserName(response.data.userName)
         toast.success(
           "User " + name + " successfully registered. Please login to continue"
         );

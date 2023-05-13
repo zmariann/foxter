@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import LikeButton from "../components/LikeButton";
 import type { FoxProps } from "../../../shared/types";
 import DeleteButton from "./DeleteButton";
-import { authStatus, getCurrentUserId } from "@/utils/authStatus";
+import { getAuthStatus, getCurrentUserId } from "@/utils/authStatus";
 import Link from "next/link";
 
 // Defining Fox component  property
@@ -35,7 +35,7 @@ const Fox: React.FC<FProps> = ({ fox, onDeleteFox }) => {
         dangerouslySetInnerHTML={{ __html: convertInputString(fox.content) }}
         className="text-base font-medium text-white"
       ></p>
-      {authStatus() ? (
+      {getAuthStatus() ? (
         <div className="flex mt-2">
           <LikeButton foxId={fox.id} initialLikes={fox.likes} />
           {fox.userId == getCurrentUserId() ? (

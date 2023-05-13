@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import { betterFetch } from "@/utils/utils";
+import { setAuthStatus, setCurrentUserId, setCurrentUserName } from "@/utils/authStatus";
 
 const LoginPage: React.FC = () => {
   const [name, setUsername] = useState("");
@@ -41,6 +42,9 @@ const LoginPage: React.FC = () => {
         body: JSON.stringify({ name, password }),
       });
       // handle successful login
+      setAuthStatus(true)
+      setCurrentUserId(data.data.userId)
+      setCurrentUserName(data.data.userName)
       toast.success(data.message.toString());
       router.push("/"); // redirects the user to the home page
     } catch (error: any) {
@@ -54,7 +58,7 @@ const LoginPage: React.FC = () => {
   };
 
   // forgot password handle: Need to understand what exactly we need to do here,
-  const handleForgotPassword = () => {};
+  const handleForgotPassword = () => { };
 
   // handle toggle for show & hide password
   const [open, setOpen] = useState(false);

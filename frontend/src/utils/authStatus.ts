@@ -1,19 +1,46 @@
-const authStatus = (): boolean => {
-  if (typeof document === "undefined") return false;
+const storeInLocalStorage = (key: string, value: any) => {
+  if (typeof localStorage === "undefined") return false;
 
-  if (document.cookie.indexOf("loggedInUser=") != -1) return true;
+  if (value === null)
+    localStorage.removeItem(key)
+  else
+    localStorage.setItem(key, value)
+  return true;
+}
+
+const getFromLocalStorage = (key: string) => {
+  if (typeof localStorage === "undefined") return null;
+
+  return localStorage.getItem(key)
+}
+
+export const getAuthStatus = (): boolean => {
+  if (getFromLocalStorage("authStatus") == "true")
+    return true;
 
   return false;
 };
 
-const getCurrentUserId = () => {
-  if(typeof document === "undefined") return null;
-
-  if (document.cookie.indexOf("loggedInUser=") != -1){
-    return parseInt(document.cookie.split("loggedInUser=")[1].split(";")[0])
-  } 
-
-  return null;
+export const setAuthStatus = (prop: boolean | null) => {
+  storeInLocalStorage("authStatus", prop)
 }
 
-export { authStatus, getCurrentUserId };
+export const getCurrentUserId = (): number | null => {
+  let currentUserId = getFromLocalStorage("currentUserId")
+  if (currentUserId === null)
+    return null
+  else
+    return parseInt(currentUserId)
+}
+
+export const getCurrentUserName = () => {
+  return getFromLocalStorage("currentUserName");
+}
+
+export const setCurrentUserId = (prop: number | null) => {
+  return storeInLocalStorage("currentUserId", prop);
+}
+
+export const setCurrentUserName = (prop: string | null) => {
+  return storeInLocalStorage("currentUserName", prop);
+}

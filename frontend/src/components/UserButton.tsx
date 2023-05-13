@@ -3,6 +3,7 @@ import { Menu, MenuItem } from "@szhsin/react-menu";
 import "@szhsin/react-menu/dist/index.css";
 import "@szhsin/react-menu/dist/transitions/slide.css";
 import Link from "next/link";
+import { getAuthStatus, getCurrentUserName } from "@/utils/authStatus";
 
 interface User {
   name: string | null;
@@ -17,13 +18,10 @@ export default function UserButton() {
     image: "",
   });
 
-  const getCookieValue = (name: string): string =>
-    document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)")?.pop() || "";
-
   const getUserData = async () => {
     setUser({
-      name: getCookieValue("userName"),
-      handle: getCookieValue("userName"),
+      name: getCurrentUserName(),
+      handle: getCurrentUserName(),
       image: "/NoProfilePicture.png",
     });
   };
@@ -32,7 +30,7 @@ export default function UserButton() {
     getUserData();
   }, []);
 
-  return user.name != "" ? (
+  return getAuthStatus() ? (
     <>
       <div className="flex-shrink-0 flex hover:bg-blue-00 rounded-full p-4 mt-12 mr-2 fixed left-2 bottom-0 cursor-pointer">
         <Link href={`/profiles/${user.name}`} className="flex-shrink-0 group block">
