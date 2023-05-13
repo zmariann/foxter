@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "primeicons/primeicons.css";
 import "primereact/resources/primereact.min.css";
@@ -108,9 +108,6 @@ const singleRoom: React.FC = () => {
   };
 
   return (
-    <div className="container m-auto grid grid-cols-[20%_minmax(50%,_1fr)_30%] min-h-screen">
-      <ToastContainer position="top-center" limit={1} autoClose={1000} />
-      {/*content in the middle start*/}
       <div>
         {/*header*/}
         <div className="flex">
@@ -197,8 +194,6 @@ const singleRoom: React.FC = () => {
           </form>
         </div>
       </div>
-      {/*content in the middle end*/}
-    </div>
   );
 };
 

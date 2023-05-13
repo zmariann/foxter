@@ -1,6 +1,6 @@
 import {ConfirmDialog, showDialog} from "@/components/confirmDialog";
 import React, { useEffect, useState } from "react";
-import { ToastContainer, toast, Flip } from "react-toastify";
+import { toast, Flip } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 interface Rooms {
@@ -121,9 +121,6 @@ const allRooms: React.FC = () => {
 
 
   return (
-    <div className="container m-auto grid grid-cols-[20%_minmax(50%,_1fr)_30%]">
-      <ToastContainer limit={1} />
-
       <div className="border-x-[3px] border-borderGrey">
         <div className="flex">
           <div className="m-[30px] h-8 w-8">
@@ -202,7 +199,6 @@ const allRooms: React.FC = () => {
           );
         })}
       </div>
-    </div>
   );
 };
 

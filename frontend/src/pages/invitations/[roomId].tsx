@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ConfirmDialog, showDialog } from "@/components/confirmDialog";
 
@@ -94,8 +94,6 @@ const SendInvitations: React.FC = () => {
   };
 
   return (
-    <div className="container m-auto grid grid-cols-[20%_minmax(50%,_1fr)_30%]">
-      <ToastContainer position="top-center" limit={1} autoClose={1000} />
       <div className="border-x-[3px] border-borderGrey">
         <div className="flex">
           <div className="m-[30px] h-8 w-8">
@@ -137,7 +135,6 @@ const SendInvitations: React.FC = () => {
           </button>
         </div>
       </div>
-    </div>
   );
 };
 
