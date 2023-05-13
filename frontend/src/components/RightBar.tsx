@@ -30,7 +30,7 @@ export default function RightBar() {
           />
         </div>
         <div className="w-full max-w-md m-auto rounded-2xl bg-whiteFox shadow-md p-5 mt-5 flex flex-col items-center">
-          <img src="/coolFox.png" className={`${imageClass}`} alt="Cool Fox" />
+          <img src="/CoolFox.png" className={`${imageClass}`} alt="Cool Fox" />
           {search.length > 0 && search.length < 3 ? (
             <div>Enter at least 3 characters</div>
           ) : (
@@ -54,7 +54,7 @@ export default function RightBar() {
             </Link>
             <Link href="https://facebook.com">
               <img
-                src="/Facebook.png"
+                src="/facebook.png"
                 alt="facebook"
                 className="max-h-8 pr-2"
               />
